@@ -7,15 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DuocRestaurant.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class DefaultController : ControllerBase
     {
-        // GET: api/Default
+        // GET: default
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult Get()
         {
-            return new string[] { "test 1", "test 2" };
+            return Ok("Hola mundo");
         }
     }
 }

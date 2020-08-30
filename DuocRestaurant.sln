@@ -3,13 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DuocRestaurant.API", "DuocRestaurant.API\DuocRestaurant.API.csproj", "{0814E04D-A63C-4AB2-8867-29873B4D268E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DuocRestaurant.API", "DuocRestaurant.API\DuocRestaurant.API.csproj", "{0814E04D-A63C-4AB2-8867-29873B4D268E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DuocRestaurant.Domain", "DuocRestaurant.Domain\DuocRestaurant.Domain.csproj", "{7178718B-1EA5-4B48-AF41-1EBEFF4B21E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DuocRestaurant.Domain", "DuocRestaurant.Domain\DuocRestaurant.Domain.csproj", "{7178718B-1EA5-4B48-AF41-1EBEFF4B21E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DuocRestaurant.Business", "DuocRestaurant.Business\DuocRestaurant.Business.csproj", "{0FE4B26C-EFC0-4C09-AA06-D57A9B1539FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DuocRestaurant.Business", "DuocRestaurant.Business\DuocRestaurant.Business.csproj", "{0FE4B26C-EFC0-4C09-AA06-D57A9B1539FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DuocRestaurant.Helpers", "DuocRestaurant.Helpers\DuocRestaurant.Helpers.csproj", "{DE28574A-CCC9-4464-B486-067A6E0D0DFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DuocRestaurant.Helpers", "DuocRestaurant.Helpers\DuocRestaurant.Helpers.csproj", "{DE28574A-CCC9-4464-B486-067A6E0D0DFD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{95A5286E-8740-44F9-90D9-7C7D82C0DFAD}"
+	ProjectSection(SolutionItems) = preProject
+		schema.sql = schema.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
