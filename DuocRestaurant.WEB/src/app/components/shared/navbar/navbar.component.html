@@ -1,0 +1,70 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" *ngIf="isAuthenticated()">
+  <button class="navbar-toggler"
+          type="button"
+          (click)="menuBehavior.isCollapsed = !menuBehavior.isCollapsed"
+          aria-controls="collapse-menu"
+          [attr.aria-expanded]="!menuBehavior.isCollapsed">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <a class="navbar-brand" [routerLink]="['']">
+    <b>
+      <span class="text-primary">Siglo</span>&nbsp;<span class="text-white">XXI</span>
+    </b>
+  </a>
+
+  <div id="collapse-menu" class="collapse navbar-collapse" [collapse]="menuBehavior.isCollapsed">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item dropdown" dropdown [autoClose]="true">
+        <a class="nav-link text-white" id="navbarDropdown" role="button" [routerLink]="['/product-maintenance']" routerLinkActive="active">
+          Productos
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Logged user menu -->
+  <div class="btn-group mr-1" dropdown>
+    <a class="nav-link dropdown-toggle clickable text-white"
+       id="navbarDropdown"
+       dropdownToggle
+       role="button"
+       aria-controls="dropdown-animated">
+      {{ user.Nombre }} {{ user.Apellido }}
+    </a>
+    <div id="dropdown-animated" *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="navbarDropdown">
+      <a class="dropdown-item clickable" [routerLink]="['/maintenance/my-account']" routerLinkActive="active">
+        <fa-icon [icon]="icons.faUserCircle" [fixedWidth]="true"></fa-icon>&nbsp;
+        Mi cuenta
+      </a>
+      <a class="dropdown-item clickable" [routerLink]="['/purchase-list/']" routerLinkActive="active">
+        <fa-icon [icon]="icons.faReceipt" [fixedWidth]="true"></fa-icon>&nbsp;
+        Mis compras
+      </a>
+      <a class="dropdown-item clickable" (click)="logout()">
+        <fa-icon [icon]="icons.faSignOutAlt" [fixedWidth]="true"></fa-icon>&nbsp;
+        Salir
+      </a>
+      <div *ngIf="hasPermissions([admin])">
+        <div class="dropdown-divider"></div>
+        <h6 class="dropdown-header">Mantenedores</h6>
+        <a class="dropdown-item clickable" [routerLink]="['/maintenance/category']" routerLinkActive="active">
+          <fa-icon [icon]="icons.faList" [fixedWidth]="true"></fa-icon>&nbsp;
+          Categorías
+        </a>
+        <a class="dropdown-item clickable" [routerLink]="['/maintenance/product']" routerLinkActive="active">
+          <fa-icon [icon]="icons.faBoxOpen" [fixedWidth]="true"></fa-icon>&nbsp;
+          Productos
+        </a>
+        <a class="dropdown-item clickable" [routerLink]="['/maintenance/store']" routerLinkActive="active">
+          <fa-icon [icon]="icons.faStore" [fixedWidth]="true"></fa-icon>&nbsp;
+          Tiendas
+        </a>
+        <a class="dropdown-item clickable" [routerLink]="['/maintenance/stock']" routerLinkActive="active">
+          <fa-icon [icon]="icons.faBoxes" [fixedWidth]="true"></fa-icon>&nbsp;
+          Stock
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>

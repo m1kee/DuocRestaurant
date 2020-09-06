@@ -15,7 +15,7 @@ namespace DuocRestaurant.API.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok("Hola mundo");
+            return Ok("API - Restaurant Siglo XXI");
         }
     }
 }

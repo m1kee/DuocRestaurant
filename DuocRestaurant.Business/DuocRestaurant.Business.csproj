@@ -4,4 +4,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DuocRestaurant.Domain\DuocRestaurant.Domain.csproj" />
+    <ProjectReference Include="..\DuocRestaurant.Helpers\DuocRestaurant.Helpers.csproj" />
+  </ItemGroup>
+
 </Project>

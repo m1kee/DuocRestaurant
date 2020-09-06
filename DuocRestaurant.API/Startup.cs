@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Business.Services;
+using Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -25,7 +27,17 @@ namespace DuocRestaurant.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvcCore().AddNewtonsoftJson();
+
+            services.Configure<RestaurantDatabaseSettings>(Configuration.GetSection("DatabaseSettings"));
+            services.AddScoped<IAuthService, AuthService>();
+
             services.AddControllers();
+
+            services.AddCors(c =>
+            {
+                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -33,6 +45,7 @@ namespace DuocRestaurant.API
         {
             if (env.IsDevelopment())
             {
+                app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
                 app.UseDeveloperExceptionPage();
             }
 
@@ -45,6 +58,7 @@ namespace DuocRestaurant.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute("default", "{controller}/{action}/{id?}");
             });
         }
     }

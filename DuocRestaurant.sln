@@ -16,6 +16,27 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{95A5
 		schema.sql = schema.sql
 	EndProjectSection
 EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DuocRestaurant.WEB", "DuocRestaurant.WEB\", "{C0F688CA-19B4-4DB7-9990-56BFD11099AE}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_59254"
+		Debug.AspNetCompiler.PhysicalPath = "DuocRestaurant.WEB\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_59254\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_59254"
+		Release.AspNetCompiler.PhysicalPath = "DuocRestaurant.WEB\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_59254\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "59254"
+		SlnRelativePath = "DuocRestaurant.WEB\"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +59,10 @@ Global
 		{DE28574A-CCC9-4464-B486-067A6E0D0DFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE28574A-CCC9-4464-B486-067A6E0D0DFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE28574A-CCC9-4464-B486-067A6E0D0DFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0F688CA-19B4-4DB7-9990-56BFD11099AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0F688CA-19B4-4DB7-9990-56BFD11099AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0F688CA-19B4-4DB7-9990-56BFD11099AE}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0F688CA-19B4-4DB7-9990-56BFD11099AE}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
