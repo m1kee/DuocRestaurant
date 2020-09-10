@@ -16,9 +16,44 @@
   <div id="collapse-menu" class="collapse navbar-collapse" [collapse]="menuBehavior.isCollapsed">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item dropdown" dropdown [autoClose]="true">
-        <a class="nav-link text-white" id="navbarDropdown" role="button" [routerLink]="['/product-maintenance']" routerLinkActive="active">
-          Productos
+        <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
+          Mantenimiento
         </a>
+
+        <div class="dropdown-menu dropdown-menu-right"
+             aria-labelledby="navbarDropdown"
+             *dropdownMenu>
+          <a [routerLink]="['/inventory-maintenance']" routerLinkActive="active"
+             class="dropdown-item clickable">
+            Inventario
+          </a>
+          <a [routerLink]="['/tables-maintenance']" routerLinkActive="active"
+             class="dropdown-item clickable">
+            Mesas
+          </a>
+          <a [routerLink]="['/users-maintenance']" routerLinkActive="active"
+             class="dropdown-item clickable">
+            Usuarios
+          </a>
+        </div>
+      </li>
+      <li class="nav-item dropdown" dropdown [autoClose]="true">
+        <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
+          Reservas
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-right"
+             aria-labelledby="navbarDropdown"
+             *dropdownMenu>
+          <a [routerLink]="['/bookings']" routerLinkActive="active"
+             class="dropdown-item clickable">
+            Crear reserva
+          </a>
+          <a [routerLink]="['/booking-search']" routerLinkActive="active"
+             class="dropdown-item clickable">
+            Consultar reserva
+          </a>
+        </div>
       </li>
     </ul>
   </div>
@@ -33,38 +68,10 @@
       {{ user.Nombre }} {{ user.Apellido }}
     </a>
     <div id="dropdown-animated" *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="navbarDropdown">
-      <a class="dropdown-item clickable" [routerLink]="['/maintenance/my-account']" routerLinkActive="active">
-        <fa-icon [icon]="icons.faUserCircle" [fixedWidth]="true"></fa-icon>&nbsp;
-        Mi cuenta
-      </a>
-      <a class="dropdown-item clickable" [routerLink]="['/purchase-list/']" routerLinkActive="active">
-        <fa-icon [icon]="icons.faReceipt" [fixedWidth]="true"></fa-icon>&nbsp;
-        Mis compras
-      </a>
       <a class="dropdown-item clickable" (click)="logout()">
         <fa-icon [icon]="icons.faSignOutAlt" [fixedWidth]="true"></fa-icon>&nbsp;
         Salir
       </a>
-      <div *ngIf="hasPermissions([admin])">
-        <div class="dropdown-divider"></div>
-        <h6 class="dropdown-header">Mantenedores</h6>
-        <a class="dropdown-item clickable" [routerLink]="['/maintenance/category']" routerLinkActive="active">
-          <fa-icon [icon]="icons.faList" [fixedWidth]="true"></fa-icon>&nbsp;
-          Categorías
-        </a>
-        <a class="dropdown-item clickable" [routerLink]="['/maintenance/product']" routerLinkActive="active">
-          <fa-icon [icon]="icons.faBoxOpen" [fixedWidth]="true"></fa-icon>&nbsp;
-          Productos
-        </a>
-        <a class="dropdown-item clickable" [routerLink]="['/maintenance/store']" routerLinkActive="active">
-          <fa-icon [icon]="icons.faStore" [fixedWidth]="true"></fa-icon>&nbsp;
-          Tiendas
-        </a>
-        <a class="dropdown-item clickable" [routerLink]="['/maintenance/stock']" routerLinkActive="active">
-          <fa-icon [icon]="icons.faBoxes" [fixedWidth]="true"></fa-icon>&nbsp;
-          Stock
-        </a>
-      </div>
     </div>
   </div>
 </nav>

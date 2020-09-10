@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ICredentials } from '@app/domain/credentials';
 import { AuthService } from '@app/services/auth.service';
-import { IUser } from '@app/domain/user';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { Credentials } from '@domain/credentials';
+import { User } from '@domain/user';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  credentials: ICredentials = {
+  credentials: Credentials = {
     Username: null,
     Password: null
   };
@@ -25,16 +25,16 @@ export class LoginComponent implements OnInit {
 
   public signIn = () => {
     this.loading = true;
-    this.authService.login(this.credentials).subscribe((user: IUser) => {
+    this.authService.login(this.credentials).subscribe((user: User) => {
       this.loading = false;
       this.router.navigate(['/home']);
     }, (response) => {
       this.loading = false;
       let message = '';
-      if (response.error && response.error.message)
-        message = response.error.message;
+      if (response.error)
+        message = response.error;
       else
-        message = 'Unexpected error, try again.';
+        message = 'Ocurrió un error inesperado, intente nuevamente.';
 
       this.toastrService.error(message);
     });

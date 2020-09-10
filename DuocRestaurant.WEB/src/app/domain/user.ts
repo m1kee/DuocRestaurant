@@ -1,7 +1,10 @@
-
-
-export interface IUser {
+export class User {
   Id: number;
-  UserName: string;
   RoleId: number;
+  Name: string;
+  LastName: string;
+  Email: string;
+  Password: string;
+  Phone: string;
+  Address: string;
 }

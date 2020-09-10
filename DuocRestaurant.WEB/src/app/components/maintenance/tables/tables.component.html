@@ -1,0 +1,108 @@
+<div class="row m-3">
+  <div class="col-xs-12 col-lg-6 col-xl-6">
+    <!-- category crud -->
+    <h1>
+      Mesa: {{ currentTable.number }}
+    </h1>
+    <hr />
+    <form novalidate="" (ngSubmit)="save(tableForm)" #tableForm="ngForm" class="was-validated">
+      <div class="row">
+        <!-- Table number -->
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group" [ngClass]="{'has-danger': number.errors?.required && number.touched }">
+            <label for="table-number">N&uacute;mero:</label>
+            <input name="number"
+                   #number="ngModel"
+                   [(ngModel)]="currentTable.number"
+                   required
+                   type="number"
+                   class="form-control"
+                   id="table-number"
+                   placeholder="Ingresa el número de la mesa">
+            <small id="number-help" class="form-text text-muted">Solo se aceptan n&uacute;meros.</small>
+          </div>
+        </div>
+        <!-- Description -->
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group" [ngClass]="{'has-danger': description.errors?.required && description.touched }">
+            <label for="category-desc">Descripci&oacute;n:</label>
+            <input name="description"
+                   #description="ngModel"
+                   [(ngModel)]="currentTable.description"
+                   type="text"
+                   class="form-control"
+                   id="table-description"
+                   placeholder="Ingresa una pequeña descripción">
+          </div>
+        </div>
+        <!-- Table people count -->
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group" [ngClass]="{'has-danger': maxPeople.errors?.required && maxPeople.touched }">
+            <label for="table-max-people">M&aacute;ximo de personas:</label>
+            <input name="maxPeople"
+                   #maxPeople="ngModel"
+                   [(ngModel)]="currentTable.maxPeople"
+                   required
+                   type="number"
+                   class="form-control"
+                   id="table-max-people"
+                   placeholder="Cantidad m&aacute;xima de personas para la mesa.">
+            <small id="number-help" class="form-text text-muted">Solo se aceptan n&uacute;meros.</small>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;" [disabled]="!tableForm.valid || loading">
+            <fa-icon [icon]="icons.faSave" [fixedWidth]="true"></fa-icon>&nbsp;
+            Guardar
+          </button>
+          <button (click)="cancel()" name="cancel-btn" type="button" class="btn btn-danger">
+            <fa-icon [icon]="icons.faTimes" [fixedWidth]="true"></fa-icon>&nbsp;
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-xs-12 col-lg-6 col-xl-6">
+    <h1> Mesas </h1>
+    <hr />
+    <!-- category list -->
+    <table class="table table-hover table-sm">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Descripci&oacute;n</th>
+          <th scope="col">N° Personas</th>
+          <th scope="col">Acciones </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let table of tables | paginate: paginationConfig">
+          <td>{{ table.number }}</td>
+          <td>{{ table.description }}</td>
+          <td>{{ table.maxPeople }}</td>
+          <td>
+            <button (click)="edit(table)" type="button" class="btn btn-sm btn-default" style="margin-right: 5px;">
+              <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
+            </button>
+            <button [swal]="['Advertencia!', '¿Está seguro de querer eliminar la mesa?', 'warning']"
+                    (confirm)="delete(table)"
+                    type="button" class="btn btn-default btn-sm">
+              <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="pagination" class="text-center">
+      <pagination-controls (pageChange)="pageChange($event)"
+                           previousLabel="Atrás"
+                           nextLabel="Siguiente"
+                           autoHide="true"
+                           responsive="true">
+      </pagination-controls>
+    </div>
+  </div>
+</div>

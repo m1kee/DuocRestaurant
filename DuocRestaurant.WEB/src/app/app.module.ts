@@ -9,6 +9,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_ROUTING } from '@app/app.routing';
 
@@ -17,6 +18,11 @@ import { LoginComponent } from '@components/shared/login/login.component';
 import { PageNotFoundComponent } from '@components/shared/page-not-found/page-not-found.component';
 import { NavbarComponent } from '@components/shared/navbar/navbar.component';
 import { HomeComponent } from '@components/home/home.component';
+import { TablesComponent } from '@components/maintenance/tables/tables.component';
+import { InventoryComponent } from '@components/maintenance/inventory/inventory.component';
+import { UsersComponent } from '@components/maintenance/users/users.component';
+import { BookingsComponent } from '@components/bookings/booking/bookings.component';
+import { BookingSearchComponent } from '@components/bookings/booking-search/booking-search.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +30,12 @@ import { HomeComponent } from '@components/home/home.component';
     LoginComponent,
     PageNotFoundComponent,
     NavbarComponent,
-    HomeComponent
+    HomeComponent,
+    TablesComponent,
+    InventoryComponent,
+    UsersComponent,
+    BookingsComponent,
+    BookingSearchComponent
   ],
   imports: [
     BrowserModule,
@@ -54,6 +65,11 @@ import { HomeComponent } from '@components/home/home.component';
       messageClass: 'toast-message',
       tapToDismiss: true,
       onActivateTick: false
+    }),
+    SweetAlert2Module.forRoot({
+      confirmButtonText: 'Si',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#dc3545'
     })
   ],
   providers: [],

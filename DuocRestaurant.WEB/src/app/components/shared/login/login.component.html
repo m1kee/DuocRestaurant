@@ -6,12 +6,12 @@
     <form #login="ngForm" novalidate>
       <hr />
       <div class="form-group">
-        <label for="username">Email:</label>
-        <input type="email" class="form-control" name="username" id="username" #username="ngModel" [(ngModel)]="credentials.Username" (keydown)="tryLogin($event)" placeholder="Email" required>
+        <label for="username">Correo:</label>
+        <input type="email" class="form-control" name="username" id="username" #username="ngModel" [(ngModel)]="credentials.Username" (keydown)="tryLogin($event)" placeholder="Ingrese su correo" required>
       </div>
       <div class="form-group mb-4">
         <label for="password">Contraseña:</label>
-        <input type="password" class="form-control" name="password" id="password" #password="ngModel" [(ngModel)]="credentials.Password" (keydown)="tryLogin($event)" placeholder="Contraseña" required>
+        <input type="password" class="form-control" name="password" id="password" #password="ngModel" [(ngModel)]="credentials.Password" (keydown)="tryLogin($event)" placeholder="Ingrese su contraseña" required>
       </div>
       <button type="button" class="btn btn-primary btn-block" (click)="signIn()" [disabled]="login.invalid || loading">Login</button>
     </form>

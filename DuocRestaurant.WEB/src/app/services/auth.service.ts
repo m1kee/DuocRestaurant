@@ -3,30 +3,30 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '@env/environment';
-import { IUser } from '@domain/user';
-import { ICredentials } from '@domain/credentials';
+import { User } from '@app/domain/user';
+import { Credentials } from '@app/domain/credentials';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private env = environment;
-  private currentUserSubject: BehaviorSubject<IUser>;
-  public loggedUser: Observable<IUser>;
+  private currentUserSubject: BehaviorSubject<User>;
+  public loggedUser: Observable<User>;
   public storageKey: string = 'logged-user';
 
   constructor(private httpClient: HttpClient) {
-    this.currentUserSubject = new BehaviorSubject<IUser>(JSON.parse(localStorage.getItem(this.storageKey)));
+    this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem(this.storageKey)));
     this.loggedUser = this.currentUserSubject.asObservable();
   }
 
-  public get currentUserValue(): IUser {
+  public get currentUserValue(): User {
     return this.currentUserSubject.value;
   }
 
-  login(credentials: ICredentials) {
+  login(credentials: Credentials) {
     return this.httpClient.post(`${this.env.apiUrl}/Auth/SignIn`, credentials)
-      .pipe(map((user: IUser) => {
+      .pipe(map((user: User) => {
         // login successful if there's a jwt token in the response
         console.log('SignIn: ', user);
         if (user) {

@@ -15,7 +15,7 @@ namespace Business.Services
 
             using (OracleConnection conn = new OracleConnection(dbSettings.ConnectionString))
             {
-                string query = $"SELECT Id, RolId, Nombre, Apellido, Correo, Telefono, Direccion  FROM Usuario WHERE Correo = :username AND Contrasena = :password";
+                string query = $"SELECT {User.ColumnNames.Id}, {User.ColumnNames.RoleId}, {User.ColumnNames.Name}, {User.ColumnNames.LastName}, {User.ColumnNames.Email}, {User.ColumnNames.Phone}, {User.ColumnNames.Address} FROM Usuario WHERE {User.ColumnNames.Email} = :username AND {User.ColumnNames.Password} = :password";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 cmd.Parameters.Add(new OracleParameter("username", username));
                 cmd.Parameters.Add(new OracleParameter("password", password));
@@ -23,17 +23,19 @@ namespace Business.Services
                 conn.Open();
 
                 OracleDataReader reader = cmd.ExecuteReader();
-                reader.Read();
-                user = new User()
+                if (reader.Read())
                 {
-                    Id = Convert.ToInt32(reader["Id"]),
-                    Correo = reader["Correo"]?.ToString(),
-                    Nombre = reader["Nombre"]?.ToString(),
-                    Apellido = reader["Apellido"]?.ToString(),
-                    Direccion = reader["Direccion"]?.ToString(),
-                    Telefono = reader["Telefono"]?.ToString(),
-                    RolId = Convert.ToInt32(reader["RolId"])
-                };
+                    user = new User()
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        Email = reader["Correo"]?.ToString(),
+                        Name = reader["Nombre"]?.ToString(),
+                        LastName = reader["Apellido"]?.ToString(),
+                        Address = reader["Direccion"]?.ToString(),
+                        Phone = reader["Telefono"]?.ToString(),
+                        RoleId = Convert.ToInt32(reader["RolId"])
+                    };
+                }
 
                 reader.Dispose();
             }

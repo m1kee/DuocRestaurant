@@ -21,12 +21,10 @@ namespace DuocRestaurant.API.Controllers
     {
         private IAuthService _authService { get; set; }
         private RestaurantDatabaseSettings _dbSettings { get; set; }
-        private readonly IConfiguration _configuration;
 
-        public AuthController(IAuthService authService, IConfiguration configuration, IOptions<RestaurantDatabaseSettings> databaseContext)
+        public AuthController(IAuthService authService, IOptions<RestaurantDatabaseSettings> databaseContext)
         {
             this._authService = authService;
-            this._configuration = configuration;
             this._dbSettings = databaseContext.Value;
         }
 
@@ -52,7 +50,7 @@ namespace DuocRestaurant.API.Controllers
 
                     if (user == null)
                         throw new Exception($"Credenciales incorrectas.");
-                    
+
                     result = Ok(user.Map());
                 }
             }
