@@ -15,7 +15,7 @@
 
   <div id="collapse-menu" class="collapse navbar-collapse" [collapse]="menuBehavior.isCollapsed">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Administrator])">
+      <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])">
         <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
           Mantenimiento
         </a>
@@ -23,17 +23,21 @@
         <div class="dropdown-menu dropdown-menu-right"
              aria-labelledby="navbarDropdown"
              *dropdownMenu>
-          <a [routerLink]="['/inventory-maintenance']" routerLinkActive="active"
+          <a [routerLink]="['/inventory-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])"
              class="dropdown-item clickable">
             Inventario
           </a>
-          <a [routerLink]="['/tables-maintenance']" routerLinkActive="active"
+          <a [routerLink]="['/tables-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator])"
              class="dropdown-item clickable">
             Mesas
           </a>
-          <a [routerLink]="['/users-maintenance']" routerLinkActive="active"
+          <a [routerLink]="['/users-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator])"
              class="dropdown-item clickable">
             Usuarios
+          </a>
+          <a [routerLink]="['/recipe-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])"
+             class="dropdown-item clickable">
+            Recetas
           </a>
         </div>
       </li>
@@ -47,13 +51,54 @@
              *dropdownMenu>
           <a [routerLink]="['/bookings']" routerLinkActive="active"
              class="dropdown-item clickable">
-            Crear reserva
+            Agendar reserva
           </a>
           <a [routerLink]="['/booking-search']" routerLinkActive="active"
              class="dropdown-item clickable">
             Consultar reserva
           </a>
         </div>
+      </li>
+      <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])">
+        <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
+          Bodega
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-right"
+             aria-labelledby="navbarDropdown"
+             *dropdownMenu>
+          <a [routerLink]="['/stock-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Warehouse])"
+             class="dropdown-item clickable">
+            Stock
+          </a>
+          <a [routerLink]="['/provider-orders']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])"
+             class="dropdown-item clickable">
+            Pedidos
+          </a>
+        </div>
+      </li>
+      <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Administrator, profiles.Finance])">
+        <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
+          Finanzas
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-right"
+             aria-labelledby="navbarDropdown"
+             *dropdownMenu>
+          <a [routerLink]="['/finance-movements']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Finance])"
+             class="dropdown-item clickable">
+            Movimientos
+          </a>
+          <a [routerLink]="['/finance-utilities']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Finance])"
+             class="dropdown-item clickable">
+            Utilidades
+          </a>
+        </div>
+      </li>
+      <li class="nav-item" *ngIf="hasPermissions([profiles.Kitchen])">
+        <a class="nav-link text-white" [routerLink]="['/kitchen-orders']" routerLinkActive="active">
+          Tablero &oacute;rdenes
+        </a>
       </li>
     </ul>
   </div>
