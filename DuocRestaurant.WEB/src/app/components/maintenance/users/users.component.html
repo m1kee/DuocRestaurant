@@ -1,3 +1,179 @@
-<p>
-  users works!
-</p>
+<div class="row m-3">
+  <div class="col-xs-12 col-lg-6 col-xl-6">
+    <!-- category crud -->
+    <h1>
+      Usuario: {{ currentUser.Name }} {{currentUser.LastName}}
+    </h1>
+    <hr />
+    <form (ngSubmit)="save(userForm)" #userForm="ngForm" appPasswordValidator>
+      <div class="row">
+        <!-- User name -->
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="user-name">Nombre:</label>
+            <input name="name"
+                   #name="ngModel"
+                   [(ngModel)]="currentUser.Name"
+                   required
+                   type="text"
+                   class="form-control"
+                   id="user-name"
+                   placeholder="Ingresa el nombre">
+          </div>
+        </div>
+        <!-- User last name -->
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="user-last-name">Apellido:</label>
+            <input name="lastName"
+                   #lastName="ngModel"
+                   [(ngModel)]="currentUser.LastName"
+                   required
+                   type="text"
+                   class="form-control"
+                   id="user-last-name"
+                   placeholder="Ingresa el apellido">
+          </div>
+        </div>
+        <!-- User email -->
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="user-email">Correo:</label>
+            <input name="email"
+                   #email="ngModel"
+                   [(ngModel)]="currentUser.Email"
+                   required
+                   type="email"
+                   class="form-control"
+                   id="user-email"
+                   placeholder="Ingresa el correo"
+                   [email]="true">
+            <small *ngIf="email.errors?.email" class="form-text text-muted">Debe ingresar un correo v&aacute;lido.</small>
+          </div>
+        </div>
+        <!-- User rol -->
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="userRol">Rol:</label>
+            <select required
+                    class="form-control"
+                    name="rol"
+                    #rol="ngModel"
+                    [(ngModel)]="currentUser.RoleId">
+              <option [ngValue]="null" [disabled]="true">Seleccione su rol</option>
+              <option [ngValue]="rol.Id" *ngFor="let rol of roles">{{ rol.Description }}</option>
+            </select>
+          </div>
+        </div>
+        <!-- User phone -->
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="user-phone">Tel&eacute;fono:</label>
+            <input name="phone"
+                   #phone="ngModel"
+                   [(ngModel)]="currentUser.Phone"
+                   type="text"
+                   class="form-control"
+                   id="user-phone"
+                   placeholder="Ingresa el n&uacute;mero de tel&eacute;fono">
+          </div>
+        </div>
+        <!-- User address -->
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="address">Direcci&oacute;n:</label>
+            <input name="address"
+                   #address="ngModel"
+                   [(ngModel)]="currentUser.Address"
+                   type="text"
+                   class="form-control"
+                   id="user-address"
+                   placeholder="Ingresa la direcci&oacute;n">
+          </div>
+        </div>
+        <!-- User password -->
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="password">Contraseña:</label>
+            <input name="password"
+                   #password="ngModel"
+                   [(ngModel)]="currentUser.Password"
+                   [required]="!currentUser.Id"
+                   type="password"
+                   class="form-control"
+                   id="password"
+                   placeholder="Ingresa la contraseña">
+          </div>
+        </div>
+        <!-- User password 2 -->
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="vpassword">Valida contraseña:</label>
+            <input name="vpassword"
+                   #vpassword="ngModel"
+                   [(ngModel)]="currentUser.VPassword"
+                   type="password"
+                   class="form-control"
+                   id="vpassword"
+                   placeholder="Valida la contraseña">
+            <small *ngIf="vpassword.errors?.notSame" class="form-text text-muted">Las contraseñas deben coincidir.</small>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;" [disabled]="!userForm.valid || userForm.untouched || loading">
+            <fa-icon [icon]="icons.faSave" [fixedWidth]="true"></fa-icon>&nbsp;
+            Guardar
+          </button>
+          <button (click)="cancel()" name="cancel-btn" type="button" class="btn btn-danger">
+            <fa-icon [icon]="icons.faTimes" [fixedWidth]="true"></fa-icon>&nbsp;
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-xs-12 col-lg-6 col-xl-6">
+    <h1> Usuarios </h1>
+    <hr />
+    <!-- category list -->
+    <table class="table table-hover table-sm">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Correo</th>
+          <th scope="col">Rol</th>
+          <th scope="col">Acciones </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users | paginate: paginationConfig">
+          <td>{{ user.Id }}</td>
+          <td>{{ user.Name }} {{ user.LastName }}</td>
+          <td>{{ user.Email }}</td>
+          <td>{{ user.Role.Description }}</td>
+          <td>
+            <button (click)="edit(user)" type="button" class="btn btn-sm btn-default" style="margin-right: 5px;">
+              <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
+            </button>
+            <button [swal]="['Advertencia!', '¿Está seguro de querer eliminar el usuario?', 'warning']"
+                    (confirm)="delete(user)"
+                    type="button" class="btn btn-default btn-sm">
+              <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="pagination" class="text-center">
+      <pagination-controls (pageChange)="pageChanged($event)"
+                           previousLabel="Atrás"
+                           nextLabel="Siguiente"
+                           autoHide="true"
+                           responsive="true">
+      </pagination-controls>
+    </div>
+  </div>
+</div>

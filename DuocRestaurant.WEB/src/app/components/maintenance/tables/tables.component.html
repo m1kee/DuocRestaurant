@@ -2,33 +2,35 @@
   <div class="col-xs-12 col-lg-6 col-xl-6">
     <!-- category crud -->
     <h1>
-      Mesa: {{ currentTable.number }}
+      Mesa: {{ currentTable.Number }}
     </h1>
     <hr />
-    <form novalidate="" (ngSubmit)="save(tableForm)" #tableForm="ngForm" class="was-validated">
+    <form  (ngSubmit)="save(tableForm)" #tableForm="ngForm">
       <div class="row">
         <!-- Table number -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
-          <div class="form-group" [ngClass]="{'has-danger': number.errors?.required && number.touched }">
-            <label for="table-number">N&uacute;mero:</label>
+          <div class="form-group">
+            <label for="number">N&uacute;mero:</label>
             <input name="number"
                    #number="ngModel"
-                   [(ngModel)]="currentTable.number"
+                   [(ngModel)]="currentTable.Number"
                    required
-                   type="number"
+                   type="text"
                    class="form-control"
-                   id="table-number"
+                   [pattern]="numberPattern"
+                   id="number"
                    placeholder="Ingresa el número de la mesa">
-            <small id="number-help" class="form-text text-muted">Solo se aceptan n&uacute;meros.</small>
+            <small *ngIf="number.errors?.required" class="form-text text-muted">Campo requerido.</small>
+            <small *ngIf="number.errors?.pattern" class="form-text text-muted">Solo se aceptan n&uacute;meros.</small>
           </div>
         </div>
         <!-- Description -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
-          <div class="form-group" [ngClass]="{'has-danger': description.errors?.required && description.touched }">
+          <div class="form-group">
             <label for="category-desc">Descripci&oacute;n:</label>
             <input name="description"
                    #description="ngModel"
-                   [(ngModel)]="currentTable.description"
+                   [(ngModel)]="currentTable.Description"
                    type="text"
                    class="form-control"
                    id="table-description"
@@ -37,23 +39,25 @@
         </div>
         <!-- Table people count -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
-          <div class="form-group" [ngClass]="{'has-danger': maxPeople.errors?.required && maxPeople.touched }">
-            <label for="table-max-people">M&aacute;ximo de personas:</label>
-            <input name="maxPeople"
-                   #maxPeople="ngModel"
-                   [(ngModel)]="currentTable.maxPeople"
+          <div class="form-group">
+            <label for="capacity">M&aacute;ximo de personas:</label>
+            <input name="capacity"
+                   #capacity="ngModel"
+                   [(ngModel)]="currentTable.Capacity"
                    required
-                   type="number"
+                   type="text"
+                   [pattern]="numberPattern"
                    class="form-control"
-                   id="table-max-people"
+                   id="capacity"
                    placeholder="Cantidad m&aacute;xima de personas para la mesa.">
-            <small id="number-help" class="form-text text-muted">Solo se aceptan n&uacute;meros.</small>
+            <small *ngIf="capacity.errors?.required" class="form-text text-muted">Campo requerido.</small>
+            <small *ngIf="capacity.errors?.pattern" class="form-text text-muted">Solo se aceptan n&uacute;meros.</small>
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;" [disabled]="!tableForm.valid || loading">
+          <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;" [disabled]="!tableForm.valid || tableForm.pristine || loading">
             <fa-icon [icon]="icons.faSave" [fixedWidth]="true"></fa-icon>&nbsp;
             Guardar
           </button>
@@ -80,11 +84,11 @@
       </thead>
       <tbody>
         <tr *ngFor="let table of tables | paginate: paginationConfig">
-          <td>{{ table.number }}</td>
-          <td>{{ table.description }}</td>
-          <td>{{ table.maxPeople }}</td>
+          <td>{{ table.Number }}</td>
+          <td>{{ table.Description }}</td>
+          <td>{{ table.Capacity }}</td>
           <td>
-            <button (click)="edit(table)" type="button" class="btn btn-sm btn-default" style="margin-right: 5px;">
+            <button (click)="edit(table, tableForm)" type="button" class="btn btn-sm btn-default" style="margin-right: 5px;">
               <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
             </button>
             <button [swal]="['Advertencia!', '¿Está seguro de querer eliminar la mesa?', 'warning']"
@@ -97,7 +101,7 @@
       </tbody>
     </table>
     <div id="pagination" class="text-center">
-      <pagination-controls (pageChange)="pageChange($event)"
+      <pagination-controls (pageChange)="pageChanged($event)"
                            previousLabel="Atrás"
                            nextLabel="Siguiente"
                            autoHide="true"

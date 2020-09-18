@@ -12,6 +12,8 @@ import { Table } from '@domain/table';
 })
 export class TablesComponent implements OnInit {
   tables: Table[] = [];
+  currentTable: Table = new Table();
+
   icons: any = {
     faSave: faSave,
     faTimes: faTimes,
@@ -19,14 +21,14 @@ export class TablesComponent implements OnInit {
     faTrashAlt: faTrashAlt
   };
 
-  currentTable: Table = new Table();
-
   paginationConfig: any = {
     itemsPerPage: 10,
     currentPage: 1,
     totalItems: this.tables.length
   };
+
   loading: boolean = false;
+  numberPattern = "^[0-9]+$"; 
 
   constructor(private toastrService: ToastrService,
     private tableService: TableService
@@ -44,7 +46,7 @@ export class TablesComponent implements OnInit {
     });
   };
 
-  tablePageChanged(event) {
+  pageChanged(event) {
     this.paginationConfig.currentPage = event;
   };
 
@@ -60,6 +62,13 @@ export class TablesComponent implements OnInit {
             this.tables.push(createdTable);
             this.loading = false;
             this.toastrService.success('Se ha creado correctamente', 'Mesa Creada');
+          }, (error) => {
+              this.loading = false;
+              let message = 'Error al crear la mesa';
+              if (error.status === 400) {
+                message = error.error;
+              }
+              this.toastrService.error(message, 'Error');
           });
       } else {
         // put
@@ -70,13 +79,21 @@ export class TablesComponent implements OnInit {
             this.tables.splice(cIndex, 1, editedTable);
             this.loading = false;
             this.toastrService.success('Se ha editado correctamente', 'Mesa Editada');
+          }, (error) => {
+            this.loading = false;
+            let message = 'Error al editar la mesa';
+            if (error.status === 400) {
+              message = error.error;
+            }
+            this.toastrService.error(message, 'Error');
           });
       }
     }
   };
 
-  edit(table: Table) {
+  edit(table: Table, form: NgForm) {
     this.currentTable = table;
+    form.form.markAsPristine();
   };
 
   delete(table: Table) {

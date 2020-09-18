@@ -42,6 +42,19 @@ alter table EMPLEADO add(
 alter table EMPLEADO add constraint usuario_fk
     foreign key (UsuarioId) references Usuario(Id)
     DEFERRABLE initially deferred;
+
+create table MESA(
+    Id integer generated always as identity (start with 1 increment by 1),
+    Numero integer not null,
+    Descripcion varchar(30),
+    Capacidad integer,
+    Activa number(1) not null,
+    EnUso number(1) not null
+);
+
+alter table MESA add(
+    CONSTRAINT mesa_pk primary key(Id)
+);
     
 Insert into ROL (Rol) Values ('Administrador');
 Insert into ROL (Rol) Values ('Bodega');
@@ -97,4 +110,18 @@ insert into EMPLEADO (UsuarioID,FechaContrato,Salario) values (11,to_date('14/05
 insert into EMPLEADO (UsuarioID,FechaContrato,Salario) values (12,to_date('30/04/2021', 'DD/MM/YYYY'),190000);
 insert into EMPLEADO (UsuarioID,FechaContrato,Salario) values (13,to_date('10/08/2021', 'DD/MM/YYYY'),190000);
 
-
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (1,'mesa interior',2,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (2,'mesa interior',2,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (3,'mesa interior',2,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (4,'mesa interior',4,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (5,'mesa interior',4,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (6,'mesa tv',6,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (7,'mesa tv',6,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (8,'barra bar',1,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (9,'barra bar',1,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (10,'barra bar',1,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (11,'barra bar',1,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (12,'barra bar',1,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (13,'mesa exterior',4,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (14,'mesa exterior',4,0,1);
+insert into MESA (Numero, Descripcion, Capacidad, EnUso, Activa) values (15,'mesa exterior',2,0,1);

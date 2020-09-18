@@ -12,21 +12,21 @@ namespace DuocRestaurant.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TableController : ControllerBase
+    public class UserController : ControllerBase
     {
-        private ITableService _tableService { get; set; }
+        private IUserService _userService { get; set; }
         private RestaurantDatabaseSettings _dbSettings { get; set; }
 
-        public TableController(ITableService authService, IOptions<RestaurantDatabaseSettings> databaseContext)
+        public UserController(IUserService userService, IOptions<RestaurantDatabaseSettings> databaseContext)
         {
-            this._tableService = authService;
+            this._userService = userService;
             this._dbSettings = databaseContext.Value;
         }
 
         /// <summary>
         /// This method returns all tables
         /// </summary>
-        /// <returns>List<Table></returns>
+        /// <returns>List<User></returns>
         [HttpGet]
         [ActionName("GetAll")]
         [Route("[action]")]
@@ -36,7 +36,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this._tableService.Get(this._dbSettings).MapAll(true));
+                result = Ok(this._userService.Get(this._dbSettings).MapAll(true));
             }
             catch (Exception ex)
             {
@@ -47,20 +47,20 @@ namespace DuocRestaurant.API.Controllers
         }
 
         /// <summary>
-        /// This method returns a specific table
+        /// This method returns a specific user
         /// </summary>
-        /// <param name="tableId"></param>
-        /// <returns>Table</returns>
+        /// <param name="userId"></param>
+        /// <returns>User</returns>
         [HttpGet]
         [ActionName("GetById")]
         [Route("[action]")]
-        public IActionResult Get([FromRoute(Name = "id")] int tableId)
+        public IActionResult Get([FromRoute(Name = "id")] int userId)
         {
             IActionResult result;
 
             try
             {
-                result = Ok(this._tableService.Get(this._dbSettings, tableId).Map(true));
+                result = Ok(this._userService.Get(this._dbSettings, userId).Map(true));
             }
             catch (Exception ex)
             {
@@ -71,23 +71,18 @@ namespace DuocRestaurant.API.Controllers
         }
 
         /// <summary>
-        /// This method inserts a new table
+        /// This method inserts a new user
         /// </summary>
-        /// <param name="table"></param>
-        /// <returns>Inserted Table</returns>
+        /// <param name="user"></param>
+        /// <returns>Inserted User</returns>
         [HttpPost]
-        public IActionResult Post([FromBody]Table table)
+        public IActionResult Post([FromBody]User user)
         {
             IActionResult result;
 
             try
             {
-                // verificar que no exista otra mesa con el mismo numero
-                Table dbTable = this._tableService.GetByNumber(this._dbSettings, table.Number);
-                if (dbTable != null)
-                    throw new Exception($"Ya existe una mesa con el número: { table.Number }");
-
-                result = Ok(this._tableService.Add(this._dbSettings, table).Map(true));
+                result = Ok(this._userService.Add(this._dbSettings, user));
             }
             catch (Exception ex)
             {
@@ -98,25 +93,20 @@ namespace DuocRestaurant.API.Controllers
         }
 
         /// <summary>
-        /// This method update a table by it's Id
+        /// This method update a user by it's Id
         /// </summary>
-        /// <param name="tableId"></param>
-        /// <param name="table"></param>
-        /// <returns>Updated Table</returns>
+        /// <param name="userId"></param>
+        /// <param name="user"></param>
+        /// <returns>Updated User</returns>
         [HttpPut("{id}")]
-        public IActionResult Put([FromRoute(Name = "id")] int tableId, [FromBody]Table table)
+        public IActionResult Put([FromRoute(Name = "id")] int userId, [FromBody]User user)
         {
             IActionResult result;
 
             try
             {
-                // verificar que no exista otra mesa con el mismo numero
-                Table dbTable = this._tableService.GetByNumber(this._dbSettings, table.Number);
-                if (dbTable != null && dbTable.Id != tableId)
-                    throw new Exception($"Ya existe una mesa con el número: { table.Number }");
-
                 // TODO: validate things
-                result = Ok(this._tableService.Edit(this._dbSettings, tableId, table).Map(true));
+                result = Ok(this._userService.Edit(this._dbSettings, userId, user));
             }
             catch (Exception ex)
             {
@@ -127,19 +117,19 @@ namespace DuocRestaurant.API.Controllers
         }
 
         /// <summary>
-        /// this method deletes a table by it's Id
+        /// this method deletes a user by it's Id
         /// </summary>
-        /// <param name="tableId"></param>
-        /// <returns>Deleted Table</returns>
+        /// <param name="userId"></param>
+        /// <returns>Deleted User</returns>
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute(Name = "id")] int tableId)
+        public IActionResult Delete([FromRoute(Name = "id")] int userId)
         {
             IActionResult result;
 
             try
             {
                 // TODO: validate things
-                result = Ok(this._tableService.Delete(this._dbSettings, tableId));
+                result = Ok(this._userService.Delete(this._dbSettings, userId));
             }
             catch (Exception ex)
             {

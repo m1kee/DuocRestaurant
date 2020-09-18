@@ -11,3 +11,7 @@
   max-width: 720px;
   height: auto;
 }
+
+.form-control.ng-invalid {
+  border-color: #dc3545;
+}

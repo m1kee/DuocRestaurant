@@ -24,6 +24,8 @@ import { UsersComponent } from '@components/maintenance/users/users.component';
 import { BookingsComponent } from '@components/bookings/booking/bookings.component';
 import { BookingSearchComponent } from '@components/bookings/booking-search/booking-search.component';
 
+import { PasswordValidatorDirective } from '@helpers/validations/password.validator';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,7 +37,8 @@ import { BookingSearchComponent } from '@components/bookings/booking-search/book
     InventoryComponent,
     UsersComponent,
     BookingsComponent,
-    BookingSearchComponent
+    BookingSearchComponent,
+    PasswordValidatorDirective
   ],
   imports: [
     BrowserModule,

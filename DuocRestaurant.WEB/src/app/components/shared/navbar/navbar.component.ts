@@ -32,7 +32,7 @@ export class NavbarComponent implements OnInit {
     isCollapsed: true
   };
 
-  admin: Profiles = Profiles.Administrator;
+  profiles = Profiles;
 
   ngOnInit() {
     this.authService.loggedUser.subscribe((user: User) => {
@@ -56,4 +56,8 @@ export class NavbarComponent implements OnInit {
   isAuthenticated = () => {
     return this.authService.isAuthenticated();
   };
+
+  hasPermissions = (requiredPermissions: number[]) => {
+    return this.authService.hasPermissions(requiredPermissions);
+  }; 
 }

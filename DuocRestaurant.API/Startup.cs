@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace DuocRestaurant.API
 {
@@ -31,6 +32,10 @@ namespace DuocRestaurant.API
 
             services.Configure<RestaurantDatabaseSettings>(Configuration.GetSection("DatabaseSettings"));
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ITableService, TableService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IInventoryService, InventoryService>();
+            services.AddScoped<IRoleService, RoleService>();
 
             services.AddControllers();
 
@@ -53,12 +58,13 @@ namespace DuocRestaurant.API
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthorization();            
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapControllerRoute("default", "{controller}/{action}/{id?}");
+                endpoints.MapControllerRoute(name: "controllerMethod",
+                   pattern: "api/{controller}/{action}/{id?}");
             });
         }
     }

@@ -2,9 +2,11 @@ export class Table {
     Id: number;
     Number: number;
     Description: string;
-    MaxPeople: number;
+    Capacity: number;
     Active: boolean;
     InUse: boolean;
 
-    public constructor() {}
+  public constructor() {
+    this.Active = true;
+  }
 }

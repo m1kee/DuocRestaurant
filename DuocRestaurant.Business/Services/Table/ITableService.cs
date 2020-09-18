@@ -7,10 +7,11 @@ namespace Business.Services
 {
     public interface ITableService
     {
-        IList<Table> Get(RestaurantDatabaseSettings ctx);
-        Table Get(RestaurantDatabaseSettings ctx, int table);
         Table Add(RestaurantDatabaseSettings ctx, Table table);
+        bool Delete(RestaurantDatabaseSettings ctx, int tableId);
         Table Edit(RestaurantDatabaseSettings ctx, int tableId, Table table);
-        Table Delete(RestaurantDatabaseSettings ctx, int tableId);
+        IList<Table> Get(RestaurantDatabaseSettings ctx);
+        Table Get(RestaurantDatabaseSettings ctx, int tableId);
+        Table GetByNumber(RestaurantDatabaseSettings ctx, int tableNumber);
     }
 }

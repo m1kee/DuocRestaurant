@@ -15,8 +15,8 @@ using Oracle.ManagedDataAccess.Client;
 
 namespace DuocRestaurant.API.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("[controller]")]
     public class AuthController : ControllerBase
     {
         private IAuthService _authService { get; set; }

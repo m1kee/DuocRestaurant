@@ -15,7 +15,7 @@
 
   <div id="collapse-menu" class="collapse navbar-collapse" [collapse]="menuBehavior.isCollapsed">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item dropdown" dropdown [autoClose]="true">
+      <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Administrator])">
         <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
           Mantenimiento
         </a>
@@ -37,7 +37,7 @@
           </a>
         </div>
       </li>
-      <li class="nav-item dropdown" dropdown [autoClose]="true">
+      <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Customer])">
         <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
           Reservas
         </a>
@@ -65,7 +65,7 @@
        dropdownToggle
        role="button"
        aria-controls="dropdown-animated">
-      {{ user.Nombre }} {{ user.Apellido }}
+      {{ user.Name }} {{ user.LastName }}
     </a>
     <div id="dropdown-animated" *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="navbarDropdown">
       <a class="dropdown-item clickable" (click)="logout()">

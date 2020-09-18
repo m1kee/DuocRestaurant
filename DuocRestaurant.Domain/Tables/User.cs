@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -15,6 +16,8 @@ namespace Domain
         public string Phone { get; set; }
         public string Address { get; set; }
 
+        public Role Role { get; set; }
+
         public struct ColumnNames
         {
             public const string Id = "Id";
@@ -25,6 +28,19 @@ namespace Domain
             public const string Password = "Contrasena";
             public const string Phone = "Telefono";
             public const string Address = "Direccion";
+        }
+
+        public override JObject Map(bool customMap = true)
+        {
+            dynamic result = base.Map(customMap);
+
+            if (customMap)
+            {
+                if (this.Role != null)
+                    result.Role = this.Role.Map(false);
+            }
+
+            return result;
         }
     }
 }
