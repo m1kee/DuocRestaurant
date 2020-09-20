@@ -1,0 +1,123 @@
+<div class="row m-3">
+  <div class="col-xs-12 col-lg-6 col-xl-6">
+    <h1>
+      Proveedor: {{ currentProvider.Name }}
+    </h1>
+    <hr />
+    <form (ngSubmit)="save(providerForm)" #providerForm="ngForm">
+      <div class="row">
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="name">Nombre:</label>
+            <input name="name"
+                   #name="ngModel"
+                   [(ngModel)]="currentProvider.Name"
+                   required
+                   type="text"
+                   class="form-control"
+                   id="name"
+                   placeholder="Ingresa el nombre">
+            <small *ngIf="name.errors?.required" class="form-text text-muted">Campo requerido.</small>
+          </div>
+        </div>
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="email">Correo:</label>
+            <input name="email"
+                   #email="ngModel"
+                   [(ngModel)]="currentProvider.Email"
+                   required
+                   type="email"
+                   class="form-control"
+                   id="email"
+                   placeholder="Ingresa el correo"
+                   [email]="true">
+            <small *ngIf="email.errors?.required" class="form-text text-muted">Campo requerido.</small>
+            <small *ngIf="email.errors?.email" class="form-text text-muted">Debe ingresar un correo v&aacute;lido.</small>
+          </div>
+        </div>
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="phone">Tel&eacute;fono:</label>
+            <input name="phone"
+                   #phone="ngModel"
+                   [(ngModel)]="currentProvider.Phone"
+                   required
+                   type="text"
+                   class="form-control"
+                   id="phone"
+                   placeholder="Ingresa el n&uacute;mero de tel&eacute;fono">
+            <small *ngIf="phone.errors?.required" class="form-text text-muted">Campo requerido.</small>
+          </div>
+        </div>
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="address">Direcci&oacute;n:</label>
+            <input name="address"
+                   #address="ngModel"
+                   [(ngModel)]="currentProvider.Address"
+                   required
+                   type="text"
+                   class="form-control"
+                   id="address"
+                   placeholder="Ingresa la direcci&oacute;n">
+            <small *ngIf="address.errors?.required" class="form-text text-muted">Campo requerido.</small>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;" [disabled]="!providerForm.valid || providerForm.pristine || loading">
+            <fa-icon [icon]="icons.faSave" [fixedWidth]="true"></fa-icon>&nbsp;
+            Guardar
+          </button>
+          <button (click)="cancel()" name="cancel-btn" type="button" class="btn btn-danger">
+            <fa-icon [icon]="icons.faTimes" [fixedWidth]="true"></fa-icon>&nbsp;
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-xs-12 col-lg-6 col-xl-6">
+    <h1> Proveedores </h1>
+    <hr />
+    <table class="table table-hover table-sm">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Correo</th>
+          <th scope="col">Tel&eacute;fono</th>
+          <th scope="col">Acciones </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let provider of providers | paginate: paginationConfig">
+          <td>{{ provider.Id }}</td>
+          <td>{{ provider.Name }}</td>
+          <td>{{ provider.Email }}</td>
+          <td>{{ provider.Phone }}</td>
+          <td>
+            <button (click)="edit(provider, providerForm)" type="button" class="btn btn-sm btn-default" style="margin-right: 5px;">
+              <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
+            </button>
+            <button [swal]="['Advertencia!', '¿Está seguro de querer eliminar el proveedor?', 'warning']"
+                    (confirm)="delete(provider)"
+                    type="button" class="btn btn-default btn-sm">
+              <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="pagination" class="text-center">
+      <pagination-controls (pageChange)="pageChanged($event)"
+                           previousLabel="Atrás"
+                           nextLabel="Siguiente"
+                           autoHide="true"
+                           responsive="true">
+      </pagination-controls>
+    </div>
+  </div>
+</div>

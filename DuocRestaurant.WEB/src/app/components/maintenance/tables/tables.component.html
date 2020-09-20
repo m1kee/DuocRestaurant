@@ -1,13 +1,11 @@
 <div class="row m-3">
   <div class="col-xs-12 col-lg-6 col-xl-6">
-    <!-- category crud -->
     <h1>
       Mesa: {{ currentTable.Number }}
     </h1>
     <hr />
     <form  (ngSubmit)="save(tableForm)" #tableForm="ngForm">
       <div class="row">
-        <!-- Table number -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
           <div class="form-group">
             <label for="number">N&uacute;mero:</label>
@@ -24,7 +22,6 @@
             <small *ngIf="number.errors?.pattern" class="form-text text-muted">Solo se aceptan n&uacute;meros.</small>
           </div>
         </div>
-        <!-- Description -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
           <div class="form-group">
             <label for="category-desc">Descripci&oacute;n:</label>
@@ -37,7 +34,6 @@
                    placeholder="Ingresa una pequeña descripción">
           </div>
         </div>
-        <!-- Table people count -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
           <div class="form-group">
             <label for="capacity">M&aacute;ximo de personas:</label>
@@ -72,7 +68,6 @@
   <div class="col-xs-12 col-lg-6 col-xl-6">
     <h1> Mesas </h1>
     <hr />
-    <!-- category list -->
     <table class="table table-hover table-sm">
       <thead class="thead-light">
         <tr>

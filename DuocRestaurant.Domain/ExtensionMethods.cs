@@ -7,7 +7,7 @@ namespace Domain
 {
     public static class ExtensionMethods
     {
-        public static JArray MapAll<TEntity>(this IEnumerable<TEntity> items, bool customMap = false) where TEntity : RestaurantTable
+        public static JArray MapAll<TEntity>(this IEnumerable<TEntity> items, RestaurantDatabaseSettings ctx, bool customMap = false) where TEntity : RestaurantTable
         {
             JArray result = null;
 
@@ -18,7 +18,7 @@ namespace Domain
 
             foreach (var item in items)
             {
-                result.Add(item.Map(customMap: customMap));
+                result.Add(item.Map(ctx: ctx, customMap: customMap));
             }
 
             return result;

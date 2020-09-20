@@ -32,7 +32,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this.providerService.Get(this.dbSettings).MapAll(true));
+                result = Ok(this.providerService.Get(this.dbSettings).MapAll(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -51,7 +51,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this.providerService.Get(this.dbSettings, providerId).Map(true));
+                result = Ok(this.providerService.Get(this.dbSettings, providerId).Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -72,7 +72,7 @@ namespace DuocRestaurant.API.Controllers
                 if (providers.Any(x => x.Email.Equals(provider.Email, StringComparison.InvariantCultureIgnoreCase)))
                     throw new Exception($"Ya existe un proveedor con el correo: { provider.Email }");
 
-                result = Ok(this.providerService.Add(this.dbSettings, provider).Map(true));
+                result = Ok(this.providerService.Add(this.dbSettings, provider).Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -93,7 +93,7 @@ namespace DuocRestaurant.API.Controllers
                 if (providers.Any(x => x.Id != providerId && x.Email.Equals(provider.Email, StringComparison.InvariantCultureIgnoreCase)))
                     throw new Exception($"Ya existe un proveedor con el correo: { provider.Email }");
 
-                result = Ok(this.providerService.Edit(this.dbSettings, providerId, provider).Map(true));
+                result = Ok(this.providerService.Edit(this.dbSettings, providerId, provider).Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {

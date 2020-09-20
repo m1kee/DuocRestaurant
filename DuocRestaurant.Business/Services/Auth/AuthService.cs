@@ -23,7 +23,8 @@ namespace Business.Services
                     $"u.{User.ColumnNames.Email}, " +
                     $"u.{User.ColumnNames.Phone}, " +
                     $"u.{User.ColumnNames.Address}, " +
-                    $"r.{Role.ColumnNames.Description} " +
+                    $"r.{Role.ColumnNames.Id} AS Role{Role.ColumnNames.Id}, " +
+                    $"r.{Role.ColumnNames.Description} AS Role{Role.ColumnNames.Description} " +
                     $"FROM Usuario u " +
                     $"join Rol r on u.{User.ColumnNames.RoleId} = r.{Role.ColumnNames.Id} " +
                     $"WHERE LOWER({User.ColumnNames.Email}) = :username AND {User.ColumnNames.Password} = :password";
@@ -48,8 +49,8 @@ namespace Business.Services
                         RoleId = Convert.ToInt32(reader[User.ColumnNames.RoleId]),
                         Role = new Role()
                         {
-                            Id = Convert.ToInt32(reader[User.ColumnNames.RoleId]),
-                            Description = reader[Role.ColumnNames.Description]?.ToString()
+                            Id = Convert.ToInt32(reader[$"Role{Role.ColumnNames.Id}"]),
+                            Description = reader[$"Role{Role.ColumnNames.Description}"]?.ToString()
                         }
                     };
                 }

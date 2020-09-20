@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,6 +17,7 @@ namespace Domain
         public int ProviderId { get; set; }
         public bool Active { get; set; }
 
+        public Provider Provider { get; set; }
         public ProductType ProductType { get; set; }
         public MeasurementUnit MeasurementUnit { get; set; }
 
@@ -32,5 +34,30 @@ namespace Domain
             public const string Active = "Activo";
         }
 
+
+        public override JObject Map(RestaurantDatabaseSettings ctx, bool customMap = false)
+        {
+            dynamic result = base.Map(ctx, customMap);
+
+            if (customMap)
+            {
+                if (this.MeasurementUnit != null)
+                {
+                    result.MeasurementUnit = this.MeasurementUnit.Map(ctx, false);
+                }
+
+                if (this.Provider != null)
+                {
+                    result.Provider = this.Provider.Map(ctx, false);
+                }
+
+                if (this.ProductType != null)
+                {
+                    result.ProductType = this.ProductType.Map(ctx, false);
+                }
+            }
+
+            return result;
+        }
     }
 }

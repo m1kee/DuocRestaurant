@@ -11,7 +11,7 @@ namespace Business.Services
     {
         public IList<Role> Get(RestaurantDatabaseSettings ctx)
         {
-            IList<Role> result = null;
+            IList<Role> result = new List<Role>();
 
             using (OracleConnection conn = new OracleConnection(ctx.ConnectionString))
             {
@@ -25,14 +25,41 @@ namespace Business.Services
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    if (result == null)
-                        result = new List<Role>();
-
                     result.Add(new Role()
                     {
                         Id = Convert.ToInt32(reader[Role.ColumnNames.Id]),
                         Description = reader[Role.ColumnNames.Description]?.ToString()
                     });
+                }
+
+                reader.Dispose();
+            }
+
+            return result;
+        }
+
+        public Role Get(RestaurantDatabaseSettings ctx, int roleId)
+        {
+            Role result = null;
+
+            using (OracleConnection conn = new OracleConnection(ctx.ConnectionString))
+            {
+                string query = $"SELECT " +
+                    $"{Role.ColumnNames.Id}, " +
+                    $"{Role.ColumnNames.Description} " +
+                    $"FROM Rol " +
+                    $"WHERE {Role.ColumnNames.Id} = {roleId}";
+                OracleCommand cmd = new OracleCommand(query, conn);
+                conn.Open();
+
+                OracleDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    result = new Role()
+                    {
+                        Id = Convert.ToInt32(reader[Role.ColumnNames.Id]),
+                        Description = reader[Role.ColumnNames.Description]?.ToString()
+                    };
                 }
 
                 reader.Dispose();

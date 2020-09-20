@@ -15,11 +15,21 @@ namespace DuocRestaurant.API.Controllers
     public class ProductController : ControllerBase
     {
         private IProductService productService { get; set; }
+        private IMeasurementUnitService measurementUnitService { get; set; }
+        private IProductTypeService productTypeService { get; set; }
+        private IProviderService providerService { get; set; }
         private RestaurantDatabaseSettings dbSettings { get; set; }
 
-        public ProductController(IProductService productService, IOptions<RestaurantDatabaseSettings> databaseContext)
+        public ProductController(IProductService productService, 
+            IMeasurementUnitService measurementUnitService,
+            IProductTypeService productTypeService,
+            IProviderService providerService,
+            IOptions<RestaurantDatabaseSettings> databaseContext)
         {
             this.productService = productService;
+            this.measurementUnitService = measurementUnitService;
+            this.productTypeService = productTypeService;
+            this.providerService = providerService;
             this.dbSettings = databaseContext.Value;
         }
 
@@ -32,7 +42,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this.productService.Get(this.dbSettings).MapAll(true));
+                result = Ok(this.productService.Get(this.dbSettings).MapAll(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -51,7 +61,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this.productService.Get(this.dbSettings, productId).Map(true));
+                result = Ok(this.productService.Get(this.dbSettings, productId).Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -72,7 +82,13 @@ namespace DuocRestaurant.API.Controllers
                 if (products.Any(x => x.Name.Equals(product.Name, StringComparison.InvariantCultureIgnoreCase)))
                     throw new Exception($"Ya existe un producto con el nombre: { product.Name }");
 
-                result = Ok(this.productService.Add(this.dbSettings, product).Map(true));
+                var created = this.productService.Add(this.dbSettings, product);
+
+                created.MeasurementUnit = this.measurementUnitService.Get(this.dbSettings, created.MeasurementUnitId);
+                created.Provider = this.providerService.Get(this.dbSettings, created.ProviderId);
+                created.ProductType = this.productTypeService.Get(this.dbSettings, created.ProductTypeId);
+
+                result = Ok(created.Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -93,7 +109,13 @@ namespace DuocRestaurant.API.Controllers
                 if (products.Any(x => x.Id != productId && x.Name.Equals(product.Name, StringComparison.InvariantCultureIgnoreCase)))
                     throw new Exception($"Ya existe un producto con el nombre: { product.Name }");
 
-                result = Ok(this.productService.Edit(this.dbSettings, productId, product).Map(true));
+                var edited = this.productService.Edit(this.dbSettings, productId, product);
+
+                edited.MeasurementUnit = this.measurementUnitService.Get(this.dbSettings, edited.MeasurementUnitId);
+                edited.Provider = this.providerService.Get(this.dbSettings, edited.ProviderId);
+                edited.ProductType = this.productTypeService.Get(this.dbSettings, edited.ProductTypeId);
+
+                result = Ok(edited.Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {

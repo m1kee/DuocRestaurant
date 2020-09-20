@@ -12,14 +12,14 @@ namespace DuocRestaurant.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RoleController : ControllerBase
+    public class ProductTypeController : ControllerBase
     {
-        private IRoleService roleService { get; set; }
+        private IProductTypeService productTypeService { get; set; }
         private RestaurantDatabaseSettings dbSettings { get; set; }
 
-        public RoleController(IRoleService roleService, IOptions<RestaurantDatabaseSettings> databaseContext)
+        public ProductTypeController(IProductTypeService productTypeService, IOptions<RestaurantDatabaseSettings> databaseContext)
         {
-            this.roleService = roleService;
+            this.productTypeService = productTypeService;
             this.dbSettings = databaseContext.Value;
         }
 
@@ -32,7 +32,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this.roleService.Get(this.dbSettings).MapAll(this.dbSettings, true));
+                result = Ok(this.productTypeService.Get(this.dbSettings).MapAll(this.dbSettings, true));
             }
             catch (Exception ex)
             {

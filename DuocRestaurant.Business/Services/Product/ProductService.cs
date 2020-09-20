@@ -19,9 +19,10 @@ namespace Business.Services
                     $"{Product.ColumnNames.Details}, " +
                     $"{Product.ColumnNames.ProductTypeId}, " +
                     $"{Product.ColumnNames.Count}, " +
-                    $"{Product.ColumnNames.MeasurementUnitId} " +
-                    $"{Product.ColumnNames.Price} " +
-                    $"{Product.ColumnNames.ProviderId} " +
+                    $"{Product.ColumnNames.MeasurementUnitId}, " +
+                    $"{Product.ColumnNames.Price}, " +
+                    $"{Product.ColumnNames.ProviderId}, " +
+                    $"{Product.ColumnNames.Active} " +
                     $") VALUES (" +
                     $"'{product.Name}', " +
                     $"'{product.Details}', " +
@@ -29,7 +30,8 @@ namespace Business.Services
                     $"{product.Count}, " +
                     $"{product.MeasurementUnitId}, " +
                     $"{product.Price}, " +
-                    $"{product.ProviderId} " +
+                    $"{product.ProviderId}, " +
+                    $"{1} " +
                     $") RETURNING {Product.ColumnNames.Id} INTO :{Product.ColumnNames.Id}";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 cmd.Parameters.Add(new OracleParameter()
@@ -100,7 +102,7 @@ namespace Business.Services
 
         public IList<Product> Get(RestaurantDatabaseSettings ctx)
         {
-            IList<Product> result = null;
+            IList<Product> result = new List<Product>();
 
             using (OracleConnection conn = new OracleConnection(ctx.ConnectionString))
             {
@@ -114,24 +116,28 @@ namespace Business.Services
                     $"p.{Product.ColumnNames.Price}, " +
                     $"p.{Product.ColumnNames.ProviderId}, " +
                     $"p.{Product.ColumnNames.Active}, " +
-                    $"um.{MeasurementUnit.ColumnNames.Id}, " +
-                    $"um.{MeasurementUnit.ColumnNames.Description}, " +
-                    $"um.{MeasurementUnit.ColumnNames.Code}, " +
-                    $"tp.{ProductType.ColumnNames.Id}, " +
-                    $"tp.{ProductType.ColumnNames.Description} " +
+                    $"um.{MeasurementUnit.ColumnNames.Id} AS MeasurementUnit{MeasurementUnit.ColumnNames.Id}, " +
+                    $"um.{MeasurementUnit.ColumnNames.Description} AS MeasurementUnit{MeasurementUnit.ColumnNames.Description}, " +
+                    $"um.{MeasurementUnit.ColumnNames.Code} AS MeasurementUnit{MeasurementUnit.ColumnNames.Code}, " +
+                    $"tp.{ProductType.ColumnNames.Id} AS ProductType{ProductType.ColumnNames.Id}, " +
+                    $"tp.{ProductType.ColumnNames.Description} AS ProductType{ProductType.ColumnNames.Description}, " +
+                    $"pv.{Provider.ColumnNames.Id} AS Provider{Provider.ColumnNames.Id}, " +
+                    $"pv.{Provider.ColumnNames.Name} AS Provider{Provider.ColumnNames.Name}, " +
+                    $"pv.{Provider.ColumnNames.Email} AS Provider{Provider.ColumnNames.Email}, " +
+                    $"pv.{Provider.ColumnNames.Phone} AS Provider{Provider.ColumnNames.Phone}, " +
+                    $"pv.{Provider.ColumnNames.Address} AS Provider{Provider.ColumnNames.Address}, " +
+                    $"pv.{Provider.ColumnNames.Active} AS Provider{Provider.ColumnNames.Active} " +
                     $"FROM Producto p " +
-                    $"JOIN UnidadMedida um ON um.Id = p.UnidadMedidaId " +
-                    $"JOIN TipoProducto tp ON tp.Id = p.TipoProductoId " +
-                    $"WHERE {Product.ColumnNames.Active} = 1";
+                    $"JOIN UnidadMedida um ON um.Id = p.{Product.ColumnNames.MeasurementUnitId} " +
+                    $"JOIN TipoProducto tp ON tp.Id = p.{Product.ColumnNames.ProductTypeId} " +
+                    $"JOIN Proveedor pv ON pv.Id = p.{Product.ColumnNames.ProviderId} " +
+                    $"WHERE p.{Product.ColumnNames.Active} = 1";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 conn.Open();
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    if (result == null)
-                        result = new List<Product>();
-
                     result.Add(new Product()
                     {
                         Id = Convert.ToInt32(reader[Product.ColumnNames.Id]),
@@ -142,17 +148,26 @@ namespace Business.Services
                         MeasurementUnitId = Convert.ToInt32(reader[Product.ColumnNames.MeasurementUnitId]),
                         Price = Convert.ToDecimal(reader[Product.ColumnNames.Price]),
                         ProviderId = Convert.ToInt32(reader[Product.ColumnNames.ProviderId]),
-                        Active = Convert.ToBoolean(reader[Product.ColumnNames.Active].ToString()),
+                        Active = Convert.ToBoolean(Convert.ToInt16(reader[Product.ColumnNames.Active].ToString())),
                         ProductType = new ProductType()
                         {
-                            Id = Convert.ToInt32(reader[ProductType.ColumnNames.Id]),
-                            Description = reader[ProductType.ColumnNames.Description]?.ToString()
+                            Id = Convert.ToInt32(reader[$"ProductType{ProductType.ColumnNames.Id}"]),
+                            Description = reader[$"ProductType{ProductType.ColumnNames.Description}"]?.ToString()
                         },
                         MeasurementUnit = new MeasurementUnit()
                         {
-                            Id = Convert.ToInt32(reader[MeasurementUnit.ColumnNames.Id]),
-                            Code = reader[MeasurementUnit.ColumnNames.Code]?.ToString(),
-                            Description = reader[MeasurementUnit.ColumnNames.Description]?.ToString()
+                            Id = Convert.ToInt32(reader[$"MeasurementUnit{MeasurementUnit.ColumnNames.Id}"]),
+                            Code = reader[$"MeasurementUnit{MeasurementUnit.ColumnNames.Code}"]?.ToString(),
+                            Description = reader[$"MeasurementUnit{MeasurementUnit.ColumnNames.Description}"]?.ToString()
+                        },
+                        Provider = new Provider()
+                        {
+                            Id = Convert.ToInt32(reader[$"Provider{Provider.ColumnNames.Id}"]),
+                            Email = reader[$"Provider{Provider.ColumnNames.Email}"]?.ToString(),
+                            Name = reader[$"Provider{Provider.ColumnNames.Name}"]?.ToString(),
+                            Address = reader[$"Provider{Provider.ColumnNames.Address}"]?.ToString(),
+                            Phone = reader[$"Provider{Provider.ColumnNames.Phone}"]?.ToString(),
+                            Active = Convert.ToBoolean(Convert.ToInt16(reader[$"Provider{Provider.ColumnNames.Active}"].ToString()))
                         }
                     });
                 }
@@ -179,15 +194,22 @@ namespace Business.Services
                     $"p.{Product.ColumnNames.Price}, " +
                     $"p.{Product.ColumnNames.ProviderId}, " +
                     $"p.{Product.ColumnNames.Active}, " +
-                    $"um.{MeasurementUnit.ColumnNames.Id}, " +
-                    $"um.{MeasurementUnit.ColumnNames.Description}, " +
-                    $"um.{MeasurementUnit.ColumnNames.Code}, " +
-                    $"tp.{ProductType.ColumnNames.Id}, " +
-                    $"tp.{ProductType.ColumnNames.Description} " +
+                    $"um.{MeasurementUnit.ColumnNames.Id} AS MeasurementUnit{MeasurementUnit.ColumnNames.Id}, " +
+                    $"um.{MeasurementUnit.ColumnNames.Description} AS MeasurementUnit{MeasurementUnit.ColumnNames.Description}, " +
+                    $"um.{MeasurementUnit.ColumnNames.Code} AS MeasurementUnit{MeasurementUnit.ColumnNames.Code}, " +
+                    $"tp.{ProductType.ColumnNames.Id} AS ProductType{ProductType.ColumnNames.Id}, " +
+                    $"tp.{ProductType.ColumnNames.Description} AS ProductType{ProductType.ColumnNames.Description}, " +
+                    $"pv.{Provider.ColumnNames.Id} AS Provider{Provider.ColumnNames.Id}, " +
+                    $"pv.{Provider.ColumnNames.Name} AS Provider{Provider.ColumnNames.Name}, " +
+                    $"pv.{Provider.ColumnNames.Email} AS Provider{Provider.ColumnNames.Email}, " +
+                    $"pv.{Provider.ColumnNames.Phone} AS Provider{Provider.ColumnNames.Phone}, " +
+                    $"pv.{Provider.ColumnNames.Address} AS Provider{Provider.ColumnNames.Address}, " +
+                    $"pv.{Provider.ColumnNames.Active} AS Provider{Provider.ColumnNames.Active} " +
                     $"FROM Producto p " +
-                    $"JOIN UnidadMedida um ON um.Id = p.UnidadMedidaId " +
-                    $"JOIN TipoProducto tp ON tp.Id = p.TipoProductoId " +
-                    $"WHERE {Product.ColumnNames.Id} = {productId}";
+                    $"JOIN UnidadMedida um ON um.Id = p.{Product.ColumnNames.MeasurementUnitId} " +
+                    $"JOIN TipoProducto tp ON tp.Id = p.{Product.ColumnNames.ProductTypeId} " +
+                    $"JOIN Proveedor pv ON pv.Id = p.{Product.ColumnNames.ProviderId} " +
+                    $"WHERE p.{Product.ColumnNames.Id} = {productId}";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 conn.Open();
 
@@ -205,17 +227,26 @@ namespace Business.Services
                         MeasurementUnitId = Convert.ToInt32(reader[Product.ColumnNames.MeasurementUnitId]),
                         Price = Convert.ToDecimal(reader[Product.ColumnNames.Price]),
                         ProviderId = Convert.ToInt32(reader[Product.ColumnNames.ProviderId]),
-                        Active = Convert.ToBoolean(reader[Product.ColumnNames.Active].ToString()),
+                        Active = Convert.ToBoolean(Convert.ToInt16(reader[Product.ColumnNames.Active].ToString())),
                         ProductType = new ProductType()
                         {
-                            Id = Convert.ToInt32(reader[ProductType.ColumnNames.Id]),
-                            Description = reader[ProductType.ColumnNames.Description]?.ToString()
+                            Id = Convert.ToInt32(reader[$"ProductType{ProductType.ColumnNames.Id}"]),
+                            Description = reader[$"ProductType{ProductType.ColumnNames.Description}"]?.ToString()
                         },
                         MeasurementUnit = new MeasurementUnit()
                         {
-                            Id = Convert.ToInt32(reader[MeasurementUnit.ColumnNames.Id]),
-                            Code = reader[MeasurementUnit.ColumnNames.Code]?.ToString(),
-                            Description = reader[MeasurementUnit.ColumnNames.Description]?.ToString()
+                            Id = Convert.ToInt32(reader[$"MeasurementUnit{MeasurementUnit.ColumnNames.Id}"]),
+                            Code = reader[$"MeasurementUnit{MeasurementUnit.ColumnNames.Code}"]?.ToString(),
+                            Description = reader[$"MeasurementUnit{MeasurementUnit.ColumnNames.Description}"]?.ToString()
+                        },
+                        Provider = new Provider()
+                        {
+                            Id = Convert.ToInt32(reader[$"Provider{Provider.ColumnNames.Id}"]),
+                            Email = reader[$"Provider{Provider.ColumnNames.Email}"]?.ToString(),
+                            Name = reader[$"Provider{Provider.ColumnNames.Name}"]?.ToString(),
+                            Address = reader[$"Provider{Provider.ColumnNames.Address}"]?.ToString(),
+                            Phone = reader[$"Provider{Provider.ColumnNames.Phone}"]?.ToString(),
+                            Active = Convert.ToBoolean(Convert.ToInt16(reader[$"Provider{Provider.ColumnNames.Active}"].ToString()))
                         }
                     };
                 }

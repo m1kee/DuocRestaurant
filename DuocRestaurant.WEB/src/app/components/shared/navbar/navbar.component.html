@@ -9,7 +9,7 @@
 
   <a class="navbar-brand" [routerLink]="['']">
     <b>
-      <span class="text-primary">Siglo</span>&nbsp;<span class="text-white">XXI</span>
+      <span class="text-success">Siglo</span>&nbsp;<span class="text-white">XXI</span>
     </b>
   </a>
 
@@ -23,9 +23,9 @@
         <div class="dropdown-menu dropdown-menu-right"
              aria-labelledby="navbarDropdown"
              *dropdownMenu>
-          <a [routerLink]="['/inventory-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])"
+          <a [routerLink]="['/product-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])"
              class="dropdown-item clickable">
-            Inventario
+            Productos
           </a>
           <a [routerLink]="['/tables-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator])"
              class="dropdown-item clickable">
@@ -38,6 +38,10 @@
           <a [routerLink]="['/recipe-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])"
              class="dropdown-item clickable">
             Recetas
+          </a>
+          <a [routerLink]="['/provider-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])"
+             class="dropdown-item clickable">
+            Proveedores
           </a>
         </div>
       </li>

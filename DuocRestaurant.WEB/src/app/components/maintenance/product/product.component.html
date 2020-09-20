@@ -1,0 +1,170 @@
+<div class="row m-3">
+  <div class="col-xs-12 col-lg-6 col-xl-6">
+    <h1>
+      Producto: {{ currentProduct.Name }}
+    </h1>
+    <hr />
+    <form (ngSubmit)="save(providerForm)" #providerForm="ngForm">
+      <div class="row">
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="name">Nombre:</label>
+            <input name="name"
+                   #name="ngModel"
+                   [(ngModel)]="currentProduct.Name"
+                   required
+                   type="text"
+                   class="form-control"
+                   id="name"
+                   placeholder="Ingresa el nombre">
+            <small *ngIf="name.errors?.required" class="form-text text-muted">Campo requerido.</small>
+          </div>
+        </div>
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="category">Categor&iacute;a:</label>
+            <select required
+                    class="form-control"
+                    name="category"
+                    #category="ngModel"
+                    [(ngModel)]="currentProduct.ProductTypeId">
+              <option [ngValue]="null" [disabled]="true">Seleccione categor&iacute;a</option>
+              <option [ngValue]="productType.Id" *ngFor="let productType of productTypes">{{ productType.Description }}</option>
+            </select>
+            <small *ngIf="category.errors?.required" class="form-text text-muted">Campo requerido.</small>
+          </div>
+        </div>
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="count">Cantidad:</label>
+            <input name="count"
+                   #count="ngModel"
+                   [(ngModel)]="currentProduct.Count"
+                   required
+                   type="text"
+                   class="form-control"
+                   [pattern]="numberPattern"
+                   id="count"
+                   placeholder="Ingresa la cantidad">
+            <small *ngIf="count.errors?.required" class="form-text text-muted">Campo requerido.</small>
+            <small *ngIf="count.errors?.pattern" class="form-text text-muted">Solo se aceptan n&uacute;meros.</small>
+          </div>
+        </div>
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="measurementUnit">U. Medida:</label>
+            <select required
+                    class="form-control"
+                    name="measurementUnit"
+                    #measurementUnit="ngModel"
+                    [(ngModel)]="currentProduct.MeasurementUnitId">
+              <option [ngValue]="null" [disabled]="true">Seleccione unidad de medida</option>
+              <option [ngValue]="measurementUnit.Id" *ngFor="let measurementUnit of measurementUnits">{{ measurementUnit.Description }}</option>
+            </select>
+            <small *ngIf="measurementUnit.errors?.required" class="form-text text-muted">Campo requerido.</small>
+          </div>
+        </div>
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="price">Precio por unidad:</label>
+            <input name="price"
+                   #price="ngModel"
+                   [(ngModel)]="currentProduct.Price"
+                   required
+                   type="text"
+                   class="form-control"
+                   [pattern]="numberPattern"
+                   id="price"
+                   placeholder="Ingresa el precio">
+            <small *ngIf="price.errors?.required" class="form-text text-muted">Campo requerido.</small>
+            <small *ngIf="price.errors?.pattern" class="form-text text-muted">Solo se aceptan n&uacute;meros.</small>
+          </div>
+        </div>
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="provider">Proveedor:</label>
+            <select required
+                    class="form-control"
+                    name="provider"
+                    #provider="ngModel"
+                    [(ngModel)]="currentProduct.ProviderId">
+              <option [ngValue]="null" [disabled]="true">Seleccione proveedor</option>
+              <option [ngValue]="provider.Id" *ngFor="let provider of providers">{{ provider.Name }}</option>
+            </select>
+            <small *ngIf="provider.errors?.required" class="form-text text-muted">Campo requerido.</small>
+          </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div class="form-group">
+            <label for="details">Detalle:</label>
+            <textarea name="details"
+                      #details="ngModel"
+                      [(ngModel)]="currentProduct.Details"
+                      type="text"
+                      class="form-control"
+                      id="details"
+                      placeholder="Ingrese el detalle del producto">
+            </textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;" [disabled]="!providerForm.valid || providerForm.pristine || loading">
+            <fa-icon [icon]="icons.faSave" [fixedWidth]="true"></fa-icon>&nbsp;
+            Guardar
+          </button>
+          <button (click)="cancel()" name="cancel-btn" type="button" class="btn btn-danger">
+            <fa-icon [icon]="icons.faTimes" [fixedWidth]="true"></fa-icon>&nbsp;
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-xs-12 col-lg-6 col-xl-6">
+    <h1> Productos </h1>
+    <hr />
+    <table class="table table-hover table-sm">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Stock</th>
+          <th scope="col">Categor&iacute;a</th>
+          <th scope="col">Proveedor</th>
+          <th scope="col">Precio</th>
+          <th scope="col">Acciones </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products | paginate: paginationConfig">
+          <td>{{ product.Id }}</td>
+          <td>{{ product.Name }}</td>
+          <td>{{ product.Count }} {{ product.MeasurementUnit.Code }}</td>
+          <td>{{ product.ProductType.Description }}</td>
+          <td>{{ product.Provider.Name }}</td>
+          <td>{{ product.Price }}</td>
+          <td>
+            <button (click)="edit(product, providerForm)" type="button" class="btn btn-sm btn-default" style="margin-right: 5px;">
+              <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
+            </button>
+            <button [swal]="['Advertencia!', '¿Está seguro de querer eliminar el proveedor?', 'warning']"
+                    (confirm)="delete(product)"
+                    type="button" class="btn btn-default btn-sm">
+              <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="pagination" class="text-center">
+      <pagination-controls (pageChange)="pageChanged($event)"
+                           previousLabel="Atrás"
+                           nextLabel="Siguiente"
+                           autoHide="true"
+                           responsive="true">
+      </pagination-controls>
+    </div>
+  </div>
+</div>

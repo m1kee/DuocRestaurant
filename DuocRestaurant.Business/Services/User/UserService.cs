@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Microsoft.AspNetCore.Identity;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace Business.Services
                     $"{User.ColumnNames.Email}, " +
                     $"{User.ColumnNames.Phone}, " +
                     $"{User.ColumnNames.Address}, " +
+                    $"{User.ColumnNames.Password}, " +
                     $"{User.ColumnNames.Active} " +
                     $") VALUES (" +
                     $"{user.RoleId}, " +
@@ -29,6 +31,7 @@ namespace Business.Services
                     $"'{user.Email}', " +
                     $"'{user.Phone}', " +
                     $"'{user.Address}', " +
+                    $"'{user.Password}', " +
                     $"{1} " +
                     $") RETURNING {User.ColumnNames.Id} INTO :{User.ColumnNames.Id}";
                 OracleCommand cmd = new OracleCommand(query, conn);
@@ -83,6 +86,7 @@ namespace Business.Services
                     $"{User.ColumnNames.Name} = '{user.Name}', " +
                     $"{User.ColumnNames.LastName} = '{user.LastName}', " +
                     $"{User.ColumnNames.Email} = '{user.Email}', " +
+                    $"{User.ColumnNames.Password} = {(string.IsNullOrWhiteSpace(user.Password) ? User.ColumnNames.Password : $"{user.Password}")}, " +
                     $"{User.ColumnNames.Phone} = '{user.Phone}', " +
                     $"{User.ColumnNames.Address} = '{user.Address}' " +
                     $"WHERE {User.ColumnNames.Id} = {userId}";
@@ -99,7 +103,7 @@ namespace Business.Services
 
         public IList<User> Get(RestaurantDatabaseSettings ctx)
         {
-            IList<User> users = null;
+            IList<User> users = new List<User>();
 
             using (OracleConnection conn = new OracleConnection(ctx.ConnectionString))
             {
@@ -111,7 +115,8 @@ namespace Business.Services
                     $"u.{User.ColumnNames.Email}, " +
                     $"u.{User.ColumnNames.Phone}, " +
                     $"u.{User.ColumnNames.Address}, " +
-                    $"r.{Role.ColumnNames.Description} " +
+                    $"r.{Role.ColumnNames.Id} AS Role{Role.ColumnNames.Id}, " +
+                    $"r.{Role.ColumnNames.Description} AS Role{Role.ColumnNames.Description} " +
                     $"FROM Usuario u " +
                     $"join Rol r on u.{User.ColumnNames.RoleId} = r.{Role.ColumnNames.Id} " +
                     $"WHERE {User.ColumnNames.Active} = 1";
@@ -121,9 +126,6 @@ namespace Business.Services
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    if (users == null)
-                        users = new List<User>();
-
                     users.Add(new User()
                     {
                         Id = Convert.ToInt32(reader[User.ColumnNames.Id]),
@@ -135,8 +137,8 @@ namespace Business.Services
                         RoleId = Convert.ToInt32(reader[User.ColumnNames.RoleId]),
                         Role = new Role()
                         {
-                            Id = Convert.ToInt32(reader[User.ColumnNames.RoleId]),
-                            Description = reader[Role.ColumnNames.Description]?.ToString()
+                            Id = Convert.ToInt32(reader[$"Role{Role.ColumnNames.Id}"]),
+                            Description = reader[$"Role{Role.ColumnNames.Description}"]?.ToString()
                         }
                     });
                 }

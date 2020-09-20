@@ -94,7 +94,7 @@ namespace Business.Services
 
         public IList<Table> Get(RestaurantDatabaseSettings ctx)
         {
-            IList<Table> result = null;
+            IList<Table> result = new List<Table>();
 
             using (OracleConnection conn = new OracleConnection(ctx.ConnectionString))
             {
@@ -112,9 +112,6 @@ namespace Business.Services
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    if (result == null)
-                        result = new List<Table>();
-
                     result.Add(new Table()
                     {
                         Id = Convert.ToInt32(reader[Table.ColumnNames.Id]),

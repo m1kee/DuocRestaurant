@@ -51,7 +51,7 @@ namespace DuocRestaurant.API.Controllers
                     if (user == null)
                         throw new Exception($"Credenciales incorrectas.");
 
-                    result = Ok(user.Map(true));
+                    result = Ok(user.Map(this.dbSettings, true));
                 }
             }
             catch (Exception ex)

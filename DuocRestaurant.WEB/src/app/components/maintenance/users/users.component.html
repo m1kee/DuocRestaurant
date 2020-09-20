@@ -1,13 +1,11 @@
 <div class="row m-3">
   <div class="col-xs-12 col-lg-6 col-xl-6">
-    <!-- category crud -->
     <h1>
       Usuario: {{ currentUser.Name }} {{currentUser.LastName}}
     </h1>
     <hr />
     <form (ngSubmit)="save(userForm)" #userForm="ngForm" appPasswordValidator>
       <div class="row">
-        <!-- User name -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
           <div class="form-group">
             <label for="user-name">Nombre:</label>
@@ -19,9 +17,9 @@
                    class="form-control"
                    id="user-name"
                    placeholder="Ingresa el nombre">
+            <small *ngIf="name.errors?.required" class="form-text text-muted">Campo requerido.</small>
           </div>
         </div>
-        <!-- User last name -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
           <div class="form-group">
             <label for="user-last-name">Apellido:</label>
@@ -33,9 +31,9 @@
                    class="form-control"
                    id="user-last-name"
                    placeholder="Ingresa el apellido">
+            <small *ngIf="lastName.errors?.required" class="form-text text-muted">Campo requerido.</small>
           </div>
         </div>
-        <!-- User email -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
           <div class="form-group">
             <label for="user-email">Correo:</label>
@@ -48,10 +46,10 @@
                    id="user-email"
                    placeholder="Ingresa el correo"
                    [email]="true">
+            <small *ngIf="email.errors?.required" class="form-text text-muted">Campo requerido.</small>
             <small *ngIf="email.errors?.email" class="form-text text-muted">Debe ingresar un correo v&aacute;lido.</small>
           </div>
         </div>
-        <!-- User rol -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
           <div class="form-group">
             <label for="userRol">Rol:</label>
@@ -63,9 +61,9 @@
               <option [ngValue]="null" [disabled]="true">Seleccione su rol</option>
               <option [ngValue]="rol.Id" *ngFor="let rol of roles">{{ rol.Description }}</option>
             </select>
+            <small *ngIf="rol.errors?.required" class="form-text text-muted">Campo requerido.</small>
           </div>
         </div>
-        <!-- User phone -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
           <div class="form-group">
             <label for="user-phone">Tel&eacute;fono:</label>
@@ -78,7 +76,6 @@
                    placeholder="Ingresa el n&uacute;mero de tel&eacute;fono">
           </div>
         </div>
-        <!-- User address -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
           <div class="form-group">
             <label for="address">Direcci&oacute;n:</label>
@@ -91,7 +88,6 @@
                    placeholder="Ingresa la direcci&oacute;n">
           </div>
         </div>
-        <!-- User password -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
           <div class="form-group">
             <label for="password">Contraseña:</label>
@@ -103,9 +99,9 @@
                    class="form-control"
                    id="password"
                    placeholder="Ingresa la contraseña">
+            <small *ngIf="password.errors?.required" class="form-text text-muted">Campo requerido.</small>
           </div>
         </div>
-        <!-- User password 2 -->
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
           <div class="form-group">
             <label for="vpassword">Valida contraseña:</label>
@@ -122,7 +118,7 @@
       </div>
       <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;" [disabled]="!userForm.valid || userForm.untouched || loading">
+          <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;" [disabled]="!userForm.valid || userForm.pristine || loading">
             <fa-icon [icon]="icons.faSave" [fixedWidth]="true"></fa-icon>&nbsp;
             Guardar
           </button>
@@ -137,7 +133,6 @@
   <div class="col-xs-12 col-lg-6 col-xl-6">
     <h1> Usuarios </h1>
     <hr />
-    <!-- category list -->
     <table class="table table-hover table-sm">
       <thead class="thead-light">
         <tr>
@@ -155,7 +150,7 @@
           <td>{{ user.Email }}</td>
           <td>{{ user.Role.Description }}</td>
           <td>
-            <button (click)="edit(user)" type="button" class="btn btn-sm btn-default" style="margin-right: 5px;">
+            <button (click)="edit(user, userForm)" type="button" class="btn btn-sm btn-default" style="margin-right: 5px;">
               <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
             </button>
             <button [swal]="['Advertencia!', '¿Está seguro de querer eliminar el usuario?', 'warning']"

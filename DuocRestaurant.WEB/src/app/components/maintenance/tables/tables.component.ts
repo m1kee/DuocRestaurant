@@ -43,6 +43,8 @@ export class TablesComponent implements OnInit {
     this.tableService.getAll().subscribe((tables: Table[]) => {
       this.tables = tables;
       this.loading = false;
+    }, (error) => {
+      this.loading = false;
     });
   };
 
@@ -97,10 +99,13 @@ export class TablesComponent implements OnInit {
   };
 
   delete(table: Table) {
+    this.loading = true;
     this.tableService.delete(table.Id).subscribe((deletedTable: Table) => {
       let cIndex = this.tables.findIndex((c) => c.Id === deletedTable.Id);
       this.tables.splice(cIndex, 1);
       this.toastrService.success('Se ha eliminado correctamente', 'Mesa Eliminada');
+    }, (error) => {
+      this.loading = false;
     });
   };
 

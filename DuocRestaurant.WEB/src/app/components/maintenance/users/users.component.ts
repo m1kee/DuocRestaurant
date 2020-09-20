@@ -47,6 +47,8 @@ export class UsersComponent implements OnInit {
     this.userService.getAll().subscribe((users: User[]) => {
       this.users = users;
       this.loading = false;
+    }, (error) => {
+      this.loading = false;
     });
   };
 
@@ -71,31 +73,54 @@ export class UsersComponent implements OnInit {
             this.currentUser = createdUser;
             this.users.push(createdUser);
             this.loading = false;
-            this.toastrService.success('Se ha creado correctamente', 'Mesa Creada');
+            this.toastrService.success('Se ha creado correctamente', 'Usuario Creado');
+          }, (error) => {
+              this.loading = false;
+              let message = 'Error al crear el usuario';
+              if (error.status === 400) {
+                message = error.error;
+              }
+              this.toastrService.error(message, 'Error');
           });
       } else {
         // put
         this.userService
           .put(this.currentUser.Id, this.currentUser)
-          .subscribe((editedTable: User) => {
-            let cIndex = this.users.findIndex((c) => c.Id === editedTable.Id);
-            this.users.splice(cIndex, 1, editedTable);
+          .subscribe((editedUser: User) => {
+            let cIndex = this.users.findIndex((c) => c.Id === editedUser.Id);
+            this.users.splice(cIndex, 1, editedUser);
             this.loading = false;
-            this.toastrService.success('Se ha editado correctamente', 'Mesa Editada');
+            this.toastrService.success('Se ha editado correctamente', 'Usuario Editado');
+          }, (error) => {
+              this.loading = false;
+              let message = 'Error al editar el usuario';
+              if (error.status === 400) {
+                message = error.error;
+              }
+              this.toastrService.error(message, 'Error');
           });
       }
     }
   };
 
-  edit(user: User) {
+  edit(user: User, form: NgForm) {
     this.currentUser = user;
+    form.form.markAsPristine();
   };
 
   delete(user: User) {
+    this.loading = true;
     this.userService.delete(user.Id).subscribe((deletedUser: User) => {
       let cIndex = this.users.findIndex((c) => c.Id === deletedUser.Id);
       this.users.splice(cIndex, 1);
       this.toastrService.success('Se ha eliminado correctamente', 'Usuario Eliminado');
+    }, (error) => {
+        this.loading = false;
+        let message = 'Error al eliminar el usuario';
+        if (error.status === 400) {
+          message = error.error;
+        }
+        this.toastrService.error(message, 'Error');
     });
   };
 

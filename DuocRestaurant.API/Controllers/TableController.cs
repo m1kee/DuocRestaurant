@@ -32,7 +32,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this.tableService.Get(this.dbSettings).MapAll(true));
+                result = Ok(this.tableService.Get(this.dbSettings).MapAll(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -51,7 +51,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this.tableService.Get(this.dbSettings, tableId).Map(true));
+                result = Ok(this.tableService.Get(this.dbSettings, tableId).Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -72,7 +72,7 @@ namespace DuocRestaurant.API.Controllers
                 if (tables.Any(x => x.Number.Equals(table.Number)))
                     throw new Exception($"Ya existe una mesa con el número: { table.Number }");
 
-                result = Ok(this.tableService.Add(this.dbSettings, table).Map(true));
+                result = Ok(this.tableService.Add(this.dbSettings, table).Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -93,7 +93,7 @@ namespace DuocRestaurant.API.Controllers
                 if (tables.Any(x => x.Id != tableId && x.Number.Equals(table.Number)))
                     throw new Exception($"Ya existe una mesa con el número: { table.Number }");
 
-                result = Ok(this.tableService.Edit(this.dbSettings, tableId, table).Map(true));
+                result = Ok(this.tableService.Edit(this.dbSettings, tableId, table).Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {

@@ -25,7 +25,7 @@ create table Usuario (
     Apellido nvarchar2(30) not null,
     Correo nvarchar2(100) not null,
     Contrasena nvarchar2(64) not null,
-    Telefono nvarchar2(15) not null,
+    Telefono nvarchar2(15),
     Direccion nvarchar2(200),
     Activo number(1)
 );
@@ -101,7 +101,7 @@ alter table UnidadMedida add(
 );
 
 CREATE TABLE Producto (
-    Id integer not null,
+    Id integer generated always as identity (start with 1 increment by 1),
     Nombre NVARCHAR2(150) not null,
     Detalle NVARCHAR2(500),
     TipoProductoId integer not null,
@@ -195,3 +195,6 @@ INSERT INTO UnidadMedida (Codigo, Descripcion) VALUES ('gr', 'gramo');
 INSERT INTO UnidadMedida (Codigo, Descripcion) VALUES ('un', 'unidad');
 INSERT INTO UnidadMedida (Codigo, Descripcion) VALUES ('lt', 'litro');
 INSERT INTO UnidadMedida (Codigo, Descripcion) VALUES ('ml', 'mililitro');
+
+
+COMMIT;

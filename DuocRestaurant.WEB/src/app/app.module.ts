@@ -13,17 +13,20 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_ROUTING } from '@app/app.routing';
 
+// components
 import { AppComponent } from './app.component';
 import { LoginComponent } from '@components/shared/login/login.component';
 import { PageNotFoundComponent } from '@components/shared/page-not-found/page-not-found.component';
 import { NavbarComponent } from '@components/shared/navbar/navbar.component';
 import { HomeComponent } from '@components/home/home.component';
 import { TablesComponent } from '@components/maintenance/tables/tables.component';
-import { InventoryComponent } from '@components/maintenance/inventory/inventory.component';
 import { UsersComponent } from '@components/maintenance/users/users.component';
 import { BookingsComponent } from '@components/bookings/booking/bookings.component';
 import { BookingSearchComponent } from '@components/bookings/booking-search/booking-search.component';
+import { ProductComponent } from './components/maintenance/product/product.component';
+import { ProviderComponent } from './components/maintenance/provider/provider.component';
 
+// validators
 import { PasswordValidatorDirective } from '@helpers/validations/password.validator';
 
 @NgModule({
@@ -34,11 +37,12 @@ import { PasswordValidatorDirective } from '@helpers/validations/password.valida
     NavbarComponent,
     HomeComponent,
     TablesComponent,
-    InventoryComponent,
     UsersComponent,
     BookingsComponent,
     BookingSearchComponent,
-    PasswordValidatorDirective
+    PasswordValidatorDirective,
+    ProductComponent,
+    ProviderComponent
   ],
   imports: [
     BrowserModule,

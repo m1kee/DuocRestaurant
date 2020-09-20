@@ -10,7 +10,7 @@ namespace Domain
 {
     public class RestaurantTable
     {
-        public virtual JObject Map(bool customMap = false)
+        public virtual JObject Map(RestaurantDatabaseSettings ctx, bool customMap = false)
         {
             JObject result = null;
 

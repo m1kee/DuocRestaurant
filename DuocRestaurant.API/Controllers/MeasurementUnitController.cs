@@ -32,7 +32,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this.measurementUnitService.Get(this.dbSettings).MapAll(true));
+                result = Ok(this.measurementUnitService.Get(this.dbSettings).MapAll(this.dbSettings, true));
             }
             catch (Exception ex)
             {

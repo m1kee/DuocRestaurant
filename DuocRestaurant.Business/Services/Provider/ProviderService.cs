@@ -93,7 +93,7 @@ namespace Business.Services
 
         public IList<Provider> Get(RestaurantDatabaseSettings ctx)
         {
-            IList<Provider> result = null;
+            IList<Provider> result = new List<Provider>();
 
             using (OracleConnection conn = new OracleConnection(ctx.ConnectionString))
             {
@@ -112,9 +112,6 @@ namespace Business.Services
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    if (result == null)
-                        result = new List<Provider>();
-
                     result.Add(new Provider()
                     {
                         Id = Convert.ToInt32(reader[Provider.ColumnNames.Id]),
@@ -122,7 +119,7 @@ namespace Business.Services
                         Name = reader[Provider.ColumnNames.Name]?.ToString(),
                         Address = reader[Provider.ColumnNames.Address]?.ToString(),
                         Phone = reader[Provider.ColumnNames.Phone]?.ToString(),
-                        Active = Convert.ToBoolean(reader[Provider.ColumnNames.Active].ToString())
+                        Active = Convert.ToBoolean(Convert.ToInt16(reader[Provider.ColumnNames.Active].ToString()))
                     });
                 }
 
@@ -161,7 +158,7 @@ namespace Business.Services
                         Name = reader[Provider.ColumnNames.Name]?.ToString(),
                         Address = reader[Provider.ColumnNames.Address]?.ToString(),
                         Phone = reader[Provider.ColumnNames.Phone]?.ToString(),
-                        Active = Convert.ToBoolean(reader[Provider.ColumnNames.Active].ToString())
+                        Active = Convert.ToBoolean(Convert.ToInt16(reader[Provider.ColumnNames.Active].ToString()))
                     };
                 }
 

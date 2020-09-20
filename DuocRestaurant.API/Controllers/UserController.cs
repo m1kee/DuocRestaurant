@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Business.Services;
 using Domain;
+using Helpers;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -15,11 +17,15 @@ namespace DuocRestaurant.API.Controllers
     public class UserController : ControllerBase
     {
         private IUserService userService { get; set; }
+        private IRoleService roleService { get; set; }
         private RestaurantDatabaseSettings dbSettings { get; set; }
 
-        public UserController(IUserService userService, IOptions<RestaurantDatabaseSettings> databaseContext)
+        public UserController(IUserService userService,
+            IRoleService roleService,
+            IOptions<RestaurantDatabaseSettings> databaseContext)
         {
             this.userService = userService;
+            this.roleService = roleService;
             this.dbSettings = databaseContext.Value;
         }
 
@@ -32,7 +38,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this.userService.Get(this.dbSettings).MapAll(true));
+                result = Ok(this.userService.Get(this.dbSettings).MapAll(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -51,7 +57,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this.userService.Get(this.dbSettings, userId).Map(true));
+                result = Ok(this.userService.Get(this.dbSettings, userId).Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -72,7 +78,14 @@ namespace DuocRestaurant.API.Controllers
                 if (users.Any(x => x.Email.Equals(user.Email, StringComparison.InvariantCultureIgnoreCase)))
                     throw new Exception($"Ya existe una usuario con el correo: { user.Email }");
 
-                result = Ok(this.userService.Add(this.dbSettings, user));
+                if (!string.IsNullOrWhiteSpace(user.Password))
+                    user.Password = EncryptHelper.SHA256(user.Password);
+
+                var created = this.userService.Add(this.dbSettings, user);
+
+                created.Role = this.roleService.Get(this.dbSettings, created.RoleId);
+
+                result = Ok(created.Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -93,7 +106,14 @@ namespace DuocRestaurant.API.Controllers
                 if (users.Any(x => x.Id != userId && x.Email.Equals(user.Email, StringComparison.InvariantCultureIgnoreCase)))
                     throw new Exception($"Ya existe una usuario con el correo: { user.Email }");
 
-                result = Ok(this.userService.Edit(this.dbSettings, userId, user));
+                if (!string.IsNullOrWhiteSpace(user.Password))
+                    user.Password = EncryptHelper.SHA256(user.Password);
+
+                var edited = this.userService.Edit(this.dbSettings, userId, user);
+
+                edited.Role = this.roleService.Get(this.dbSettings, edited.RoleId);
+
+                result = Ok(edited.Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {

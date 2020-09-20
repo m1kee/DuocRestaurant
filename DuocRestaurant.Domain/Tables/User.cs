@@ -32,14 +32,14 @@ namespace Domain
             public const string Active = "Activo";
         }
 
-        public override JObject Map(bool customMap = true)
+        public override JObject Map(RestaurantDatabaseSettings ctx, bool customMap = true)
         {
-            dynamic result = base.Map(customMap);
+            dynamic result = base.Map(ctx, customMap);
 
             if (customMap)
             {
                 if (this.Role != null)
-                    result.Role = this.Role.Map(false);
+                    result.Role = this.Role.Map(ctx, false);
             }
 
             return result;
