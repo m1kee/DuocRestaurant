@@ -12,6 +12,5 @@ namespace Business.Services
         Table Edit(RestaurantDatabaseSettings ctx, int tableId, Table table);
         IList<Table> Get(RestaurantDatabaseSettings ctx);
         Table Get(RestaurantDatabaseSettings ctx, int tableId);
-        Table GetByNumber(RestaurantDatabaseSettings ctx, int tableNumber);
     }
 }

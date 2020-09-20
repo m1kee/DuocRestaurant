@@ -18,7 +18,7 @@ namespace Domain
             public const string Id = "Id";
             public const string Number = "Numero";
             public const string Description = "Descripcion";
-            public const string Capacity = "CantidadPersonas";
+            public const string Capacity = "Capacidad";
             public const string Active = "Activa";
             public const string InUse = "EnUso";
         }

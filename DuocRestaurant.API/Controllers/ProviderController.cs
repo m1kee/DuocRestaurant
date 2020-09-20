@@ -12,14 +12,14 @@ namespace DuocRestaurant.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TableController : ControllerBase
+    public class ProviderController : ControllerBase
     {
-        private ITableService tableService { get; set; }
+        private IProviderService providerService { get; set; }
         private RestaurantDatabaseSettings dbSettings { get; set; }
 
-        public TableController(ITableService authService, IOptions<RestaurantDatabaseSettings> databaseContext)
+        public ProviderController(IProviderService providerService, IOptions<RestaurantDatabaseSettings> databaseContext)
         {
-            this.tableService = authService;
+            this.providerService = providerService;
             this.dbSettings = databaseContext.Value;
         }
 
@@ -32,7 +32,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this.tableService.Get(this.dbSettings).MapAll(true));
+                result = Ok(this.providerService.Get(this.dbSettings).MapAll(true));
             }
             catch (Exception ex)
             {
@@ -45,13 +45,13 @@ namespace DuocRestaurant.API.Controllers
         [HttpGet]
         [ActionName("GetById")]
         [Route("[action]")]
-        public IActionResult Get([FromRoute(Name = "id")] int tableId)
+        public IActionResult Get([FromRoute(Name = "id")] int providerId)
         {
             IActionResult result;
 
             try
             {
-                result = Ok(this.tableService.Get(this.dbSettings, tableId).Map(true));
+                result = Ok(this.providerService.Get(this.dbSettings, providerId).Map(true));
             }
             catch (Exception ex)
             {
@@ -62,17 +62,17 @@ namespace DuocRestaurant.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody]Table table)
+        public IActionResult Post([FromBody]Provider provider)
         {
             IActionResult result;
 
             try
             {
-                var tables = this.tableService.Get(this.dbSettings);
-                if (tables.Any(x => x.Number.Equals(table.Number)))
-                    throw new Exception($"Ya existe una mesa con el número: { table.Number }");
+                var providers = this.providerService.Get(this.dbSettings);
+                if (providers.Any(x => x.Email.Equals(provider.Email, StringComparison.InvariantCultureIgnoreCase)))
+                    throw new Exception($"Ya existe un proveedor con el correo: { provider.Email }");
 
-                result = Ok(this.tableService.Add(this.dbSettings, table).Map(true));
+                result = Ok(this.providerService.Add(this.dbSettings, provider).Map(true));
             }
             catch (Exception ex)
             {
@@ -83,17 +83,17 @@ namespace DuocRestaurant.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put([FromRoute(Name = "id")] int tableId, [FromBody]Table table)
+        public IActionResult Put([FromRoute(Name = "id")] int providerId, [FromBody]Provider provider)
         {
             IActionResult result;
 
             try
             {
-                var tables = this.tableService.Get(this.dbSettings);
-                if (tables.Any(x => x.Id != tableId && x.Number.Equals(table.Number)))
-                    throw new Exception($"Ya existe una mesa con el número: { table.Number }");
+                var providers = this.providerService.Get(this.dbSettings);
+                if (providers.Any(x => x.Id != providerId && x.Email.Equals(provider.Email, StringComparison.InvariantCultureIgnoreCase)))
+                    throw new Exception($"Ya existe un proveedor con el correo: { provider.Email }");
 
-                result = Ok(this.tableService.Edit(this.dbSettings, tableId, table).Map(true));
+                result = Ok(this.providerService.Edit(this.dbSettings, providerId, provider).Map(true));
             }
             catch (Exception ex)
             {
@@ -104,13 +104,13 @@ namespace DuocRestaurant.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute(Name = "id")] int tableId)
+        public IActionResult Delete([FromRoute(Name = "id")] int providerId)
         {
             IActionResult result;
 
             try
             {
-                result = Ok(this.tableService.Delete(this.dbSettings, tableId));
+                result = Ok(this.providerService.Delete(this.dbSettings, providerId));
             }
             catch (Exception ex)
             {

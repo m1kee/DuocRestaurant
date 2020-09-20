@@ -15,9 +15,21 @@ namespace Business.Services
 
             using (OracleConnection conn = new OracleConnection(dbSettings.ConnectionString))
             {
-                string query = $"SELECT {User.ColumnNames.Id}, {User.ColumnNames.RoleId}, {User.ColumnNames.Name}, {User.ColumnNames.LastName}, {User.ColumnNames.Email}, {User.ColumnNames.Phone}, {User.ColumnNames.Address} FROM Usuario WHERE {User.ColumnNames.Email} = :username AND {User.ColumnNames.Password} = :password";
+                string query = $"SELECT " +
+                    $"u.{User.ColumnNames.Id}, " +
+                    $"u.{User.ColumnNames.RoleId}, " +
+                    $"u.{User.ColumnNames.Name}, " +
+                    $"u.{User.ColumnNames.LastName}, " +
+                    $"u.{User.ColumnNames.Email}, " +
+                    $"u.{User.ColumnNames.Phone}, " +
+                    $"u.{User.ColumnNames.Address}, " +
+                    $"r.{Role.ColumnNames.Description} " +
+                    $"FROM Usuario u " +
+                    $"join Rol r on u.{User.ColumnNames.RoleId} = r.{Role.ColumnNames.Id} " +
+                    $"WHERE LOWER({User.ColumnNames.Email}) = :username AND {User.ColumnNames.Password} = :password";
+
                 OracleCommand cmd = new OracleCommand(query, conn);
-                cmd.Parameters.Add(new OracleParameter("username", username));
+                cmd.Parameters.Add(new OracleParameter("username", username.ToLower()));
                 cmd.Parameters.Add(new OracleParameter("password", password));
 
                 conn.Open();
@@ -27,13 +39,18 @@ namespace Business.Services
                 {
                     user = new User()
                     {
-                        Id = Convert.ToInt32(reader["Id"]),
-                        Email = reader["Correo"]?.ToString(),
-                        Name = reader["Nombre"]?.ToString(),
-                        LastName = reader["Apellido"]?.ToString(),
-                        Address = reader["Direccion"]?.ToString(),
-                        Phone = reader["Telefono"]?.ToString(),
-                        RoleId = Convert.ToInt32(reader["RolId"])
+                        Id = Convert.ToInt32(reader[User.ColumnNames.Id]),
+                        Email = reader[User.ColumnNames.Email]?.ToString(),
+                        Name = reader[User.ColumnNames.Name]?.ToString(),
+                        LastName = reader[User.ColumnNames.LastName]?.ToString(),
+                        Address = reader[User.ColumnNames.Address]?.ToString(),
+                        Phone = reader[User.ColumnNames.Phone]?.ToString(),
+                        RoleId = Convert.ToInt32(reader[User.ColumnNames.RoleId]),
+                        Role = new Role()
+                        {
+                            Id = Convert.ToInt32(reader[User.ColumnNames.RoleId]),
+                            Description = reader[Role.ColumnNames.Description]?.ToString()
+                        }
                     };
                 }
 

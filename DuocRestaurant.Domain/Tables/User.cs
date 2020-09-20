@@ -15,6 +15,7 @@ namespace Domain
         public string Password { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
+        public bool Active { get; set; }
 
         public Role Role { get; set; }
 
@@ -28,6 +29,7 @@ namespace Domain
             public const string Password = "Contrasena";
             public const string Phone = "Telefono";
             public const string Address = "Direccion";
+            public const string Active = "Activo";
         }
 
         public override JObject Map(bool customMap = true)

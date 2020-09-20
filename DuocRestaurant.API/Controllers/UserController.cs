@@ -14,19 +14,15 @@ namespace DuocRestaurant.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private IUserService _userService { get; set; }
-        private RestaurantDatabaseSettings _dbSettings { get; set; }
+        private IUserService userService { get; set; }
+        private RestaurantDatabaseSettings dbSettings { get; set; }
 
         public UserController(IUserService userService, IOptions<RestaurantDatabaseSettings> databaseContext)
         {
-            this._userService = userService;
-            this._dbSettings = databaseContext.Value;
+            this.userService = userService;
+            this.dbSettings = databaseContext.Value;
         }
 
-        /// <summary>
-        /// This method returns all tables
-        /// </summary>
-        /// <returns>List<User></returns>
         [HttpGet]
         [ActionName("GetAll")]
         [Route("[action]")]
@@ -36,7 +32,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this._userService.Get(this._dbSettings).MapAll(true));
+                result = Ok(this.userService.Get(this.dbSettings).MapAll(true));
             }
             catch (Exception ex)
             {
@@ -46,11 +42,6 @@ namespace DuocRestaurant.API.Controllers
             return result;
         }
 
-        /// <summary>
-        /// This method returns a specific user
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns>User</returns>
         [HttpGet]
         [ActionName("GetById")]
         [Route("[action]")]
@@ -60,7 +51,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this._userService.Get(this._dbSettings, userId).Map(true));
+                result = Ok(this.userService.Get(this.dbSettings, userId).Map(true));
             }
             catch (Exception ex)
             {
@@ -70,11 +61,6 @@ namespace DuocRestaurant.API.Controllers
             return result;
         }
 
-        /// <summary>
-        /// This method inserts a new user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns>Inserted User</returns>
         [HttpPost]
         public IActionResult Post([FromBody]User user)
         {
@@ -82,7 +68,11 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                result = Ok(this._userService.Add(this._dbSettings, user));
+                var users = this.userService.Get(this.dbSettings);
+                if (users.Any(x => x.Email.Equals(user.Email, StringComparison.InvariantCultureIgnoreCase)))
+                    throw new Exception($"Ya existe una usuario con el correo: { user.Email }");
+
+                result = Ok(this.userService.Add(this.dbSettings, user));
             }
             catch (Exception ex)
             {
@@ -92,12 +82,6 @@ namespace DuocRestaurant.API.Controllers
             return result;
         }
 
-        /// <summary>
-        /// This method update a user by it's Id
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="user"></param>
-        /// <returns>Updated User</returns>
         [HttpPut("{id}")]
         public IActionResult Put([FromRoute(Name = "id")] int userId, [FromBody]User user)
         {
@@ -105,8 +89,11 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                // TODO: validate things
-                result = Ok(this._userService.Edit(this._dbSettings, userId, user));
+                var users = this.userService.Get(this.dbSettings);
+                if (users.Any(x => x.Id != userId && x.Email.Equals(user.Email, StringComparison.InvariantCultureIgnoreCase)))
+                    throw new Exception($"Ya existe una usuario con el correo: { user.Email }");
+
+                result = Ok(this.userService.Edit(this.dbSettings, userId, user));
             }
             catch (Exception ex)
             {
@@ -116,11 +103,6 @@ namespace DuocRestaurant.API.Controllers
             return result;
         }
 
-        /// <summary>
-        /// this method deletes a user by it's Id
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns>Deleted User</returns>
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute(Name = "id")] int userId)
         {
@@ -128,8 +110,7 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
-                // TODO: validate things
-                result = Ok(this._userService.Delete(this._dbSettings, userId));
+                result = Ok(this.userService.Delete(this.dbSettings, userId));
             }
             catch (Exception ex)
             {

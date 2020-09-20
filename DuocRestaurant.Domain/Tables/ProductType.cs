@@ -4,11 +4,10 @@ using System.Text;
 
 namespace Domain
 {
-    public class Role : RestaurantTable
+    public class ProductType : RestaurantTable
     {
         public int Id { get; set; }
         public string Description { get; set; }
-
 
         public struct ColumnNames
         {

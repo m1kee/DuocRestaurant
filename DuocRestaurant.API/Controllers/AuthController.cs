@@ -19,13 +19,13 @@ namespace DuocRestaurant.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private IAuthService _authService { get; set; }
-        private RestaurantDatabaseSettings _dbSettings { get; set; }
+        private IAuthService authService { get; set; }
+        private RestaurantDatabaseSettings dbSettings { get; set; }
 
         public AuthController(IAuthService authService, IOptions<RestaurantDatabaseSettings> databaseContext)
         {
-            this._authService = authService;
-            this._dbSettings = databaseContext.Value;
+            this.authService = authService;
+            this.dbSettings = databaseContext.Value;
         }
 
         [HttpPost]
@@ -46,12 +46,12 @@ namespace DuocRestaurant.API.Controllers
 
                     credentials.Password = EncryptHelper.SHA256(credentials.Password);
 
-                    User user = _authService.SignIn(this._dbSettings, credentials.Username, credentials.Password);
+                    User user = authService.SignIn(this.dbSettings, credentials.Username, credentials.Password);
 
                     if (user == null)
                         throw new Exception($"Credenciales incorrectas.");
 
-                    result = Ok(user.Map());
+                    result = Ok(user.Map(true));
                 }
             }
             catch (Exception ex)

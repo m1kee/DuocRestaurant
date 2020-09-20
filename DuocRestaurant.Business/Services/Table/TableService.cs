@@ -169,43 +169,5 @@ namespace Business.Services
 
             return result;
         }
-
-        public Table GetByNumber(RestaurantDatabaseSettings ctx, int tableNumber)
-        {
-            Table result = null;
-
-            using (OracleConnection conn = new OracleConnection(ctx.ConnectionString))
-            {
-                string query = $"SELECT " +
-                    $"{Table.ColumnNames.Id}, " +
-                    $"{Table.ColumnNames.Number}, " +
-                    $"{Table.ColumnNames.Capacity}, " +
-                    $"{Table.ColumnNames.Description}, " +
-                    $"{Table.ColumnNames.Active}, " +
-                    $"{Table.ColumnNames.InUse} " +
-                    $"FROM Mesa " +
-                    $"WHERE {Table.ColumnNames.Number} = {tableNumber}";
-                OracleCommand cmd = new OracleCommand(query, conn);
-                conn.Open();
-
-                OracleDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
-                {
-                    result = new Table()
-                    {
-                        Id = Convert.ToInt32(reader[Table.ColumnNames.Id]),
-                        Number = Convert.ToInt32(reader[Table.ColumnNames.Number]),
-                        Capacity = Convert.ToInt32(reader[Table.ColumnNames.Capacity]),
-                        Description = reader[Table.ColumnNames.Description]?.ToString(),
-                        Active = Convert.ToBoolean(reader[Table.ColumnNames.Active]),
-                        InUse = Convert.ToBoolean(reader[Table.ColumnNames.InUse])
-                    };
-                }
-
-                reader.Dispose();
-            }
-
-            return result;
-        }
     }
 }

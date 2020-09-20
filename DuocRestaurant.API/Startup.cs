@@ -32,10 +32,12 @@ namespace DuocRestaurant.API
 
             services.Configure<RestaurantDatabaseSettings>(Configuration.GetSection("DatabaseSettings"));
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IMeasurementUnitService, MeasurementUnitService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProviderService, ProviderService>();
+            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ITableService, TableService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IInventoryService, InventoryService>();
-            services.AddScoped<IRoleService, RoleService>();
 
             services.AddControllers();
 

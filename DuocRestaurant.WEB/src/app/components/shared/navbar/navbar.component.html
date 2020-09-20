@@ -110,7 +110,8 @@
        dropdownToggle
        role="button"
        aria-controls="dropdown-animated">
-      {{ user.Name }} {{ user.LastName }}
+      {{ user.Name }} {{ user.LastName }} <br />
+      <small> {{ user.Role.Description }} </small>
     </a>
     <div id="dropdown-animated" *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="navbarDropdown">
       <a class="dropdown-item clickable" (click)="logout()">
