@@ -36,6 +36,9 @@ namespace Domain
         {
             dynamic result = base.Map(ctx, customMap);
 
+            if (!string.IsNullOrWhiteSpace(this.Password))
+                result.Password = null;
+
             if (customMap)
             {
                 if (this.Role != null)
