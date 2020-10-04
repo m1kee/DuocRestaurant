@@ -1,17 +1,16 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Booking } from '@app/domain/booking';
 import { environment } from '@env/environment';
-import { Table } from '@app/domain/table';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TableService {
+export class BookingService {
   private env = environment;
-  private controllerName: string = 'Table';
+  private controllerName: string = 'Booking';
   private controllerUrl: string = `${this.env.apiUrl}/${this.controllerName}`;
   constructor(private httpClient: HttpClient) { }
-
 
   getAll() {
     return this.httpClient.get(`${this.controllerUrl}/GetAll`);
@@ -21,12 +20,16 @@ export class TableService {
     return this.httpClient.get(`${this.controllerUrl}/GetById/${id}`);
   }
 
-  post(table: Table) {
-    return this.httpClient.post(`${this.controllerUrl}`, table);
+  getByCode(code: number) {
+    return this.httpClient.get(`${this.controllerUrl}/GetByCode/${code}`);
   }
 
-  put(id: number, table: Table) {
-    return this.httpClient.put(`${this.controllerUrl}/${id}`, table);
+  post(booking: Booking) {
+    return this.httpClient.post(`${this.controllerUrl}`, booking);
+  }
+
+  put(id: number, booking: Booking) {
+    return this.httpClient.put(`${this.controllerUrl}/${id}`, booking);
   }
 
   delete(id: number) {

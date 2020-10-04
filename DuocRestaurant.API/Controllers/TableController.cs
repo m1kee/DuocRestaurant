@@ -7,6 +7,7 @@ using Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 
 namespace DuocRestaurant.API.Controllers
 {
@@ -44,7 +45,7 @@ namespace DuocRestaurant.API.Controllers
 
         [HttpGet]
         [ActionName("GetById")]
-        [Route("[action]")]
+        [Route("[action]/{id:int}")]
         public IActionResult Get([FromRoute(Name = "id")] int tableId)
         {
             IActionResult result;
@@ -111,6 +112,47 @@ namespace DuocRestaurant.API.Controllers
             try
             {
                 result = Ok(this.tableService.Delete(this.dbSettings, tableId));
+            }
+            catch (Exception ex)
+            {
+                result = BadRequest(ex.Message);
+            }
+
+            return result;
+        }
+
+        [ActionName("FilterBy")]
+        [Route("[action]")]
+        public IActionResult FilterBy([FromBody]JObject filters)
+        {
+            IActionResult result;
+
+            try
+            {
+                var tables = this.tableService.Get(this.dbSettings);
+
+                if (filters.ContainsKey("Capacity"))
+                {
+                    int capacity = Convert.ToInt32(filters.GetValue("Capacity").ToString());
+
+                    tables = tables.Where(x => x.Capacity >= capacity).ToList();
+                }
+
+                if (filters.ContainsKey("Active"))
+                {
+                    bool active = Convert.ToBoolean(filters.GetValue("Active").ToString());
+
+                    tables = tables.Where(x => x.Active == active).ToList();
+                }
+
+                if (filters.ContainsKey("InUse"))
+                {
+                    bool inUse = Convert.ToBoolean(filters.GetValue("InUse").ToString());
+
+                    tables = tables.Where(x => x.InUse == inUse).ToList();
+                }
+
+                result = Ok(tables.MapAll(this.dbSettings, true));
             }
             catch (Exception ex)
             {

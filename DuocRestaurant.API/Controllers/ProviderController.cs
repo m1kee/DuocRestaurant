@@ -44,7 +44,7 @@ namespace DuocRestaurant.API.Controllers
 
         [HttpGet]
         [ActionName("GetById")]
-        [Route("[action]")]
+        [Route("[action]/{id:int}")]
         public IActionResult Get([FromRoute(Name = "id")] int providerId)
         {
             IActionResult result;

@@ -8,7 +8,6 @@ const routes: Routes = [
     {
         path: '',
         component: HomePage,
-        canActivate: [AuthGuard],
         children: [
             {
                 path: 'orders',
@@ -33,7 +32,7 @@ const routes: Routes = [
             },
             {
                 path: '**',
-                loadChildren: () => import('../not-found/not-found.module').then(m => m.NotFoundPageModule)
+                loadChildren: () => import('../welcome/welcome.module').then(m => m.WelcomePageModule)
             }
         ]
     }

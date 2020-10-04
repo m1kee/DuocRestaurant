@@ -20,7 +20,7 @@ namespace DuocRestaurant.API.Controllers
         private IProviderService providerService { get; set; }
         private RestaurantDatabaseSettings dbSettings { get; set; }
 
-        public ProductController(IProductService productService, 
+        public ProductController(IProductService productService,
             IMeasurementUnitService measurementUnitService,
             IProductTypeService productTypeService,
             IProviderService providerService,
@@ -54,7 +54,7 @@ namespace DuocRestaurant.API.Controllers
 
         [HttpGet]
         [ActionName("GetById")]
-        [Route("[action]")]
+        [Route("[action]/{id:int}")]
         public IActionResult Get([FromRoute(Name = "id")] int productId)
         {
             IActionResult result;

@@ -1,0 +1,72 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Reserva</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #form="ngForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col size-xs="12" size-lg="6">
+          <ion-item>
+            <ion-label position="floating"> Nombre </ion-label>
+            <ion-input type="text" [(ngModel)]="currentUser.Name" name="name" readonly></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size-xs="12" size-lg="6">
+          <ion-item>
+            <ion-label position="floating"> Apellido </ion-label>
+            <ion-input type="text" [(ngModel)]="currentUser.LastName" name="lastname" readonly></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size-xs="12" size-lg="6">
+          <ion-item>
+            <ion-label position="floating"> Correo </ion-label>
+            <ion-input type="text" [(ngModel)]="currentUser.Email" name="email" readonly></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size-xs="12" size-lg="6">
+          <ion-item>
+            <ion-label position="floating"> Comensales </ion-label>
+            <ion-input type="number" [(ngModel)]="booking.Diners" #category="ngModel" name="diners" min="0"
+              pattern="^[0-9]+$" (change)="getTables()" required></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size-xs="12" size-lg="6">
+          <ion-item>
+            <ion-label position="stacked"> Fecha </ion-label>
+            <ion-datetime displayFormat="DD de MMMM de YYYY" [monthNames]="monthNames"
+              [(ngModel)]="booking.DateFormatted" name="date" [min]="minDate" [max]="maxDate"
+              hourValues="9,10,11,12,13,14,15,16,17,18,19,20,21,22" required></ion-datetime>
+          </ion-item>
+        </ion-col>
+        <ion-col size-xs="12" size-lg="6">
+          <ion-item>
+            <ion-label position="stacked"> Hora </ion-label>
+            <ion-datetime displayFormat="H:mm" [(ngModel)]="booking.TimeFormatted" name="time"
+              hourValues="9,10,11,12,13,14,15,16,17,18,19,20,21,22" minuteValues="0" required></ion-datetime>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating"> Mesa </ion-label>
+            <ion-select [(ngModel)]="booking.TableId" name="table" placeholder="Seleccione su mesa" required>
+              <ion-select-option *ngFor="let table of tables" [value]="table.Id">
+                Mesa {{table.Number}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col size-xs="12">
+          <ion-button type="button" [disabled]="form.invalid" expand="block" (click)="save()">Reservar</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

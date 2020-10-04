@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: BookingsPage
+  },
+  {
+    path: 'booking-modal',
+    loadChildren: () => import('./booking-modal/booking-modal.module').then( m => m.BookingModalPageModule)
   }
 ];
 

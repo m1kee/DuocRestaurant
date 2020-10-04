@@ -52,9 +52,11 @@ alter table Mesa add(
 
 CREATE TABLE Reserva (
     Id integer generated always as identity (start with 1 increment by 1),
+    Codigo integer NOT NULL, -- UsuarioId + MesaId + Fecha(YYYYMMDDHH)
     UsuarioId integer NOT NULL,
     MesaId integer NOT NULL,
     Fecha DATE NOT NULL,
+    Comensales integer NOT NULL,
     Estado NUMBER(1) NOT NULL
 );
 
@@ -124,7 +126,8 @@ alter table Producto add constraint FK_Inventario_UnidadMedida
 
 alter table Producto add constraint FK_Inventario_Proveedor
     foreign key (ProveedorId) references Proveedor(Id);
-    
+   
+
 Insert INTO Rol (Descripcion) VALUES ('Administrador');
 Insert INTO Rol (Descripcion) VALUES ('Bodega');
 Insert INTO Rol (Descripcion) VALUES ('Finanzas');

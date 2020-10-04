@@ -7,6 +7,14 @@ const routes: Routes = [
   {
     path: '',
     component: ReceptionPage
+  },
+  {
+    path: 'with-booking',
+    loadChildren: () => import('./with-booking/with-booking.module').then( m => m.WithBookingPageModule)
+  },
+  {
+    path: 'without-booking',
+    loadChildren: () => import('./without-booking/without-booking.module').then( m => m.WithoutBookingPageModule)
   }
 ];
 

@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #form="ngForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col size-xs="12">
+          <ion-item>
+            <ion-label> Comensales </ion-label>
+            <ion-input type="number" [(ngModel)]="diners" name="diners" min="0"
+              pattern="^[0-9]+$" required></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-button type="button" (click)="searchAvailableTables(diners)" expand="block" [disabled]="form.invalid"> Buscar mesa </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-list>
+            <ion-list-header lines="inset">
+              <ion-label>
+                <h1>Mesas disponibles</h1>
+                <p><i>Seleccione una de las mesas disponibles</i></p>
+                <br>
+              </ion-label>
+            </ion-list-header>
+            <ion-item lines="none" *ngFor="let table of availableTables" button (click)="selectTable(table)">
+              <ion-label>
+                <p><b>Mesa {{table.Number}}</b> ({{table.Description}})</p>
+              </ion-label>
+
+              <ion-badge slot="end" color="primary">
+                {{table.Capacity}}
+                <ion-icon name="people-outline"></ion-icon>
+            </ion-badge>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

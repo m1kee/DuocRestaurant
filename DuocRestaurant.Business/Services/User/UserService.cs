@@ -119,7 +119,7 @@ namespace Business.Services
                     $"r.{Role.ColumnNames.Description} AS Role{Role.ColumnNames.Description} " +
                     $"FROM Usuario u " +
                     $"join Rol r on u.{User.ColumnNames.RoleId} = r.{Role.ColumnNames.Id} " +
-                    $"WHERE {User.ColumnNames.Active} = 1";
+                    $"WHERE u.{User.ColumnNames.Active} = 1";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 conn.Open();
 
@@ -162,11 +162,11 @@ namespace Business.Services
                     $"u.{User.ColumnNames.LastName}, " +
                     $"u.{User.ColumnNames.Email}, " +
                     $"u.{User.ColumnNames.Phone}, " +
-                    $"u.{User.ColumnNames.Address} " +
+                    $"u.{User.ColumnNames.Address}, " +
                     $"r.{Role.ColumnNames.Description} " +
                     $"FROM Usuario u " +
                     $"join Rol r on u.{User.ColumnNames.RoleId} = r.{Role.ColumnNames.Id} " +
-                    $"WHERE {User.ColumnNames.Id} = {userId}";
+                    $"WHERE u.{User.ColumnNames.Id} = {userId}";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 conn.Open();
 

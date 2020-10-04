@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #form="ngForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label> Codigo Reserva: </ion-label>
+            <ion-input type="number" pattern="^[0-9]+$" required name="code" [(ngModel)]="code">
+            </ion-input>
+          </ion-item>
+          <br>
+          <ion-button color="primary" expand="block" (click)="searchBooking(code)" [disabled]="form.invalid">Buscar reserva</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+  
+</ion-content>

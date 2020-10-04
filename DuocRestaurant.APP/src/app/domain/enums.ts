@@ -6,3 +6,9 @@ export enum Profiles {
   Waiter = 5,
   Customer = 6
 }
+
+export enum BookingState {
+  Active = 1,
+  Canceled = 2,
+  Expired = 3
+}
