@@ -1,35 +1,40 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Mis reservas</ion-title>
-  </ion-toolbar>
+    <ion-toolbar color="primary">
+        <ion-title>Mis reservas</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item-sliding *ngFor="let booking of bookings">
-        <ion-item >
-            <ion-label>
-                <h2><b>Reserva: {{ booking.Code }}</b></h2>
-                <h3>Mesa {{booking.Table.Number}} ({{booking.Table.Description}})</h3> 
-                <p><i> {{booking.Date | date:'full'}} </i></p>
-                <ion-text color="{{booking.State === bookingStates.Active ? 'success' : 'danger'}}">
-                    <span *ngIf="booking.State === bookingStates.Active">Activa</span>
-                    <span *ngIf="booking.State === bookingStates.Expired">Caducada</span>
-                    <span *ngIf="booking.State === bookingStates.Canceled">Cancelada</span>
-                </ion-text>
-            </ion-label>
+    <ion-refresher slot="fixed" (ionRefresh)="getBookings($event)">
+        <ion-refresher-content>
+        </ion-refresher-content>
+    </ion-refresher>
+
+    <ion-list>
+        <ion-item-sliding *ngFor="let booking of bookings">
+            <ion-item>
+                <ion-label>
+                    <h2><b>Reserva: {{ booking.Code }}</b></h2>
+                    <h3>Mesa {{booking.Table.Number}} ({{booking.Table.Description}})</h3>
+                    <p><i> {{booking.Date | date:'full'}} </i></p>
+                    <ion-text color="{{booking.State === bookingStates.Active ? 'success' : 'danger'}}">
+                        <span *ngIf="booking.State === bookingStates.Active">Activa</span>
+                        <span *ngIf="booking.State === bookingStates.Expired">Caducada</span>
+                        <span *ngIf="booking.State === bookingStates.Canceled">Cancelada</span>
+                    </ion-text>
+                </ion-label>
 
 
-            <ion-badge slot="end" color="primary">
-                {{booking.Diners}}
-                <ion-icon name="people-outline"></ion-icon>
-            </ion-badge>
-        </ion-item>
-        <ion-item-options side="end" *ngIf="cancelableBooking(booking)">
-            <ion-item-option (click)="cancelBooking(booking)" color="danger">Cancelar</ion-item-option>
-        </ion-item-options>
-    </ion-item-sliding>
-</ion-list>
+                <ion-badge slot="end" color="primary">
+                    {{booking.Diners}}
+                    <ion-icon name="people-outline"></ion-icon>
+                </ion-badge>
+            </ion-item>
+            <ion-item-options side="end" *ngIf="cancelableBooking(booking)">
+                <ion-item-option (click)="cancelBooking(booking)" color="danger">Cancelar</ion-item-option>
+            </ion-item-options>
+        </ion-item-sliding>
+    </ion-list>
 
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
         <ion-fab-button (click)="newBooking()">

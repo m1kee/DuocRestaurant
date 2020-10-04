@@ -18,20 +18,24 @@ export class AvailabilityPage implements OnInit {
     }
 
     ngOnInit() {
-        this.getTables();
+        this.getTables(null);
     }
 
-    async getTables() {
+    async getTables(event) {
         let loading = await this.loadingController.create({
-            message: 'Cargando listado de mesas'
+            message: 'Obteniendo mesas'
         });
         await loading.present();
 
         this.tableService.getAll().subscribe((tables: Table[]) => {
             this.tables = tables;
             loading.dismiss();
+            if (event)
+                event.target.complete();
         }, (error) => {
             loading.dismiss();
+            if (event)
+                event.target.complete();
         });
     }
 
@@ -48,7 +52,7 @@ export class AvailabilityPage implements OnInit {
             loading.dismiss();
         }, async (error) => {
             loading.dismiss();
-            let message = 'Ocurrió un error al actualizar la mesa.';
+            let message = 'Ocurriï¿½ un error al actualizar la mesa.';
 
             const toast = await this.toastController.create({
                 message: message,

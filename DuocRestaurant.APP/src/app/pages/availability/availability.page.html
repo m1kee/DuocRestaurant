@@ -5,11 +5,16 @@
 </ion-header>
 
 <ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="getTables($event)">
+        <ion-refresher-content>
+        </ion-refresher-content>
+    </ion-refresher>
+
     <ion-list>
         <ion-item-sliding *ngFor="let table of tables">
             <ion-item>
                 <ion-label>
-                    <h2> Mesa {{table.Number}} </h2> 
+                    <h2> Mesa {{table.Number}} </h2>
                     <p> {{table.Description}} </p>
                     <ion-text color="{{table.InUse ? 'warning' : 'success'}}">
                         {{ table.InUse ? 'Ocupada' : 'Disponible' }}
@@ -23,7 +28,9 @@
                 </ion-badge>
             </ion-item>
             <ion-item-options side="end">
-                <ion-item-option (click)="updateAvailability(table)" [color]="table.InUse ? 'success' : 'danger'">{{ table.InUse ? 'Liberar' : 'En Uso' }}</ion-item-option>
+                <ion-item-option (click)="updateAvailability(table)"
+                    [color]="table.InUse ? 'success' : 'danger'">{{ table.InUse ? 'Liberar' : 'En Uso' }}
+                </ion-item-option>
             </ion-item-options>
         </ion-item-sliding>
     </ion-list>

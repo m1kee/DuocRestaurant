@@ -15,14 +15,14 @@
         <ion-col size-xs="12">
           <ion-item>
             <ion-label> Comensales </ion-label>
-            <ion-input type="number" [(ngModel)]="diners" name="diners" min="0"
-              pattern="^[0-9]+$" required></ion-input>
+            <ion-input type="number" [(ngModel)]="diners" name="diners" min="0" pattern="^[0-9]+$" required></ion-input>
           </ion-item>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col>
-          <ion-button type="button" (click)="searchAvailableTables(diners)" expand="block" [disabled]="form.invalid"> Buscar mesa </ion-button>
+          <ion-button type="button" (click)="searchAvailableTables(diners)" expand="block" [disabled]="form.invalid">
+            Buscar mesa </ion-button>
         </ion-col>
       </ion-row>
       <ion-row>
@@ -43,7 +43,13 @@
               <ion-badge slot="end" color="primary">
                 {{table.Capacity}}
                 <ion-icon name="people-outline"></ion-icon>
-            </ion-badge>
+              </ion-badge>
+            </ion-item>
+
+            <ion-item *ngIf="!availableTables || availableTables.length === 0">
+              <ion-label>
+                <p><b>No hay mesas disponibles </b></p>
+              </ion-label>
             </ion-item>
           </ion-list>
         </ion-col>

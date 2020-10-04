@@ -115,8 +115,12 @@ namespace DuocRestaurant.API.Controllers
             {
                 // validate that there is not other booking with the same table|date
                 var bookings = this.bookingService.Get(this.dbSettings);
+                if (booking.Date.ToLocalTime() < DateTime.Now)
+                {
+                    throw new Exception($"No puedes crear una reserva para una fecha anterior a {DateTime.Now:dd-MM-yyyy HH:mm}.");
+                }
                 // verify inside my bookings
-                if (bookings.Any(x => x.UserId == booking.UserId && x.Date.Equals(booking.Date.ToLocalTime()) && x.Active))
+                else if (bookings.Any(x => x.UserId == booking.UserId && x.Date.Equals(booking.Date.ToLocalTime()) && x.Active))
                 {
                     throw new Exception($"Ya tienes una reserva creada para el mismo horario en la misma fecha.");
                 }

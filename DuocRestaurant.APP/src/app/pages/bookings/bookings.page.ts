@@ -27,32 +27,47 @@ export class BookingsPage implements OnInit {
     ) { }
 
     async ngOnInit() {
+        this.getBookings(null);
+    }
+
+    async getBookings(event) {
         let loading = await this.loadingController.create({
             message: `Obteniendo reservas`
         });
         await loading.present();
 
-        this.authService.loggedUser.subscribe((user: User) => {
+        if (!this.currentUser)
+            this.getUser();
+
+        let filters = {
+            UserId: this.currentUser.Id
+        }
+
+        this.bookingService.filterBy(filters).subscribe((bookings: Booking[]) => {
+            loading.dismiss();
+            this.bookings = bookings.sort((a, b) => this.sortDates(a.Date, b.Date));
+            if (event)
+                event.target.complete();
+            //console.log('my bookings: ', this.bookings);
+        }, (error) => { 
+            loading.dismiss(); 
+            if (event)
+                event.target.complete();
+        });
+    };
+
+    async getUser() {
+        await this.authService.loggedUser.subscribe((user: User) => {
             this.currentUser = user;
-            let filters = {
-                UserId: this.currentUser.Id
-            }
-
-            this.bookingService.filterBy(filters).subscribe((bookings: Booking[]) => {
-                loading.dismiss();
-                this.bookings = bookings.sort((a, b) => this.sortDates(a.Date, b.Date));
-                //console.log('my bookings: ', this.bookings);
-            }, (error) => { loading.dismiss(); });
-
-        }, (error) => { loading.dismiss(); });
-    }
+        });
+    };
 
     sortDates(a, b) {
         let thisDate = new Date(b);
         let thatDate = new Date(a);
 
         return thisDate.getTime() - thatDate.getTime();
-    }
+    };
 
     async newBooking() {
         const modal = await this.modalController.create({
