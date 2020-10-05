@@ -61,8 +61,7 @@ namespace Domain
 
             if (customMap)
             {
-                if (this.State != null)
-                    result.State = this.State;
+                result.State = this.State;
 
                 if (this.User != null)
                     result.User = this.User.Map(ctx, false);
