@@ -6,3 +6,8 @@ export enum Profiles {
   Waiter = 5,
   Customer = 6
 }
+
+export enum ProductTypes {
+  Supply = 1,
+  Consumable = 2
+}

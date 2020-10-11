@@ -145,8 +145,8 @@ export class ProductComponent implements OnInit {
 
   delete(product: Product) {
     this.loading = true;
-    this.productService.delete(product.Id).subscribe((deletedProduct: Product) => {
-      let cIndex = this.products.findIndex((c) => c.Id === deletedProduct.Id);
+    this.productService.delete(product.Id).subscribe((deleted: boolean) => {
+      let cIndex = this.products.findIndex((c) => c.Id === product.Id);
       this.products.splice(cIndex, 1);
       this.toastrService.success('Se ha eliminado correctamente', 'Producto Eliminado');
     }, (error) => {

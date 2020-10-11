@@ -100,8 +100,8 @@ export class TablesComponent implements OnInit {
 
   delete(table: Table) {
     this.loading = true;
-    this.tableService.delete(table.Id).subscribe((deletedTable: Table) => {
-      let cIndex = this.tables.findIndex((c) => c.Id === deletedTable.Id);
+    this.tableService.delete(table.Id).subscribe((deleted: boolean) => {
+      let cIndex = this.tables.findIndex((c) => c.Id === table.Id);
       this.tables.splice(cIndex, 1);
       this.toastrService.success('Se ha eliminado correctamente', 'Mesa Eliminada');
     }, (error) => {

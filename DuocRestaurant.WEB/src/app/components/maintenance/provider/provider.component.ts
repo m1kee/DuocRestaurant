@@ -99,8 +99,8 @@ export class ProviderComponent implements OnInit {
 
   delete(provider: Provider) {
     this.loading = true;
-    this.providerService.delete(provider.Id).subscribe((deletedProvider: Provider) => {
-      let cIndex = this.providers.findIndex((c) => c.Id === deletedProvider.Id);
+    this.providerService.delete(provider.Id).subscribe((deleted: boolean) => {
+      let cIndex = this.providers.findIndex((c) => c.Id === provider.Id);
       this.providers.splice(cIndex, 1);
       this.toastrService.success('Se ha eliminado correctamente', 'Proveedor Eliminado');
     }, (error) => {

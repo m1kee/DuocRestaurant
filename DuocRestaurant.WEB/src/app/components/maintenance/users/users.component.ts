@@ -110,8 +110,8 @@ export class UsersComponent implements OnInit {
 
   delete(user: User) {
     this.loading = true;
-    this.userService.delete(user.Id).subscribe((deletedUser: User) => {
-      let cIndex = this.users.findIndex((c) => c.Id === deletedUser.Id);
+    this.userService.delete(user.Id).subscribe((deleted: boolean) => {
+      let cIndex = this.users.findIndex((c) => c.Id === user.Id);
       this.users.splice(cIndex, 1);
       this.toastrService.success('Se ha eliminado correctamente', 'Usuario Eliminado');
     }, (error) => {

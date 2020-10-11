@@ -9,6 +9,7 @@ import { BookingSearchComponent } from '@components/bookings/booking-search/book
 import { BookingsComponent } from '@components/bookings/booking/bookings.component';
 import { ProductComponent } from '@components/maintenance/product/product.component';
 import { ProviderComponent } from '@components/maintenance/provider/provider.component';
+import { RecipesComponent } from '@components/maintenance/recipes/recipes.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -20,6 +21,7 @@ const routes: Routes = [
   { path: 'users-maintenance', component: UsersComponent, canActivate: [AuthGuard] },
   { path: 'booking', component: BookingsComponent, canActivate: [AuthGuard] },
   { path: 'booking-search', component: BookingSearchComponent, canActivate: [AuthGuard] },
+  { path: 'recipe-maintenance', component: RecipesComponent, canActivate: [AuthGuard] },
   
   { path: '**', component: PageNotFoundComponent, canActivate: [AuthGuard] }
 ];

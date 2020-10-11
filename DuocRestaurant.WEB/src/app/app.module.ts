@@ -13,6 +13,13 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_ROUTING } from '@app/app.routing';
 
+// ngx-mask config
+import { NgxMaskModule, IConfig  } from 'ngx-mask';
+const maskConfig: Partial<IConfig> = {
+  showMaskTyped: true,
+  showTemplate: true
+};
+
 // components
 import { AppComponent } from './app.component';
 import { LoginComponent } from '@components/shared/login/login.component';
@@ -28,6 +35,7 @@ import { ProviderComponent } from './components/maintenance/provider/provider.co
 
 // validators
 import { PasswordValidatorDirective } from '@helpers/validations/password.validator';
+import { RecipesComponent } from './components/maintenance/recipes/recipes.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +50,8 @@ import { PasswordValidatorDirective } from '@helpers/validations/password.valida
     BookingSearchComponent,
     PasswordValidatorDirective,
     ProductComponent,
-    ProviderComponent
+    ProviderComponent,
+    RecipesComponent
   ],
   imports: [
     BrowserModule,
@@ -77,7 +86,8 @@ import { PasswordValidatorDirective } from '@helpers/validations/password.valida
       confirmButtonText: 'Si',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#dc3545'
-    })
+    }),
+    NgxMaskModule.forRoot(maskConfig)
   ],
   providers: [],
   bootstrap: [AppComponent]

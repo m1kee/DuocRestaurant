@@ -1,0 +1,193 @@
+<div class="row m-3">
+  <div class="col-12 col-lg-6 col-xl-6">
+    <h1>
+      Receta: {{ currentRecipe.Name }}
+    </h1>
+    <hr />
+    <form (ngSubmit)="save(recipeForm)" #recipeForm="ngForm">
+      <div class="row">
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-12">
+          <div class="form-group">
+            <label for="name">Nombre:</label>
+            <input name="name" #name="ngModel" [(ngModel)]="currentRecipe.Name" required type="text"
+              class="form-control" id="name" placeholder="Ingresa el nombre">
+            <small *ngIf="name.errors?.required" class="form-text text-muted">Campo requerido.</small>
+          </div>
+        </div>
+
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-12">
+          <div class="form-group">
+            <label for="price">Precio:</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">
+                  <fa-icon [icon]="icons.faDollarSign" [fixedWidth]="true"></fa-icon>
+                </span>
+              </div>
+              <input name="price" #price="ngModel" [(ngModel)]="currentRecipe.Price" required type="text"
+                class="form-control" [pattern]="numberPattern" id="price" placeholder="Ingresa el precio" />
+            </div>
+
+            <small *ngIf="price.errors?.required" class="form-text text-muted">Campo requerido.</small>
+            <small *ngIf="price.errors?.pattern" class="form-text text-muted">Solo se aceptan n&uacute;meros.</small>
+          </div>
+        </div>
+
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-12">
+          <div class="form-group">
+            <label for="preparationTime">Tiempo preparaci&oacute;n aprox.:</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">
+                  <fa-icon [icon]="icons.faClock" [fixedWidth]="true"></fa-icon>
+                </span>
+              </div>
+              <input name="preparationTime" #preparationTime="ngModel" [(ngModel)]="currentRecipe.PreparationTime"
+                required type="text" class="form-control" [pattern]="decimalPattern" id="preparationTime"
+                placeholder="Ingresa el tiempo estimado de preparaci&oacute;n" />
+            </div>
+
+            <small *ngIf="preparationTime.errors?.required" class="form-text text-muted">Campo requerido.</small>
+            <small *ngIf="preparationTime.errors?.pattern" class="form-text text-muted">Solo se aceptan
+              n&uacute;meros.</small>
+          </div>
+        </div>
+
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-12" *ngIf="currentRecipe.Id">
+          <div class="form-group">
+            <label for="image">Imagen:</label>
+            <input name="image" #image type="file" [(ngModel)]="selectedFile" class="form-control" id="image"
+              (change)="onFileChanged($event)" placeholder="Ingresa el nombre" accept="image/*" style="display: none;">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <button class="btn btn-outline-secondary" type="button" (click)="image.click()">Elige un
+                  archivo
+                </button>
+              </div>
+              <input type="text" value="{{getFileName(selectedFile)}}" class="form-control" readonly>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="details">Detalle:</label>
+            <textarea name="details" #details="ngModel" [(ngModel)]="currentRecipe.Details" type="text"
+              class="form-control" id="details" placeholder="Ingrese el detalle de la receta">
+            </textarea>
+          </div>
+        </div>
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <div class="row">
+            <div class="col-12 col-sm-6">
+              <h1> Ingredientes </h1>
+            </div>
+            <div class="col-12 col-sm-6 text-right">
+              <button type="button" class="btn btn-success" (click)="addRecipeDetail()">
+                <fa-icon [icon]="icons.faPlus" [fixedWidth]="true"></fa-icon>
+                Agregar Ingrediente
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <div class="row" *ngFor="let recipeDetail of currentRecipe.RecipeDetails; index as recipeDetailIndex">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
+                  <div class="form-group">
+                    <label for="product{{recipeDetailIndex}}">Producto:</label>
+                    <select required class="form-control" name="product{{recipeDetailIndex}}" #product="ngModel"
+                      [(ngModel)]="recipeDetail.ProductId">
+                      <option [ngValue]="null" [disabled]="true">Seleccione un producto</option>
+                      <option [ngValue]="product.Id" *ngFor="let product of getOnlyUnselectedProducts(recipeDetail)">
+                        {{ product.Name }}</option>
+                    </select>
+                    <small *ngIf="product.errors?.required" class="form-text text-muted">Campo requerido.</small>
+                  </div>
+                </div>
+                <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-4">
+                  <div class="form-group">
+                    <label for="count{{recipeDetailIndex}}">Cantidad:</label>
+                    <div class="input-group">
+                      <input name="count{{recipeDetailIndex}}" #count="ngModel" [(ngModel)]="recipeDetail.Count"
+                        required type="text" class="form-control" aria-describedby="count"
+                        [pattern]="decimalPattern" placeholder="Ingresa la cantidad requerida">
+                      <div class="input-group-append">
+                        <span class="input-group-text"
+                          id="count{{recipeDetailIndex}}">{{ getSelectedProductUnitOfMeasurement(recipeDetail.ProductId) }}</span>
+                      </div>
+                    </div>
+                    <small *ngIf="count.errors?.required" class="form-text text-muted">Campo requerido.</small>
+                    <small *ngIf="count.errors?.pattern" class="form-text text-muted">Solo se aceptan
+                      n&uacute;meros.</small>
+                  </div>
+                </div>
+                <div class="col-2 text-right">
+                  <div class="form-group">
+                    <label for="count"></label>
+                    <button (click)="deleteRecipeDetail(recipeDetail)" type="button" class="btn btn-danger"
+                      style="margin-top: 32px;">
+                      <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;"
+            [disabled]="!recipeForm.valid || recipeForm.pristine || loading">
+            <fa-icon [icon]="icons.faSave" [fixedWidth]="true"></fa-icon>&nbsp;
+            Guardar
+          </button>
+          <button (click)="cancel()" name="cancel-btn" type="button" class="btn btn-danger">
+            <fa-icon [icon]="icons.faTimes" [fixedWidth]="true"></fa-icon>&nbsp;
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-12 col-lg-6 col-xl-6">
+    <h1> Recetas </h1>
+    <hr />
+    <table class="table table-hover table-sm">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Precio</th>
+          <th scope="col">T. Preparaci&oacute;n</th>
+          <th scope="col">Acciones </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let recipe of recipes | paginate: paginationConfig; index as index">
+          <td>{{ index +1 }}</td>
+          <td>{{ recipe.Name }}</td>
+          <td>{{ recipe.Price | currency : 'USD' : 'symbol' : '1.0-0' }}</td>
+          <td>{{ recipe.PreparationTime }} min.</td>
+          <td>
+            <button (click)="edit(recipe, recipeForm)" type="button" class="btn btn-sm btn-default">
+              <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
+            </button>
+            <button [swal]="['Advertencia!', '¿Está seguro de querer eliminar la receta?', 'warning']"
+              (confirm)="delete(recipe)" type="button" class="btn btn-default btn-sm">
+              <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="pagination" class="text-center">
+      <pagination-controls (pageChange)="pageChanged($event)" previousLabel="Atrás" nextLabel="Siguiente"
+        autoHide="true" responsive="true">
+      </pagination-controls>
+    </div>
+  </div>
+</div>

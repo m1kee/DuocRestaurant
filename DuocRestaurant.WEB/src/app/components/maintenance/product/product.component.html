@@ -4,7 +4,7 @@
       Producto: {{ currentProduct.Name }}
     </h1>
     <hr />
-    <form (ngSubmit)="save(providerForm)" #providerForm="ngForm">
+    <form (ngSubmit)="save(productForm)" #productForm="ngForm">
       <div class="row">
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
           <div class="form-group">
@@ -110,7 +110,7 @@
       </div>
       <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;" [disabled]="!providerForm.valid || providerForm.pristine || loading">
+          <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;" [disabled]="!productForm.valid || productForm.pristine || loading">
             <fa-icon [icon]="icons.faSave" [fixedWidth]="true"></fa-icon>&nbsp;
             Guardar
           </button>
@@ -146,7 +146,7 @@
           <td>{{ product.Provider.Name }}</td>
           <td>{{ product.Price }}</td>
           <td>
-            <button (click)="edit(product, providerForm)" type="button" class="btn btn-sm btn-default" style="margin-right: 5px;">
+            <button (click)="edit(product, productForm)" type="button" class="btn btn-sm btn-default" style="margin-right: 5px;">
               <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
             </button>
             <button [swal]="['Advertencia!', '¿Está seguro de querer eliminar el proveedor?', 'warning']"

@@ -1,6 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
-import { HttpClient } from '@angular/common/http';
 import { Product } from '@domain/product';
 
 @Injectable({
@@ -30,5 +30,9 @@ export class ProductService {
 
   delete(id: number) {
     return this.httpClient.delete(`${this.controllerUrl}/${id}`);
+  }
+
+  filterBy(filters) {
+    return this.httpClient.post(`${this.controllerUrl}/FilterBy`, filters);
   }
 }

@@ -7,6 +7,7 @@ using Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 
 namespace DuocRestaurant.API.Controllers
 {
@@ -133,6 +134,40 @@ namespace DuocRestaurant.API.Controllers
             try
             {
                 result = Ok(this.productService.Delete(this.dbSettings, productId));
+            }
+            catch (Exception ex)
+            {
+                result = BadRequest(ex.Message);
+            }
+
+            return result;
+        }
+
+        [ActionName("FilterBy")]
+        [Route("[action]")]
+        public IActionResult FilterBy([FromBody] JObject filters)
+        {
+            IActionResult result;
+
+            try
+            {
+                var products = this.productService.Get(this.dbSettings);
+
+                if (filters.ContainsKey("Active"))
+                {
+                    bool active = Convert.ToBoolean(filters.GetValue("Active").ToString());
+
+                    products = products.Where(x => x.Active == active).ToList();
+                }
+
+                if (filters.ContainsKey("ProductTypeId"))
+                {
+                    int productTypeId = Convert.ToInt32(filters.GetValue("ProductTypeId").ToString());
+
+                    products = products.Where(x => x.ProductTypeId == productTypeId).ToList();
+                }
+
+                result = Ok(products.MapAll(this.dbSettings, true));
             }
             catch (Exception ex)
             {

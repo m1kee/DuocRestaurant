@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Routing.Constraints;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace DuocRestaurant.API
 {
@@ -37,6 +38,7 @@ namespace DuocRestaurant.API
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IProductTypeService, ProductTypeService>();
             services.AddScoped<IProviderService, ProviderService>();
+            services.AddScoped<IRecipeService, RecipeService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ITableService, TableService>();
             services.AddScoped<IUserService, UserService>();
@@ -46,6 +48,13 @@ namespace DuocRestaurant.API
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            });
+
+            services.Configure<FormOptions>(option =>
+            {
+                option.ValueLengthLimit = int.MaxValue;
+                option.MultipartBodyLengthLimit = int.MaxValue;
+                option.MemoryBufferThreshold = int.MaxValue;
             });
         }
 
