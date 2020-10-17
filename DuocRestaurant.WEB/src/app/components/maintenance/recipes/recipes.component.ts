@@ -4,9 +4,10 @@ import { ProductTypes } from '@app/domain/enums';
 import { Product } from '@app/domain/product';
 import { Recipe } from '@app/domain/recipe';
 import { RecipeDetail } from '@app/domain/recipe-detail';
+import { DECIMAL_REGEX, NUMBER_REGEX } from '@app/helpers/validations/common-regex';
 import { ProductService } from '@app/services/product.service';
 import { RecipeService } from '@app/services/recipe.service';
-import { faClock, faDollarSign, faEdit, faPlus, faSave, faTimes, faTrashAlt, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faClock, faDollarSign, faEdit, faPlus, faSave, faTimes, faTrashAlt, faUpload, faUndo } from '@fortawesome/free-solid-svg-icons';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -27,7 +28,8 @@ export class RecipesComponent implements OnInit {
     faPlus: faPlus,
     faUpload: faUpload,
     faClock: faClock,
-    faDollarSign: faDollarSign
+    faDollarSign: faDollarSign,
+    faUndo: faUndo
   };
 
   paginationConfig: any = {
@@ -39,19 +41,19 @@ export class RecipesComponent implements OnInit {
   selectedFile: any;
 
   loading: boolean = false;
-  numberPattern = "^[0-9]+$";
-  decimalPattern = "^\\d+(\\.\\d{1,3})?$";
+  numberPattern = NUMBER_REGEX;
+  decimalPattern = DECIMAL_REGEX;
 
   constructor(
     public recipeService: RecipeService,
     public productService: ProductService,
     private toastrService: ToastrService
-  ) { }
+  ) { };
 
   ngOnInit() {
     this.getRecipes();
     this.getProducts();
-  }
+  };
 
   getRecipes() {
     this.loading = true;
@@ -77,7 +79,7 @@ export class RecipesComponent implements OnInit {
     }, (error) => {
       this.loading = false;
     });
-  }
+  };
 
   save(form: NgForm) {
     this.loading = true;
@@ -148,9 +150,24 @@ export class RecipesComponent implements OnInit {
     this.currentRecipe = new Recipe();
   };
 
-  deleteRecipeDetail(recipeDetail: RecipeDetail) {
+  deleteRecipeDetail(recipeDetail: RecipeDetail, form: NgForm) {
     if (!recipeDetail)
       return;
+
+    if (recipeDetail.RecipeId) {
+      recipeDetail.Active = false;
+    }
+    else {
+      let index = this.currentRecipe.RecipeDetails.findIndex((c) => c.ProductId === recipeDetail.ProductId);
+      this.currentRecipe.RecipeDetails.splice(index, 1);
+    }
+  };
+
+  undoDeleteRecipeDetail(recipeDetail: RecipeDetail) {
+    if (!recipeDetail)
+      return;
+
+    recipeDetail.Active = true;
   }
 
   onFileChanged(event) {
@@ -181,7 +198,7 @@ export class RecipesComponent implements OnInit {
       return selectedFile.replace(/^.*[\\\/]/, '');
 
     return null;
-  }
+  };
 
   getSelectedProductUnitOfMeasurement(productId) {
     if (!productId || !this.products || this.products.length === 0)
@@ -190,7 +207,7 @@ export class RecipesComponent implements OnInit {
     let product = this.products.find(product => product.Id === productId);
     if (product)
       return product.MeasurementUnit.Code;
-  }
+  };
 
   addRecipeDetail() {
     if (!this.currentRecipe)
@@ -199,17 +216,17 @@ export class RecipesComponent implements OnInit {
     let defaultRecipeDetail = new RecipeDetail();
     if (!this.currentRecipe.RecipeDetails.find(x => x.RecipeId === defaultRecipeDetail.RecipeId && x.ProductId === defaultRecipeDetail.ProductId && x.Count === defaultRecipeDetail.Count))
       this.currentRecipe.RecipeDetails.push(defaultRecipeDetail);
-  }
+  };
 
   getFormControlName(text, index) {
     return `${text}${index}`;
-  }
+  };
 
   getOnlyUnselectedProducts(recipeDetail: RecipeDetail) {
     let unselectedProducts = this.products.filter(product => recipeDetail.ProductId === product.Id || !this.currentRecipe.RecipeDetails.find(rd => rd.ProductId === product.Id));
     // console.log('getOnlyUnselectedProducts: ', unselectedProducts);
     return unselectedProducts;
-  }
+  };
 
   pageChanged(event) {
     this.paginationConfig.currentPage = event;

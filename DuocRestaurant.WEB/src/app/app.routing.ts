@@ -10,6 +10,7 @@ import { BookingsComponent } from '@components/bookings/booking/bookings.compone
 import { ProductComponent } from '@components/maintenance/product/product.component';
 import { ProviderComponent } from '@components/maintenance/provider/provider.component';
 import { RecipesComponent } from '@components/maintenance/recipes/recipes.component';
+import { SupplyOrdersComponent } from './components/supply-orders/supply-orders.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -22,6 +23,7 @@ const routes: Routes = [
   { path: 'booking', component: BookingsComponent, canActivate: [AuthGuard] },
   { path: 'booking-search', component: BookingSearchComponent, canActivate: [AuthGuard] },
   { path: 'recipe-maintenance', component: RecipesComponent, canActivate: [AuthGuard] },
+  { path: 'supply-orders', component: SupplyOrdersComponent, canActivate: [AuthGuard] },
   
   { path: '**', component: PageNotFoundComponent, canActivate: [AuthGuard] }
 ];

@@ -10,6 +10,7 @@ import { Provider } from '@domain/provider';
 import { ProviderService } from '../../../services/provider.service';
 import { MeasurementUnitService } from '../../../services/measurement-unit.service';
 import { ProductTypeService } from '../../../services/product-type.service';
+import { NUMBER_REGEX } from '@app/helpers/validations/common-regex';
 
 @Component({
   selector: 'app-product',
@@ -37,7 +38,7 @@ export class ProductComponent implements OnInit {
   };
 
   loading: boolean = false;
-  numberPattern = "^[0-9]+$"; 
+  numberPattern = NUMBER_REGEX; 
 
   constructor(private toastrService: ToastrService,
     private productService: ProductService,

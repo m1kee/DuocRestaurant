@@ -167,6 +167,13 @@ namespace DuocRestaurant.API.Controllers
                     products = products.Where(x => x.ProductTypeId == productTypeId).ToList();
                 }
 
+                if (filters.ContainsKey("ProviderId"))
+                {
+                    int providerId = Convert.ToInt32(filters.GetValue("ProviderId").ToString());
+
+                    products = products.Where(x => x.ProviderId == providerId).ToList();
+                }
+
                 result = Ok(products.MapAll(this.dbSettings, true));
             }
             catch (Exception ex)

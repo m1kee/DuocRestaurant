@@ -98,10 +98,12 @@
                   <div class="form-group">
                     <label for="product{{recipeDetailIndex}}">Producto:</label>
                     <select required class="form-control" name="product{{recipeDetailIndex}}" #product="ngModel"
-                      [(ngModel)]="recipeDetail.ProductId">
+                            [disabled]="!recipeDetail.Active"
+                            [(ngModel)]="recipeDetail.ProductId">
                       <option [ngValue]="null" [disabled]="true">Seleccione un producto</option>
                       <option [ngValue]="product.Id" *ngFor="let product of getOnlyUnselectedProducts(recipeDetail)">
-                        {{ product.Name }}</option>
+                        {{ product.Name }}
+                      </option>
                     </select>
                     <small *ngIf="product.errors?.required" class="form-text text-muted">Campo requerido.</small>
                   </div>
@@ -111,24 +113,40 @@
                     <label for="count{{recipeDetailIndex}}">Cantidad:</label>
                     <div class="input-group">
                       <input name="count{{recipeDetailIndex}}" #count="ngModel" [(ngModel)]="recipeDetail.Count"
-                        required type="text" class="form-control" aria-describedby="count"
-                        [pattern]="decimalPattern" placeholder="Ingresa la cantidad requerida">
+                             required type="text" class="form-control" aria-describedby="count"
+                             [disabled]="!recipeDetail.Active"
+                             [pattern]="decimalPattern" placeholder="Ingresa la cantidad requerida">
                       <div class="input-group-append">
                         <span class="input-group-text"
-                          id="count{{recipeDetailIndex}}">{{ getSelectedProductUnitOfMeasurement(recipeDetail.ProductId) }}</span>
+                              id="count{{recipeDetailIndex}}">{{ getSelectedProductUnitOfMeasurement(recipeDetail.ProductId) }}</span>
                       </div>
                     </div>
-                    <small *ngIf="count.errors?.required" class="form-text text-muted">Campo requerido.</small>
-                    <small *ngIf="count.errors?.pattern" class="form-text text-muted">Solo se aceptan
-                      n&uacute;meros.</small>
+                    <small *ngIf="count.errors?.required" class="form-text text-muted">
+                      Campo requerido.
+                    </small>
+                    <small *ngIf="count.errors?.pattern" class="form-text text-muted">
+                      Solo se aceptan n&uacute;meros.
+                    </small>
                   </div>
                 </div>
                 <div class="col-2 text-right">
                   <div class="form-group">
                     <label for="count"></label>
-                    <button (click)="deleteRecipeDetail(recipeDetail)" type="button" class="btn btn-danger"
-                      style="margin-top: 32px;">
+                    <button (click)="deleteRecipeDetail(recipeDetail, recipeForm)"
+                            *ngIf="recipeDetail.Active"
+                            title="Eliminar ingrediente"
+                            type="button"
+                            class="btn btn-danger"
+                            style="margin-top: 32px;">
                       <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
+                    </button>
+                    <button (click)="undoDeleteRecipeDetail(recipeDetail)"
+                            *ngIf="!recipeDetail.Active"
+                            title="Deshacer"
+                            type="button"
+                            class="btn btn-secondary"
+                            style="margin-top: 32px;">
+                      <fa-icon [icon]="icons.faUndo" [fixedWidth]="true"></fa-icon>
                     </button>
                   </div>
                 </div>
@@ -141,7 +159,7 @@
       <div class="row pt-3">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
           <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;"
-            [disabled]="!recipeForm.valid || recipeForm.pristine || loading">
+            [disabled]="!recipeForm.valid || loading">
             <fa-icon [icon]="icons.faSave" [fixedWidth]="true"></fa-icon>&nbsp;
             Guardar
           </button>

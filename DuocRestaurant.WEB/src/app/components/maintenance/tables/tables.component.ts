@@ -4,6 +4,7 @@ import { NgForm } from '@angular/forms';
 import { faSave, faTimes, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { TableService } from "@services/table.service";
 import { Table } from '@domain/table';
+import { NUMBER_REGEX } from '@app/helpers/validations/common-regex';
 
 @Component({
   selector: 'app-tables',
@@ -28,7 +29,7 @@ export class TablesComponent implements OnInit {
   };
 
   loading: boolean = false;
-  numberPattern = "^[0-9]+$"; 
+  numberPattern = NUMBER_REGEX; 
 
   constructor(private toastrService: ToastrService,
     private tableService: TableService

@@ -1,0 +1,137 @@
+<div class="row m-3">
+  <div class="col-12 col-lg-6 col-xl-6">
+    <h1>
+      Orden de compra: {{ currentOrder.Name }}
+    </h1>
+    <hr />
+    <form (ngSubmit)="save(recipeForm)" #recipeForm="ngForm">
+      <div class="row">
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-12">
+          <div class="form-group">
+            <label for="provider">Proveedor:</label>
+            <select required
+                    class="form-control"
+                    name="provider"
+                    (change)="getProducts()"
+                    #provider="ngModel"
+                    [(ngModel)]="currentOrder.ProviderId">
+              <option [ngValue]="null" [disabled]="true">Seleccione proveedor</option>
+              <option [ngValue]="provider.Id" *ngFor="let provider of providers">{{ provider.Name }}</option>
+            </select>
+            <small *ngIf="provider.errors?.required" class="form-text text-muted">Campo requerido.</small>
+          </div>
+        </div>
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <div class="row">
+            <div class="col-12 col-sm-6">
+              <h1> Productos </h1>
+            </div>
+            <div class="col-12 col-sm-6 text-right">
+              <button type="button" class="btn btn-success" (click)="addSupplyOrderDetail()">
+                <fa-icon [icon]="icons.faPlus" [fixedWidth]="true"></fa-icon>
+                Agregar producto
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <div class="row" *ngFor="let supplyOrderDetail of currentOrder.SupplyOrderDetails; index as supplyOrderDetailIndex">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
+                  <div class="form-group">
+                    <label for="product{{supplyOrderDetailIndex}}">Producto:</label>
+                    <select required class="form-control" name="product{{supplyOrderDetailIndex}}" #product="ngModel"
+                      [(ngModel)]="supplyOrderDetail.ProductId">
+                      <option [ngValue]="null" [disabled]="true">Seleccione un producto</option>
+                      <option [ngValue]="product.Id" *ngFor="let product of getOnlyUnselectedProducts(supplyOrderDetail)">
+                        {{ product.Name }}</option>
+                    </select>
+                    <small *ngIf="product.errors?.required" class="form-text text-muted">Campo requerido.</small>
+                  </div>
+                </div>
+                <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-4">
+                  <div class="form-group">
+                    <label for="count{{supplyOrderDetailIndex}}">Cantidad:</label>
+                    <div class="input-group">
+                      <input name="count{{supplyOrderDetailIndex}}" #count="ngModel" [(ngModel)]="supplyOrderDetail.Count"
+                        required type="text" class="form-control" aria-describedby="count"
+                        [pattern]="decimalPattern" placeholder="Ingresa la cantidad requerida">
+                      <div class="input-group-append">
+                        <span class="input-group-text"
+                          id="count{{supplyOrderDetailIndex}}">{{ getSelectedProductUnitOfMeasurement(supplyOrderDetail.ProductId) }}</span>
+                      </div>
+                    </div>
+                    <small *ngIf="count.errors?.required" class="form-text text-muted">Campo requerido.</small>
+                    <small *ngIf="count.errors?.pattern" class="form-text text-muted">Solo se aceptan
+                      n&uacute;meros.</small>
+                  </div>
+                </div>
+                <div class="col-2 text-right">
+                  <div class="form-group">
+                    <label for="count"></label>
+                    <button (click)="deleteSupplyOrderDetail(supplyOrderDetail)" type="button" class="btn btn-danger"
+                      style="margin-top: 32px;">
+                      <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;"
+            [disabled]="!recipeForm.valid || recipeForm.pristine || loading">
+            <fa-icon [icon]="icons.faSave" [fixedWidth]="true"></fa-icon>&nbsp;
+            Guardar
+          </button>
+          <button (click)="cancel()" name="cancel-btn" type="button" class="btn btn-danger">
+            <fa-icon [icon]="icons.faTimes" [fixedWidth]="true"></fa-icon>&nbsp;
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-12 col-lg-6 col-xl-6">
+    <h1> Órdenes </h1>
+    <hr />
+    <table class="table table-hover table-sm">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Proveedor</th>
+          <th scope="col">C. Productos</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Acciones </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let supplyOrder of supplyOrders | paginate: paginationConfig; index as index">
+          <td>{{ index + 1 }}</td>
+          <td>{{ supplyOrder.Provider.Name }}</td>
+          <td>{{ supplyOrder.SupplyOrderDetails.length }}</td>
+          <td>{{ supplyOrder.State.Name }}</td>
+          <td>
+            <button (click)="edit(supplyOrder, recipeForm)" type="button" class="btn btn-sm btn-default">
+              <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
+            </button>
+            <button [swal]="['Advertencia!', '¿Está seguro de querer eliminar la orden?', 'warning']"
+              (confirm)="delete(supplyOrder)" type="button" class="btn btn-default btn-sm">
+              <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="pagination" class="text-center">
+      <pagination-controls (pageChange)="pageChanged($event)" previousLabel="Atrás" nextLabel="Siguiente"
+        autoHide="true" responsive="true">
+      </pagination-controls>
+    </div>
+  </div>
+</div>
