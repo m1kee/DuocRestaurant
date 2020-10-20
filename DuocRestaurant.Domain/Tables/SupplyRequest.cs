@@ -14,6 +14,7 @@ namespace Domain
         public int StateId { get; set; }
         public bool Active { get; set; }
 
+        public SupplyRequestState State { get; set; }
         public Provider Provider { get; set; }
         public List<SupplyRequestDetail> SupplyRequestDetails { get; set; }
 
@@ -37,6 +38,8 @@ namespace Domain
                     result.Provider = this.Provider.Map(ctx, true);
                 if (this.SupplyRequestDetails != null)
                     result.SupplyRequestDetails = this.SupplyRequestDetails.MapAll(ctx, true);
+                if (this.State != null)
+                    result.State = this.State.Map(ctx, false);
             }
 
             return result;

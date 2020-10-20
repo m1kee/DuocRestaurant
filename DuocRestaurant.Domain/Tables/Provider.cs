@@ -13,6 +13,7 @@ namespace Domain
         public string Email { get; set; }
         public bool Active { get; set; }
 
+        public const string TableName = "Proveedor";
         public struct ColumnNames
         {
             public const string Id = "Id";

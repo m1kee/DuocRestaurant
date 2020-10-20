@@ -31,6 +31,10 @@ const routes: Routes = [
                 loadChildren: () => import('../availability/availability.module').then(m => m.AvailabilityPageModule)
             },
             {
+                path: 'supply-order-reception',
+                loadChildren: () => import('../supply-order-reception/supply-order-reception.module').then(m => m.SupplyOrderReceptionPageModule)
+            },
+            {
                 path: '**',
                 loadChildren: () => import('../welcome/welcome.module').then(m => m.WelcomePageModule)
             }

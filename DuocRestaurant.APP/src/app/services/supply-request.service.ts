@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SupplyOrder } from '@app/domain/supply-order';
+import { SupplyRequest } from '@app/domain/supply-request';
 import { environment } from '@env/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SuppliesOrderService {
+export class SupplyRequestService {
   private env = environment;
   private controllerName: string = 'SupplyRequest';
   private controllerUrl: string = `${this.env.apiUrl}/${this.controllerName}`;
@@ -20,13 +20,17 @@ export class SuppliesOrderService {
     return this.httpClient.get(`${this.controllerUrl}/GetById/${id}`);
   }
 
-  post(supplyOrder: SupplyOrder) {
-    return this.httpClient.post(`${this.controllerUrl}`, supplyOrder);
+  getByCode(code: string) {
+    return this.httpClient.get(`${this.controllerUrl}/GetByCode/${code}`);
+  }
+
+  post(supplyRequest: SupplyRequest) {
+    return this.httpClient.post(`${this.controllerUrl}`, supplyRequest);
   }
 
   
-  put(id: number, supplyOrder: SupplyOrder) {
-    return this.httpClient.put(`${this.controllerUrl}/${id}`, supplyOrder);
+  put(id: number, supplyRequest: SupplyRequest) {
+    return this.httpClient.put(`${this.controllerUrl}/${id}`, supplyRequest);
   }
 
   delete(id: number) {

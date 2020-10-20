@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Orden de compra</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #form="ngForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label> C&oacute;digo Orden: </ion-label>
+            <ion-input type="number" pattern="^[0-9]+$" required name="code" [(ngModel)]="code">
+            </ion-input>
+          </ion-item>
+          <br>
+          <ion-button color="primary" expand="block" (click)="searchSupplyOrder(code)" [disabled]="form.invalid">Buscar
+            orden</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>{{ supplyRequest.Provider.Name }}</ion-label>
+      <ion-label>{{ supplyRequest.Date | date:'dd/MM/yyyy HH:mm:ss' }}</ion-label>
+    </ion-list-header>
+
+    <ion-item-sliding *ngFor="let supplyRequestDetail of supplyRequest.SupplyRequestDetails">
+      <ion-item>
+        <ion-badge slot="start" color="primary">
+          {{supplyRequestDetail.Count}} {{supplyRequestDetail.MeasurementUnit.Code}}
+        </ion-badge>
+
+        <ion-label>
+          <h2><b>{{ supplyRequestDetail.Product.Name }}</b></h2>
+          <h3>{{ supplyRequestDetail.Product.Detail }}</h3>
+        </ion-label>
+        
+        <ion-checkbox slot="end" [(ngModel)]="supplyRequestDetail.isChecked"></ion-checkbox>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+
+  <ion-button color="primary" expand="block" (click)="completeSupplyRequest()">Buscar
+    Recibir orden
+  </ion-button>
+</ion-content>
