@@ -67,6 +67,9 @@ namespace DuocRestaurant.API.Controllers
             {
                 var supplyRequest = this.supplyRequestService.Get(this.dbSettings, supplyRequestId);
 
+                if (supplyRequest == null)
+                    throw new Exception($"No se encontró la orden de compra con el Id: {supplyRequestId}");
+
                 if (supplyRequest.SupplyRequestDetails != null)
                 {
                     var products = this.productService.Get(this.dbSettings).Where(x => x.Active).ToList();
@@ -75,6 +78,29 @@ namespace DuocRestaurant.API.Controllers
                         supplyRequestDetail.Product = products.FirstOrDefault(x => x.Id == supplyRequestDetail.ProductId);
                     }
                 }
+
+                result = Ok(supplyRequest.Map(this.dbSettings, true));
+            }
+            catch (Exception ex)
+            {
+                result = BadRequest(ex.Message);
+            }
+
+            return result;
+        }
+
+        [HttpGet]
+        [ActionName("GetById")]
+        [Route("[action]/{id:string}")]
+        public IActionResult Get([FromRoute(Name = "id")] string supplyRequestCode)
+        {
+            IActionResult result;
+
+            try
+            {
+                var supplyRequest = this.supplyRequestService.GetByCode(this.dbSettings, supplyRequestCode);
+                if (supplyRequest == null)
+                    throw new Exception($"No se encontró una orden de compra activa con el código: {supplyRequestCode}");
 
                 result = Ok(supplyRequest.Map(this.dbSettings, true));
             }

@@ -9,6 +9,7 @@ namespace Domain
     public class SupplyRequest : RestaurantTable
     {
         public int Id { get; set; }
+        public string Code { get; set; }
         public int ProviderId { get; set; }
         public DateTime CreationDate { get; set; }
         public int StateId { get; set; }
@@ -45,6 +46,7 @@ namespace Domain
         public struct ColumnNames
         {
             public const string Id = "Id";
+            public const string Code = "Code";
             public const string ProviderId = "ProveedorId";
             public const string StateId = "EstadoPedidoId";
             public const string Active = "Activo";

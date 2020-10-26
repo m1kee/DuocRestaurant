@@ -18,12 +18,16 @@ namespace Business.Services
                 conn.Open();
                 OracleTransaction transaction = conn.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
 
+                supplyRequest.Code = $"{supplyRequest.ProviderId}{supplyRequest.CreationDate:yyMMddHHmmss}";
+
                 string query = $"INSERT INTO {SupplyRequest.TableName} (" +
+                    $"{SupplyRequest.ColumnNames.Code}, " +
                     $"{SupplyRequest.ColumnNames.ProviderId}, " +
                     $"{SupplyRequest.ColumnNames.StateId}, " +
                     $"{SupplyRequest.ColumnNames.Active} " +
                     $") VALUES (" +
-                    $"'{supplyRequest.ProviderId}', " +
+                    $"'{supplyRequest.Code}', " +
+                    $"{supplyRequest.ProviderId}, " +
                     $"{supplyRequest.StateId}, " +
                     $"{1} " +
                     $") RETURNING {SupplyRequest.ColumnNames.Id} INTO :{SupplyRequest.ColumnNames.Id}";
@@ -289,19 +293,20 @@ namespace Business.Services
                 {
                     SupplyRequest supplyRequest = new SupplyRequest()
                     {
-                        Id = Convert.ToInt32($"sr.{reader[SupplyRequest.ColumnNames.Id]}"),
-                        ProviderId = Convert.ToInt32($"sr.{reader[SupplyRequest.ColumnNames.ProviderId]}"),
-                        StateId = Convert.ToInt32($"sr.{reader[SupplyRequest.ColumnNames.StateId]}"),
-                        Active = Convert.ToBoolean(Convert.ToInt16($"sr.{reader[SupplyRequest.ColumnNames.Active].ToString()}")),
+                        Id = Convert.ToInt32(reader[$"sr.{SupplyRequest.ColumnNames.Id}"]),
+                        Code = reader[$"sr.{SupplyRequest.ColumnNames.Code}"]?.ToString(),
+                        ProviderId = Convert.ToInt32(reader[$"sr.{SupplyRequest.ColumnNames.ProviderId}"]),
+                        StateId = Convert.ToInt32(reader[$"sr.{SupplyRequest.ColumnNames.StateId}"]),
+                        Active = Convert.ToBoolean(Convert.ToInt16(reader[$"sr.{SupplyRequest.ColumnNames.Active}"].ToString())),
 
                         Provider = new Provider()
                         {
-                            Id = Convert.ToInt32($"p.{reader[Provider.ColumnNames.Id]}"),
-                            Email = reader[$"p.{reader[Provider.ColumnNames.Email]}"]?.ToString(),
-                            Name = reader[$"p.{reader[Provider.ColumnNames.Name]}"]?.ToString(),
-                            Address = reader[$"p.{reader[Provider.ColumnNames.Address]}"]?.ToString(),
-                            Phone = reader[$"p.{reader[Provider.ColumnNames.Phone]}"]?.ToString(),
-                            Active = Convert.ToBoolean(Convert.ToInt16(reader[$"p.{reader[Provider.ColumnNames.Active]}"].ToString()))
+                            Id = Convert.ToInt32(reader[$"p.{Provider.ColumnNames.Id}"]),
+                            Email = reader[$"p.{Provider.ColumnNames.Email}"]?.ToString(),
+                            Name = reader[$"p.{Provider.ColumnNames.Name}"]?.ToString(),
+                            Address = reader[$"p.{Provider.ColumnNames.Address}"]?.ToString(),
+                            Phone = reader[$"p.{Provider.ColumnNames.Phone}"]?.ToString(),
+                            Active = Convert.ToBoolean(Convert.ToInt16(reader[$"p.{Provider.ColumnNames.Active}"].ToString()))
                         }
                     };
 
@@ -387,7 +392,7 @@ namespace Business.Services
 
         public SupplyRequest Get(RestaurantDatabaseSettings ctx, int supplyRequestId)
         {
-            SupplyRequest result = new SupplyRequest();
+            SupplyRequest result = null;
 
             using (OracleConnection conn = new OracleConnection(ctx.ConnectionString))
             {
@@ -413,19 +418,20 @@ namespace Business.Services
                 {
                     result = new SupplyRequest()
                     {
-                        Id = Convert.ToInt32($"sr.{reader[SupplyRequest.ColumnNames.Id]}"),
-                        ProviderId = Convert.ToInt32($"sr.{reader[SupplyRequest.ColumnNames.ProviderId]}"),
-                        StateId = Convert.ToInt32($"sr.{reader[SupplyRequest.ColumnNames.StateId]}"),
-                        Active = Convert.ToBoolean(Convert.ToInt16($"sr.{reader[SupplyRequest.ColumnNames.Active].ToString()}")),
+                        Id = Convert.ToInt32(reader[$"sr.{SupplyRequest.ColumnNames.Id}"]),
+                        Code = reader[$"sr.{SupplyRequest.ColumnNames.Code}"]?.ToString(),
+                        ProviderId = Convert.ToInt32(reader[$"sr.{SupplyRequest.ColumnNames.ProviderId}"]),
+                        StateId = Convert.ToInt32(reader[$"sr.{SupplyRequest.ColumnNames.StateId}"]),
+                        Active = Convert.ToBoolean(Convert.ToInt16(reader[$"sr.{SupplyRequest.ColumnNames.Active}"].ToString())),
 
                         Provider = new Provider()
                         {
-                            Id = Convert.ToInt32($"p.{reader[Provider.ColumnNames.Id]}"),
-                            Email = reader[$"p.{reader[Provider.ColumnNames.Email]}"]?.ToString(),
-                            Name = reader[$"p.{reader[Provider.ColumnNames.Name]}"]?.ToString(),
-                            Address = reader[$"p.{reader[Provider.ColumnNames.Address]}"]?.ToString(),
-                            Phone = reader[$"p.{reader[Provider.ColumnNames.Phone]}"]?.ToString(),
-                            Active = Convert.ToBoolean(Convert.ToInt16(reader[$"p.{reader[Provider.ColumnNames.Active]}"].ToString()))
+                            Id = Convert.ToInt32(reader[$"p.{Provider.ColumnNames.Id}"]),
+                            Email = reader[$"p.{Provider.ColumnNames.Email}"]?.ToString(),
+                            Name = reader[$"p.{Provider.ColumnNames.Name}"]?.ToString(),
+                            Address = reader[$"p.{Provider.ColumnNames.Address}"]?.ToString(),
+                            Phone = reader[$"p.{Provider.ColumnNames.Phone}"]?.ToString(),
+                            Active = Convert.ToBoolean(Convert.ToInt16(reader[$"p.{Provider.ColumnNames.Active}"].ToString()))
                         }
                     };
 
@@ -465,6 +471,61 @@ namespace Business.Services
                         Count = Convert.ToDecimal(reader[SupplyRequestDetail.ColumnNames.Count]),
                         Active = Convert.ToBoolean(Convert.ToInt16(reader[SupplyRequestDetail.ColumnNames.Active].ToString()))
                     };
+                }
+
+                reader.Dispose();
+            }
+
+            return result;
+        }
+
+        public SupplyRequest GetByCode(RestaurantDatabaseSettings ctx, string supplyRequestCode)
+        {
+            SupplyRequest result = null;
+
+            using (OracleConnection conn = new OracleConnection(ctx.ConnectionString))
+            {
+                string query = $"SELECT " +
+                    $"sr.{SupplyRequest.ColumnNames.Id}, " +
+                    $"sr.{SupplyRequest.ColumnNames.Code}, " +
+                    $"sr.{SupplyRequest.ColumnNames.ProviderId}, " +
+                    $"sr.{SupplyRequest.ColumnNames.StateId}, " +
+                    $"sr.{SupplyRequest.ColumnNames.Active}, " +
+                    $"p.{Provider.ColumnNames.Id}, " +
+                    $"p.{Provider.ColumnNames.Name}, " +
+                    $"p.{Provider.ColumnNames.Email}, " +
+                    $"p.{Provider.ColumnNames.Phone}, " +
+                    $"p.{Provider.ColumnNames.Address}, " +
+                    $"p.{Provider.ColumnNames.Active} " +
+                    $"FROM {SupplyRequest.TableName} sr " +
+                    $"JOIN {Provider.TableName} p on p.{Provider.ColumnNames.Id} = {SupplyRequest.ColumnNames.ProviderId}" +
+                    $"WHERE {SupplyRequest.ColumnNames.Code} = '{supplyRequestCode}'";
+                OracleCommand cmd = new OracleCommand(query, conn);
+                conn.Open();
+
+                OracleDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    result = new SupplyRequest()
+                    {
+                        Id = Convert.ToInt32(reader[$"sr.{SupplyRequest.ColumnNames.Id}"]),
+                        Code = reader[$"sr.{SupplyRequest.ColumnNames.Code}"]?.ToString(),
+                        ProviderId = Convert.ToInt32(reader[$"sr.{SupplyRequest.ColumnNames.ProviderId}"]),
+                        StateId = Convert.ToInt32(reader[$"sr.{SupplyRequest.ColumnNames.StateId}"]),
+                        Active = Convert.ToBoolean(Convert.ToInt16(reader[$"sr.{SupplyRequest.ColumnNames.Active}"].ToString())),
+
+                        Provider = new Provider()
+                        {
+                            Id = Convert.ToInt32(reader[$"p.{Provider.ColumnNames.Id}"]),
+                            Email = reader[$"p.{Provider.ColumnNames.Email}"]?.ToString(),
+                            Name = reader[$"p.{Provider.ColumnNames.Name}"]?.ToString(),
+                            Address = reader[$"p.{Provider.ColumnNames.Address}"]?.ToString(),
+                            Phone = reader[$"p.{Provider.ColumnNames.Phone}"]?.ToString(),
+                            Active = Convert.ToBoolean(Convert.ToInt16(reader[$"p.{Provider.ColumnNames.Active}"].ToString()))
+                        }
+                    };
+
+                    result.SupplyRequestDetails = this.Get(conn, result).ToList();
                 }
 
                 reader.Dispose();

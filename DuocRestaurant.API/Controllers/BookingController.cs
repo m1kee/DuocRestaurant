@@ -69,9 +69,9 @@ namespace DuocRestaurant.API.Controllers
             return result;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [ActionName("GetByCode")]
-        [Route("[action]/{id:int}")]
+        [Route("[action]/{id:string}")]
         public IActionResult GetByCode([FromRoute(Name = "id")] string bookingCode)
         {
             IActionResult result;

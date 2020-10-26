@@ -20,10 +20,13 @@ export class SupplyRequestService {
     return this.httpClient.get(`${this.controllerUrl}/GetById/${id}`);
   }
 
+  getByCode(code: string) {
+    return this.httpClient.get(`${this.controllerUrl}/GetByCode/${code}`);
+  }
+
   post(supplyOrder: SupplyRequest) {
     return this.httpClient.post(`${this.controllerUrl}`, supplyOrder);
   }
-
   
   put(id: number, supplyOrder: SupplyRequest) {
     return this.httpClient.put(`${this.controllerUrl}/${id}`, supplyOrder);

@@ -13,6 +13,7 @@ namespace Business.Services
         IList<SupplyRequest> Get(RestaurantDatabaseSettings ctx);
         IList<SupplyRequestDetail> Get(RestaurantDatabaseSettings ctx, SupplyRequest supplyRequest);
         SupplyRequest Get(RestaurantDatabaseSettings ctx, int supplyRequestId);
+        SupplyRequest GetByCode(RestaurantDatabaseSettings ctx, string supplyRequestCode);
         bool Delete(RestaurantDatabaseSettings ctx, int supplyRequestId);
         bool Delete(RestaurantDatabaseSettings ctx, SupplyRequestDetail supplyRequestDetail);
     }

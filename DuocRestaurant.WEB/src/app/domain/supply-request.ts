@@ -5,6 +5,7 @@ import { SupplyRequestState } from './supply-request-state';
 
 export class SupplyRequest {
     Id: number;
+    Code: string;
     ProviderId: number;
     StateId: number;
     CreationDate: Date;
