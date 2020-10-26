@@ -2,16 +2,16 @@
 
 DROP TABLE DetalleReceta;
 DROP TABLE Receta;
-DROP TABLE Producto;
-DROP TABLE TipoProducto;
 DROP TABLE Reserva;
-DROP TABLE UnidadMedida;
 DROP TABLE Mesa;
 DROP TABLE Usuario;
 DROP TABLE Rol;
 DROP TABLE DetallePedidoInsumo;
 DROP TABLE PedidoInsumo;
 DROP TABLE EstadoPedidoInsumo;
+DROP TABLE Producto;
+DROP TABLE TipoProducto;
+DROP TABLE UnidadMedida;
 DROP TABLE Proveedor;
 
 -- SCHEMA CREATION
