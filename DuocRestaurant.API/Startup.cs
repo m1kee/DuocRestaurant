@@ -40,6 +40,7 @@ namespace DuocRestaurant.API
             services.AddScoped<IProviderService, ProviderService>();
             services.AddScoped<IRecipeService, RecipeService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<ISupplyRequestService, SupplyRequestService>();
             services.AddScoped<ITableService, TableService>();
             services.AddScoped<IUserService, UserService>();
 

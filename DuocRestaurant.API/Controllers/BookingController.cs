@@ -72,7 +72,7 @@ namespace DuocRestaurant.API.Controllers
         [HttpGet("{id}")]
         [ActionName("GetByCode")]
         [Route("[action]/{id:int}")]
-        public IActionResult GetByCode([FromRoute(Name = "id")] int bookingCode)
+        public IActionResult GetByCode([FromRoute(Name = "id")] string bookingCode)
         {
             IActionResult result;
 
@@ -82,7 +82,7 @@ namespace DuocRestaurant.API.Controllers
                 if (booking == null)
                     throw new Exception($"No se encontró una reserva activa con el código: {bookingCode}");
 
-                if (booking.State == Booking.BookingState.Expired)
+                if (booking.State == Enums.BookingState.Expired)
                 {
                     throw new Exception($"La reserva ha caducado ya que han pasado más de 15 minutos.");
                 } 

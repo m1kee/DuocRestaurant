@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Recepci&oacute;n</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-list-header>
+      <ion-label>{{ supplyRequest.Provider.Name }}</ion-label>
+      <ion-label>{{ supplyRequest.Date | date:'dd/MM/yyyy HH:mm:ss' }}</ion-label>
+    </ion-list-header>
+
+    <ion-item-sliding *ngFor="let supplyRequestDetail of supplyRequest.SupplyRequestDetails">
+      <ion-item>
+        <ion-badge slot="start" color="primary">
+          {{supplyRequestDetail.Count}} {{supplyRequestDetail.MeasurementUnit.Code}}
+        </ion-badge>
+
+        <ion-label>
+          <h2><b>{{ supplyRequestDetail.Product.Name }}</b></h2>
+          <h3>{{ supplyRequestDetail.Product.Detail }}</h3>
+        </ion-label>
+        
+        <ion-checkbox slot="end" [(ngModel)]="supplyRequestDetail.isChecked"></ion-checkbox>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+
+  <ion-button color="primary" expand="block" (click)="completeSupplyRequest()">
+    Confirmar recepci&oacute;n
+  </ion-button>
+</ion-content>

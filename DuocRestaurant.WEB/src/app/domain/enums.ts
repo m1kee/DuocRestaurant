@@ -11,3 +11,16 @@ export enum ProductTypes {
   Supply = 1,
   Consumable = 2
 }
+
+export enum SupplyRequestStates {
+  NotAssigned = 0,
+  Created = 1,
+  Confirmed = 2,
+  Rejected = 3
+}
+
+export enum BookingState {
+  Active = 1,
+  Canceled = 2,
+  Expired = 3
+}

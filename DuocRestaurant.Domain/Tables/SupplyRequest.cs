@@ -15,6 +15,28 @@ namespace Domain
         public bool Active { get; set; }
 
         public SupplyRequestState State { get; set; }
+        public Enums.SupplyRequestState StateEnum
+        {
+            get
+            {
+                var result = Enums.SupplyRequestState.NotAssigned;
+
+                switch (StateId)
+                {
+                    case (int)Enums.SupplyRequestState.Confirmed:
+                        result = Enums.SupplyRequestState.Confirmed;
+                        break;
+                    case (int)Enums.SupplyRequestState.Created:
+                        result = Enums.SupplyRequestState.Created;
+                        break;
+                    case (int)Enums.SupplyRequestState.Rejected:
+                        result = Enums.SupplyRequestState.Rejected;
+                        break;
+                }
+
+                return result;
+            }
+        }
         public Provider Provider { get; set; }
         public List<SupplyRequestDetail> SupplyRequestDetails { get; set; }
 
@@ -40,6 +62,8 @@ namespace Domain
                     result.SupplyRequestDetails = this.SupplyRequestDetails.MapAll(ctx, true);
                 if (this.State != null)
                     result.State = this.State.Map(ctx, false);
+
+                result.StateEnum = this.StateEnum;
             }
 
             return result;

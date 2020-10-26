@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { SupplyOrderReceptionPage } from './supply-order-reception.page';
+import { ConfirmReceptionModalPage } from './confirm-reception-modal.page';
 
-describe('SupplyOrderReceptionPage', () => {
-  let component: SupplyOrderReceptionPage;
-  let fixture: ComponentFixture<SupplyOrderReceptionPage>;
+describe('ConfirmReceptionModalPage', () => {
+  let component: ConfirmReceptionModalPage;
+  let fixture: ComponentFixture<ConfirmReceptionModalPage>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SupplyOrderReceptionPage ],
+      declarations: [ ConfirmReceptionModalPage ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SupplyOrderReceptionPage);
+    fixture = TestBed.createComponent(ConfirmReceptionModalPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

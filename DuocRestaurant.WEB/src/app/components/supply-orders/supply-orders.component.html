@@ -4,7 +4,7 @@
       Orden de compra: {{ currentOrder.Name }}
     </h1>
     <hr />
-    <form (ngSubmit)="save(recipeForm)" #recipeForm="ngForm">
+    <form (ngSubmit)="save(form)" #form="ngForm">
       <div class="row">
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-12">
           <div class="form-group">
@@ -85,7 +85,7 @@
       <div class="row pt-3">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
           <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;"
-            [disabled]="!recipeForm.valid || recipeForm.pristine || loading">
+            [disabled]="!form.valid || form.pristine || loading">
             <fa-icon [icon]="icons.faSave" [fixedWidth]="true"></fa-icon>&nbsp;
             Guardar
           </button>
@@ -105,23 +105,24 @@
         <tr>
           <th scope="col">#</th>
           <th scope="col">Proveedor</th>
-          <th scope="col">C. Productos</th>
+          <th scope="col">Fecha</th>
           <th scope="col">Estado</th>
           <th scope="col">Acciones </th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let supplyOrder of supplyOrders | paginate: paginationConfig; index as index">
+        <tr *ngFor="let supplyRequest of supplyRequests | paginate: paginationConfig; index as index">
           <td>{{ index + 1 }}</td>
-          <td>{{ supplyOrder.Provider.Name }}</td>
-          <td>{{ supplyOrder.SupplyOrderDetails.length }}</td>
-          <td>{{ supplyOrder.State.Name }}</td>
+          <td>{{ supplyRequest.Provider.Name }}</td>
+          <td>{{ supplyRequest.CreationDate | date }}</td>
+          <td>{{ supplyRequest.State.Name }}</td>
           <td>
-            <button (click)="edit(supplyOrder, recipeForm)" type="button" class="btn btn-sm btn-default">
+            <button (click)="edit(supplyRequest, form)" type="button" class="btn btn-sm btn-default">
               <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
             </button>
-            <button [swal]="['Advertencia!', '¿Está seguro de querer eliminar la orden?', 'warning']"
-              (confirm)="delete(supplyOrder)" type="button" class="btn btn-default btn-sm">
+            <button *ngIf="supplyRequest.StateEnum == supplyRequestStates.Confirmed"
+              [swal]="['Advertencia!', '¿Está seguro de querer eliminar la orden?', 'warning']"
+              (confirm)="delete(supplyRequest)" type="button" class="btn btn-default btn-sm">
               <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
             </button>
           </td>

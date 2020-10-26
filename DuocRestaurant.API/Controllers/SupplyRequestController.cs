@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Business.Services;
 using Domain;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -62,13 +59,13 @@ namespace DuocRestaurant.API.Controllers
         [HttpGet]
         [ActionName("GetById")]
         [Route("[action]/{id:int}")]
-        public IActionResult Get([FromRoute(Name = "id")] int recipeId)
+        public IActionResult Get([FromRoute(Name = "id")] int supplyRequestId)
         {
             IActionResult result;
 
             try
             {
-                var supplyRequest = this.supplyRequestService.Get(this.dbSettings, recipeId);
+                var supplyRequest = this.supplyRequestService.Get(this.dbSettings, supplyRequestId);
 
                 if (supplyRequest.SupplyRequestDetails != null)
                 {
@@ -89,16 +86,15 @@ namespace DuocRestaurant.API.Controllers
             return result;
         }
 
-        [HttpPost, DisableRequestSizeLimit]
+        [HttpPost]
         public IActionResult Post([FromBody] SupplyRequest supplyRequest)
         {
             IActionResult result;
 
             try
             {
-                var supplyRequests = this.supplyRequestService.Get(this.dbSettings);
-                if (supplyRequests.Any(x => x.CreationDate.Date.Equals(supplyRequest.CreationDate.Date))) // check if this is necessary
-                    throw new Exception($"Ya existe una receta para la fecha: {supplyRequest.CreationDate:dd-MM-YYYY}");
+                // always create a new supply request as created
+                supplyRequest.StateId = (int)Enums.SupplyRequestState.Created;
 
                 var created = this.supplyRequestService.Add(this.dbSettings, supplyRequest);
 
@@ -122,17 +118,13 @@ namespace DuocRestaurant.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put([FromRoute(Name = "id")] int recipeId, [FromBody] SupplyRequest supplyRequest)
+        public IActionResult Put([FromRoute(Name = "id")] int supplyRequestId, [FromBody] SupplyRequest supplyRequest)
         {
             IActionResult result;
 
             try
             {
-                var supplyRequests = this.supplyRequestService.Get(this.dbSettings);
-                if (supplyRequests.Any(x => x.CreationDate.Date.Equals(supplyRequest.CreationDate.Date))) // check if this is necessary
-                    throw new Exception($"Ya existe una receta para la fecha: {supplyRequest.CreationDate:dd-MM-YYYY}");
-
-                var edited = this.supplyRequestService.Edit(this.dbSettings, recipeId, supplyRequest);
+                var edited = this.supplyRequestService.Edit(this.dbSettings, supplyRequestId, supplyRequest);
 
                 edited.SupplyRequestDetails = this.supplyRequestService.Get(this.dbSettings, edited).ToList();
 
@@ -156,13 +148,13 @@ namespace DuocRestaurant.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute(Name = "id")] int recipeId)
+        public IActionResult Delete([FromRoute(Name = "id")] int supplyRequestId)
         {
             IActionResult result;
 
             try
             {
-                result = Ok(this.supplyRequestService.Delete(this.dbSettings, recipeId));
+                result = Ok(this.supplyRequestService.Delete(this.dbSettings, supplyRequestId));
             }
             catch (Exception ex)
             {

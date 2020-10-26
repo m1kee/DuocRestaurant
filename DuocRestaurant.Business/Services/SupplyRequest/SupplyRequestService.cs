@@ -279,7 +279,7 @@ namespace Business.Services
                     $"p.{Provider.ColumnNames.Address}, " +
                     $"p.{Provider.ColumnNames.Active} " +
                     $"FROM {SupplyRequest.TableName} sr " +
-                    $"JOIN {Provider.TableName} p on p.{Provider.ColumnNames.Id} = {SupplyRequest.ColumnNames.ProviderId}" +
+                    $"JOIN {Provider.TableName} p on p.{Provider.ColumnNames.Id} = sr.{SupplyRequest.ColumnNames.ProviderId} " +
                     $"WHERE sr.{SupplyRequest.ColumnNames.Active} = 1";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 conn.Open();

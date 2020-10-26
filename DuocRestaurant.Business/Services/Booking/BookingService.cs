@@ -14,7 +14,7 @@ namespace Business.Services
 
             using (OracleConnection conn = new OracleConnection(ctx.ConnectionString))
             {
-                booking.Code = Convert.ToInt32($"{booking.UserId}{booking.TableId}{booking.Date:yyMMddHH}");
+                booking.Code = $"{booking.UserId}{booking.TableId}{booking.Date:yyMMddHH}";
 
                 string query = $"INSERT INTO Reserva (" +
                     $"{Booking.ColumnNames.UserId}, " +
@@ -137,7 +137,7 @@ namespace Business.Services
                     result.Add(new Booking()
                     {
                         Id = Convert.ToInt32(reader[Booking.ColumnNames.Id]),
-                        Code = Convert.ToInt32(reader[Booking.ColumnNames.Code]),
+                        Code = reader[Booking.ColumnNames.Code]?.ToString(),
                         UserId = Convert.ToInt32(reader[Booking.ColumnNames.UserId]),
                         TableId = Convert.ToInt32(reader[Booking.ColumnNames.TableId]),
                         Date = Convert.ToDateTime(reader[Booking.ColumnNames.Date]).ToLocalTime(),
@@ -212,7 +212,7 @@ namespace Business.Services
                     result = new Booking()
                     {
                         Id = Convert.ToInt32(reader[Booking.ColumnNames.Id]),
-                        Code = Convert.ToInt32(reader[Booking.ColumnNames.Code]),
+                        Code = reader[Booking.ColumnNames.Code]?.ToString(),
                         UserId = Convert.ToInt32(reader[Booking.ColumnNames.UserId]),
                         TableId = Convert.ToInt32(reader[Booking.ColumnNames.TableId]),
                         Date = Convert.ToDateTime(reader[Booking.ColumnNames.Date]).ToLocalTime(),
@@ -246,7 +246,7 @@ namespace Business.Services
             return result;
         }
 
-        public Booking GetByCode(RestaurantDatabaseSettings ctx, int bookingCode)
+        public Booking GetByCode(RestaurantDatabaseSettings ctx, string bookingCode)
         {
             Booking result = null;
 
@@ -276,7 +276,7 @@ namespace Business.Services
                     $"FROM Reserva r " +
                     $"JOIN Mesa m ON m.Id = r.{Booking.ColumnNames.TableId} " +
                     $"JOIN Usuario u ON u.Id = r.{Booking.ColumnNames.UserId} " +
-                    $"WHERE r.{Booking.ColumnNames.Code} = {bookingCode}";
+                    $"WHERE r.{Booking.ColumnNames.Code} = '{bookingCode}'";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 conn.Open();
 
@@ -287,7 +287,7 @@ namespace Business.Services
                     result = new Booking()
                     {
                         Id = Convert.ToInt32(reader[Booking.ColumnNames.Id]),
-                        Code = Convert.ToInt32(reader[Booking.ColumnNames.Code]),
+                        Code = reader[Booking.ColumnNames.Code]?.ToString(),
                         UserId = Convert.ToInt32(reader[Booking.ColumnNames.UserId]),
                         TableId = Convert.ToInt32(reader[Booking.ColumnNames.TableId]),
                         Date = Convert.ToDateTime(reader[Booking.ColumnNames.Date]).ToLocalTime(),

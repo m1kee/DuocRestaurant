@@ -1,6 +1,6 @@
 import { Product } from './product';
 
-export class SupplyOrderDetail {
+export class SupplyRequestDetail {
     SupplyOrderId: number;
     ProductId: number;
     Count: number;

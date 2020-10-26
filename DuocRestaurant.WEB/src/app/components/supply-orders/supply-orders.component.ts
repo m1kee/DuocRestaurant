@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { SupplyRequestStates } from '@app/domain/enums';
 import { Product } from '@app/domain/product';
 import { Provider } from '@app/domain/provider';
-import { SupplyOrder } from '@app/domain/supply-order';
-import { SupplyOrderDetail } from '@app/domain/supply-order-detail';
+import { SupplyRequest } from '@app/domain/supply-request';
+import { SupplyRequestDetail } from '@app/domain/supply-request-detail';
 import { DECIMAL_REGEX, NUMBER_REGEX } from '@app/helpers/validations/common-regex';
 import { ProductService } from '@app/services/product.service';
 import { ProviderService } from '@app/services/provider.service';
-import { SuppliesOrderService } from '@app/services/supplies-order.service';
+import { SupplyRequestService } from '@app/services/supply-request.service';
 import { faClock, faDollarSign, faEdit, faPlus, faSave, faTimes, faTrashAlt, faUpload, faUndo } from '@fortawesome/free-solid-svg-icons';
 import { ToastrService } from 'ngx-toastr';
 
@@ -17,10 +18,11 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./supply-orders.component.css']
 })
 export class SupplyOrdersComponent implements OnInit {
-  currentOrder: SupplyOrder = new SupplyOrder();
-  supplyOrders: SupplyOrder[] = [];
+  currentOrder: SupplyRequest = new SupplyRequest();
+  supplyRequests: SupplyRequest[] = [];
   products: Product[] = [];
   providers: Provider[] = [];
+  supplyRequestStates = SupplyRequestStates;
 
   icons: any = {
     faSave: faSave,
@@ -37,7 +39,7 @@ export class SupplyOrdersComponent implements OnInit {
   paginationConfig: any = {
     itemsPerPage: 10,
     currentPage: 1,
-    totalItems: this.supplyOrders.length
+    totalItems: this.supplyRequests.length
   };
 
   loading: boolean = false;
@@ -45,7 +47,7 @@ export class SupplyOrdersComponent implements OnInit {
   decimalPattern = DECIMAL_REGEX;
 
   constructor(
-    public suppliesOrderService: SuppliesOrderService,
+    public supplyRequestService: SupplyRequestService,
     public productService: ProductService,
     private providerService: ProviderService,
     private toastrService: ToastrService
@@ -58,8 +60,8 @@ export class SupplyOrdersComponent implements OnInit {
 
   getSupplyOrders() {
     this.loading = true;
-    this.suppliesOrderService.getAll().subscribe((supplyOrders: SupplyOrder[]) => {
-      this.supplyOrders = supplyOrders;
+    this.supplyRequestService.getAll().subscribe((supplyRequests: SupplyRequest[]) => {
+      this.supplyRequests = supplyRequests;
       this.loading = false;
     }, (error) => {
       this.loading = false;
@@ -97,11 +99,11 @@ export class SupplyOrdersComponent implements OnInit {
     if (form.valid) {
       if (!this.currentOrder.Id) {
         // post
-        this.suppliesOrderService
+        this.supplyRequestService
           .post(this.currentOrder)
-          .subscribe((created: SupplyOrder) => {
+          .subscribe((created: SupplyRequest) => {
             this.currentOrder = created;
-            this.supplyOrders.push(created);
+            this.supplyRequests.push(created);
             this.loading = false;
             this.toastrService.success('Se ha creado correctamente', 'Orden Creada');
             form.form.markAsPristine();
@@ -115,11 +117,11 @@ export class SupplyOrdersComponent implements OnInit {
           });
       } else {
         // put
-        this.suppliesOrderService
+        this.supplyRequestService
           .put(this.currentOrder.Id, this.currentOrder)
-          .subscribe((edited: SupplyOrder) => {
-            let cIndex = this.supplyOrders.findIndex((c) => c.Id === edited.Id);
-            this.supplyOrders.splice(cIndex, 1, edited);
+          .subscribe((edited: SupplyRequest) => {
+            let cIndex = this.supplyRequests.findIndex((c) => c.Id === edited.Id);
+            this.supplyRequests.splice(cIndex, 1, edited);
             this.loading = false;
             this.toastrService.success('Se ha editado correctamente', 'Orden Editada');
             form.form.markAsPristine();
@@ -135,16 +137,16 @@ export class SupplyOrdersComponent implements OnInit {
     }
   };
 
-  edit(supplyOrder: SupplyOrder, form: NgForm) {
+  edit(supplyOrder: SupplyRequest, form: NgForm) {
     this.currentOrder = supplyOrder;
     form.form.markAsPristine();
   };
 
-  delete(supplyOrder: SupplyOrder) {
+  delete(supplyOrder: SupplyRequest) {
     this.loading = true;
-    this.suppliesOrderService.delete(supplyOrder.Id).subscribe((deleted: boolean) => {
-      let cIndex = this.supplyOrders.findIndex((c) => c.Id === supplyOrder.Id);
-      this.supplyOrders.splice(cIndex, 1);
+    this.supplyRequestService.delete(supplyOrder.Id).subscribe((deleted: boolean) => {
+      let cIndex = this.supplyRequests.findIndex((c) => c.Id === supplyOrder.Id);
+      this.supplyRequests.splice(cIndex, 1);
       this.toastrService.success('Se ha eliminado correctamente', 'Orden Eliminada');
       this.loading = false;
     }, (error) => {
@@ -158,10 +160,10 @@ export class SupplyOrdersComponent implements OnInit {
   };
 
   cancel() {
-    this.currentOrder = new SupplyOrder();
+    this.currentOrder = new SupplyRequest();
   };
 
-  deleteSupplyOrderDetail(supplyOrderDetail: SupplyOrderDetail) {
+  deleteSupplyOrderDetail(supplyOrderDetail: SupplyRequestDetail) {
     if (!supplyOrderDetail)
       return;
   };
@@ -179,7 +181,7 @@ export class SupplyOrdersComponent implements OnInit {
     if (!this.currentOrder)
       return;
 
-    let defaultSupplyOrderDetail = new SupplyOrderDetail();
+    let defaultSupplyOrderDetail = new SupplyRequestDetail();
     if (!this.currentOrder.SupplyOrderDetails.find(x => x.SupplyOrderId === defaultSupplyOrderDetail.SupplyOrderId && x.ProductId === defaultSupplyOrderDetail.ProductId && x.Count === defaultSupplyOrderDetail.Count))
       this.currentOrder.SupplyOrderDetails.push(defaultSupplyOrderDetail);
   };
@@ -188,7 +190,7 @@ export class SupplyOrdersComponent implements OnInit {
     return `${text}${index}`;
   };
 
-  getOnlyUnselectedProducts(supplyOrderDetail: SupplyOrderDetail) {
+  getOnlyUnselectedProducts(supplyOrderDetail: SupplyRequestDetail) {
     let unselectedProducts = this.products.filter(product => supplyOrderDetail.ProductId === product.Id || !this.currentOrder.SupplyOrderDetails.find(rd => rd.ProductId === product.Id));
     return unselectedProducts;
   };
