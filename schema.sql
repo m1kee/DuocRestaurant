@@ -5,11 +5,14 @@ DROP TABLE Receta;
 DROP TABLE Producto;
 DROP TABLE TipoProducto;
 DROP TABLE Reserva;
-DROP TABLE Proveedor;
 DROP TABLE UnidadMedida;
 DROP TABLE Mesa;
 DROP TABLE Usuario;
 DROP TABLE Rol;
+DROP TABLE DetallePedidoInsumo;
+DROP TABLE PedidoInsumo;
+DROP TABLE EstadoPedidoInsumo;
+DROP TABLE Proveedor;
 
 -- SCHEMA CREATION
 CREATE TABLE Rol (
@@ -23,7 +26,7 @@ CREATE TABLE Usuario (
     RolId INTEGER NOT NULL,
     Nombre VARCHAR2(30) NOT NULL,
     Apellido VARCHAR2(30) NOT NULL,
-    Correo VARCHAR2(100) NOT NULL,
+    Email VARCHAR2(100) NOT NULL,
     Contrasena VARCHAR2(64) NOT NULL,
     Telefono VARCHAR2(15),
     Direccion VARCHAR2(200),
@@ -105,7 +108,7 @@ CREATE TABLE Receta (
     CONSTRAINT PK_Receta PRIMARY KEY (Id)
 );
 
-Create TABLE DetalleReceta(
+CREATE TABLE DetalleReceta(
     RecetaId INTEGER NOT NULL,
     ProductoId INTEGER NOT NULL,
     Cantidad NUMBER(8,3) NOT NULL,
@@ -113,7 +116,35 @@ Create TABLE DetalleReceta(
     CONSTRAINT PK_DetalleReceta PRIMARY KEY (RecetaId, ProductoId),
     CONSTRAINT FK_DetalleReceta_Receta FOREIGN KEY (RecetaId) REFERENCES Receta(Id),
     CONSTRAINT FK_DetalleReceta_Producto FOREIGN KEY (ProductoId) REFERENCES Producto(Id)
-);   
+);
+
+CREATE TABLE EstadoPedidoInsumo(
+    Id INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    Descripcion VARCHAR2(20) NOT NULL,
+    CONSTRAINT PK_EstadoPedidoInsumo PRIMARY KEY (Id)
+);  
+
+CREATE TABLE PedidoInsumo(
+    Id INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    Codigo VARCHAR2(50) NOT NULL, -- UsuarioId + MesaId + Fecha(YYYYMMDDHH)
+    ProveedorId INTEGER NOT NULL,
+    Fecha DATE NOT NULL,
+    EstadoPedidoId INTEGER NOT NULL,
+    Activo NUMBER(1) NOT NULL,
+    CONSTRAINT PK_PedidoInsumo PRIMARY KEY (Id),
+    CONSTRAINT FK_PedidoInsumo_Proveedor FOREIGN KEY (ProveedorId) REFERENCES Proveedor(Id),
+    CONSTRAINT FK_PedidoInsumo_EstadoPedidoInsumo FOREIGN KEY (EstadoPedidoId) REFERENCES EstadoPedidoInsumo(Id)
+); 
+
+CREATE TABLE DetallePedidoInsumo(
+    PedidoInsumoId INTEGER NOT NULL,
+    ProductoId INTEGER NOT NULL,
+    Cantidad INTEGER NOT NULL,
+    Activo NUMBER(1) NOT NULL,
+    CONSTRAINT PK_DetallePedidoInsumo PRIMARY KEY (PedidoInsumoId, ProductoId),
+    CONSTRAINT FK_DetallePedidoInsumo_PedidoInsumo FOREIGN KEY (PedidoInsumoId) REFERENCES PedidoInsumo(Id),
+    CONSTRAINT FK_DetallePedidoInsumo_Producto FOREIGN KEY (ProductoId) REFERENCES Producto(Id)
+); 
 
 -- INSERTS
 INSERT INTO Rol (Descripcion) VALUES ('Administrador');
@@ -123,37 +154,37 @@ INSERT INTO Rol (Descripcion) VALUES ('Cocina');
 INSERT INTO Rol (Descripcion) VALUES ('Garzon');
 INSERT INTO Rol (Descripcion) VALUES ('Cliente');
 
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (1,'Segismundo', 'Morat', 'Segi_Mora168@SigloXXI.cl', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56922223760', 'Victoria,2251,Maipu', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (2,'Laura', 'Paz', 'l_paz1999@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56967239551', 'Calama,6028,Pudahuel', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (3,'Diego', 'Torres', 'diegox_ushiha@hotmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+569954670302', 'Jorge Hunneus,754,Quinta Normal', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (4,'Valentina', 'Pincheira', 'valery-uwu@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56978902121', 'Gamero,529,Independencia', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (4,'Henry', 'Zamora', 'dracula_darks@hotmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56934523033', 'Gamero,567,Independencia', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (4,'Mario', 'Pino', 'mariop1993@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56923408485', 'San Martin,575,Santiago', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (4,'Claudia', 'Salfate', 'salfate_clau94@outlook.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56943407675', 'Fermin Vivaceta,502,Independencia', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (5,'Perla', 'San Martin', 'gema-ruby3@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56940331111', 'Recoleta,598,Recoleta', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (5,'Alberto', 'Rivera', 'albersoto@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56925340555', 'Dominicana,200,Recoleta', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (5,'Julia', 'Aries', 'juliana-kawaii@hotmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56934506653', 'Francisco Bilbao,6052,Providencia', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (5,'Ares', 'Martines', 'fe4-jp@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56949492332', 'Gamero,531,Independencia', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (5,'Eubanz', 'Brando', 'banz-87@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56922523042', 'Victoria,666,Maipu', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (5,'Pablo', 'Mamani', 'perezpe3@hotmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56978924721', 'Duble almeyda,3755,Nuñoa', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (6,'Maria', 'Bella', 'maripe@yopmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56975797876', '5 de abril,2220,Maipu', 0);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (6,'Carla', 'Brio', 'carlitax-5654@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56978221199', '3 Poniente, 2242, Maipu', 1);
-INSERT INTO Usuario (RolId, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion, Activo)
+INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (6,'Flor', 'Monsalva', 'for-mañanera@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56900004533', '4 Poniente 5044, Maipu', 1);
 
 INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa) VALUES (1,'mesa interior',2,0,1);
