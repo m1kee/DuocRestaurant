@@ -46,9 +46,10 @@ namespace Domain
         public struct ColumnNames
         {
             public const string Id = "Id";
-            public const string Code = "Code";
+            public const string Code = "Codigo";
             public const string ProviderId = "ProveedorId";
             public const string StateId = "EstadoPedidoId";
+            public const string CreationDate = "Fecha";
             public const string Active = "Activo";
         }
 

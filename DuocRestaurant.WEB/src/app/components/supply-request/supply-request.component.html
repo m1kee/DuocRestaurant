@@ -1,7 +1,7 @@
 <div class="row m-3">
   <div class="col-12 col-lg-6 col-xl-6">
     <h1>
-      Orden de compra: {{ currentOrder.Name }}
+      Orden de compra: {{ currentOrder.Code }}
     </h1>
     <hr />
     <form (ngSubmit)="save(form)" #form="ngForm">
@@ -11,6 +11,7 @@
             <label for="provider">Proveedor:</label>
             <select required
                     class="form-control"
+                    [disabled]="currentOrder.StateEnum != this.supplyRequestStates.Created"
                     name="provider"
                     (change)="getProducts()"
                     #provider="ngModel"
@@ -28,7 +29,8 @@
               <h1> Productos </h1>
             </div>
             <div class="col-12 col-sm-6 text-right">
-              <button type="button" class="btn btn-success" (click)="addSupplyOrderDetail()">
+              <button type="button" class="btn btn-success" (click)="addSupplyRequestDetail()"
+                      [disabled]="currentOrder.StateEnum != this.supplyRequestStates.Created">
                 <fa-icon [icon]="icons.faPlus" [fixedWidth]="true"></fa-icon>
                 Agregar producto
               </button>
@@ -37,14 +39,14 @@
 
           <div class="card">
             <div class="card-body">
-              <div class="row" *ngFor="let supplyOrderDetail of currentOrder.SupplyOrderDetails; index as supplyOrderDetailIndex">
+              <div class="row" *ngFor="let supplyRequestDetail of currentOrder.SupplyRequestDetails; index as supplyRequestDetailIndex">
                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
                   <div class="form-group">
-                    <label for="product{{supplyOrderDetailIndex}}">Producto:</label>
-                    <select required class="form-control" name="product{{supplyOrderDetailIndex}}" #product="ngModel"
-                      [(ngModel)]="supplyOrderDetail.ProductId">
+                    <label for="product{{supplyRequestDetailIndex}}">Producto:</label>
+                    <select required class="form-control" name="product{{supplyRequestDetailIndex}}" #product="ngModel" [disabled]="!supplyRequestDetail.Active || currentOrder.StateEnum != this.supplyRequestStates.Created" 
+                      [(ngModel)]="supplyRequestDetail.ProductId">
                       <option [ngValue]="null" [disabled]="true">Seleccione un producto</option>
-                      <option [ngValue]="product.Id" *ngFor="let product of getOnlyUnselectedProducts(supplyOrderDetail)">
+                      <option [ngValue]="product.Id" *ngFor="let product of getOnlyUnselectedProducts(supplyRequestDetail)">
                         {{ product.Name }}</option>
                     </select>
                     <small *ngIf="product.errors?.required" class="form-text text-muted">Campo requerido.</small>
@@ -52,14 +54,14 @@
                 </div>
                 <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-4">
                   <div class="form-group">
-                    <label for="count{{supplyOrderDetailIndex}}">Cantidad:</label>
+                    <label for="count{{supplyRequestDetailIndex}}">Cantidad:</label>
                     <div class="input-group">
-                      <input name="count{{supplyOrderDetailIndex}}" #count="ngModel" [(ngModel)]="supplyOrderDetail.Count"
-                        required type="text" class="form-control" aria-describedby="count"
+                      <input name="count{{supplyRequestDetailIndex}}" #count="ngModel" [(ngModel)]="supplyRequestDetail.Count"
+                        required type="text" class="form-control" aria-describedby="count" [disabled]="!supplyRequestDetail.Active || currentOrder.StateEnum != this.supplyRequestStates.Created"
                         [pattern]="decimalPattern" placeholder="Ingresa la cantidad requerida">
                       <div class="input-group-append">
                         <span class="input-group-text"
-                          id="count{{supplyOrderDetailIndex}}">{{ getSelectedProductUnitOfMeasurement(supplyOrderDetail.ProductId) }}</span>
+                          id="count{{supplyRequestDetailIndex}}">un.</span>
                       </div>
                     </div>
                     <small *ngIf="count.errors?.required" class="form-text text-muted">Campo requerido.</small>
@@ -70,9 +72,24 @@
                 <div class="col-2 text-right">
                   <div class="form-group">
                     <label for="count"></label>
-                    <button (click)="deleteSupplyOrderDetail(supplyOrderDetail)" type="button" class="btn btn-danger"
-                      style="margin-top: 32px;">
+
+                    <button (click)="deleteSupplyRequestDetail(supplyRequestDetail, recipeForm)"
+                            *ngIf="supplyRequestDetail.Active"
+                            title="Eliminar"
+                            [disabled]="currentOrder.StateEnum != this.supplyRequestStates.Created"
+                            type="button"
+                            class="btn btn-danger"
+                            style="margin-top: 32px;">
                       <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
+                    </button>
+                    <button (click)="undoSupplyRequestDetail(supplyRequestDetail)"
+                            *ngIf="!supplyRequestDetail.Active"
+                            title="Deshacer"
+                            [disabled]="currentOrder.StateEnum != this.supplyRequestStates.Created"
+                            type="button"
+                            class="btn btn-secondary"
+                            style="margin-top: 32px;">
+                      <fa-icon [icon]="icons.faUndo" [fixedWidth]="true"></fa-icon>
                     </button>
                   </div>
                 </div>
@@ -85,7 +102,7 @@
       <div class="row pt-3">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
           <button name="save-btn" type="submit" class="btn btn-success" style="margin-right: 5px;"
-            [disabled]="!form.valid || form.pristine || loading">
+            [disabled]="!form.valid || form.pristine || loading || currentOrder.StateEnum != this.supplyRequestStates.Created">
             <fa-icon [icon]="icons.faSave" [fixedWidth]="true"></fa-icon>&nbsp;
             Guardar
           </button>
@@ -115,14 +132,25 @@
           <td>{{ index + 1 }}</td>
           <td>{{ supplyRequest.Provider.Name }}</td>
           <td>{{ supplyRequest.CreationDate | date }}</td>
-          <td>{{ supplyRequest.State.Name }}</td>
+          <td>{{ supplyRequest.State.Description }}</td>
           <td>
-            <button (click)="edit(supplyRequest, form)" type="button" class="btn btn-sm btn-default">
+            <button *ngIf="supplyRequest.StateEnum != this.supplyRequestStates.Created"
+                    (click)="view(supplyRequest)" type="button" class="btn btn-sm btn-default" title="Ver orden de compra">
+              <fa-icon [icon]="icons.faEye" [fixedWidth]="true"></fa-icon>
+            </button>
+            <button *ngIf="supplyRequest.StateEnum == this.supplyRequestStates.Created"
+                    type="button" class="btn btn-sm btn-default" title="Enviar a proveedor"
+                    [swal]="{ title: 'Enviar orden', text: '¿Está seguro de querer enviar la orden al proveedor?', type: 'question', showCancelButton: true }"
+                    (confirm)="send(supplyRequest)">
+              <fa-icon [icon]="icons.faEnvelope" [fixedWidth]="true"></fa-icon>
+            </button>
+            <button *ngIf="supplyRequest.StateEnum == this.supplyRequestStates.Created"
+                    (click)="edit(supplyRequest, form)" type="button" class="btn btn-sm btn-default" title="Editar orden de compra">
               <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
             </button>
-            <button *ngIf="supplyRequest.StateEnum == supplyRequestStates.Confirmed"
-              [swal]="['Advertencia!', '¿Está seguro de querer eliminar la orden?', 'warning']"
-              (confirm)="delete(supplyRequest)" type="button" class="btn btn-default btn-sm">
+            <button *ngIf="supplyRequest.StateEnum == this.supplyRequestStates.Created" title="Eliminar orden de compra"
+                    [swal]="['Advertencia!', '¿Está seguro de querer eliminar la orden?', 'warning']"
+                    (confirm)="delete(supplyRequest)" type="button" class="btn btn-default btn-sm">
               <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
             </button>
           </td>

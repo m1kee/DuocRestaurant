@@ -25,7 +25,7 @@ namespace Domain
             public const string RoleId = "RolId";
             public const string Name = "Nombre";
             public const string LastName = "Apellido";
-            public const string Email = "Correo";
+            public const string Email = "Email";
             public const string Password = "Contrasena";
             public const string Phone = "Telefono";
             public const string Address = "Direccion";

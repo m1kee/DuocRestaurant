@@ -32,8 +32,11 @@ namespace DuocRestaurant.API
             services.AddMvcCore().AddNewtonsoftJson();
 
             services.Configure<RestaurantDatabaseSettings>(Configuration.GetSection("DatabaseSettings"));
+            services.Configure<DatabaseSettings>(Configuration.GetSection("DatabaseSettings"));
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<IMailService, MailService>();
             services.AddScoped<IMeasurementUnitService, MeasurementUnitService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IProductTypeService, ProductTypeService>();

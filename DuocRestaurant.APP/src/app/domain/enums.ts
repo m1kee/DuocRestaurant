@@ -13,10 +13,11 @@ export enum ProductTypes {
 }
 
 export enum SupplyRequestStates {
-  NotAssigned = 0,
-  Created = 1,
-  Confirmed = 2,
-  Rejected = 3
+    NotAssigned = 0,
+    Created = 1,
+    Sended = 2,
+    Confirmed = 3,
+    Rejected = 4
 }
 
 export enum BookingState {

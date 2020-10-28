@@ -1,7 +1,7 @@
 import { Product } from './product';
 
 export class SupplyRequestDetail {
-    SupplyOrderId: number;
+    SupplyRequestId: number;
     ProductId: number;
     Count: number;
     Active: boolean;
@@ -9,7 +9,7 @@ export class SupplyRequestDetail {
     Product: Product;
 
     constructor() {
-        this.SupplyOrderId = null;
+        this.SupplyRequestId = null;
         this.ProductId = null;
         this.Active = true;
     }

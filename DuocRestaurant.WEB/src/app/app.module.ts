@@ -32,7 +32,7 @@ import { BookingsComponent } from '@components/bookings/booking/bookings.compone
 import { BookingSearchComponent } from '@components/bookings/booking-search/booking-search.component';
 import { ProductComponent } from './components/maintenance/product/product.component';
 import { ProviderComponent } from './components/maintenance/provider/provider.component';
-import { SupplyOrdersComponent } from './components/supply-orders/supply-orders.component';
+import { SupplyRequestComponent } from './components/supply-request/supply-request.component';
 
 // validators
 import { PasswordValidatorDirective } from '@helpers/validations/password.validator';
@@ -53,7 +53,7 @@ import { RecipesComponent } from './components/maintenance/recipes/recipes.compo
     ProductComponent,
     ProviderComponent,
     RecipesComponent,
-    SupplyOrdersComponent
+    SupplyRequestComponent
   ],
   imports: [
     BrowserModule,

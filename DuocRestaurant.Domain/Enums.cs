@@ -26,8 +26,9 @@ namespace Domain
         {
             NotAssigned = 0,
             Created = 1,
-            Confirmed = 2,
-            Rejected = 3
+            Sended = 2,
+            Confirmed = 3,
+            Rejected = 4
         }
 
         public enum BookingState

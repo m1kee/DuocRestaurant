@@ -9,15 +9,15 @@ import { DECIMAL_REGEX, NUMBER_REGEX } from '@app/helpers/validations/common-reg
 import { ProductService } from '@app/services/product.service';
 import { ProviderService } from '@app/services/provider.service';
 import { SupplyRequestService } from '@app/services/supply-request.service';
-import { faClock, faDollarSign, faEdit, faPlus, faSave, faTimes, faTrashAlt, faUpload, faUndo } from '@fortawesome/free-solid-svg-icons';
+import { faClock, faDollarSign, faEdit, faPlus, faSave, faTimes, faTrashAlt, faUpload, faUndo, faEnvelope, faEye } from '@fortawesome/free-solid-svg-icons';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-supply-orders',
-  templateUrl: './supply-orders.component.html',
-  styleUrls: ['./supply-orders.component.css']
+  selector: 'app-supply-request',
+  templateUrl: './supply-request.component.html',
+  styleUrls: ['./supply-request.component.css']
 })
-export class SupplyOrdersComponent implements OnInit {
+export class SupplyRequestComponent implements OnInit {
   currentOrder: SupplyRequest = new SupplyRequest();
   supplyRequests: SupplyRequest[] = [];
   products: Product[] = [];
@@ -33,7 +33,9 @@ export class SupplyOrdersComponent implements OnInit {
     faUpload: faUpload,
     faClock: faClock,
     faDollarSign: faDollarSign,
-    faUndo: faUndo
+    faUndo: faUndo,
+    faEnvelope: faEnvelope,
+    faEye: faEye
   };
 
   paginationConfig: any = {
@@ -137,15 +139,24 @@ export class SupplyOrdersComponent implements OnInit {
     }
   };
 
-  edit(supplyOrder: SupplyRequest, form: NgForm) {
-    this.currentOrder = supplyOrder;
+  edit(supplyRequest: SupplyRequest, form: NgForm) {
+    this.currentOrder = supplyRequest;
+    this.getProducts();
+
     form.form.markAsPristine();
   };
 
-  delete(supplyOrder: SupplyRequest) {
+  view(supplyRequest: SupplyRequest, form: NgForm) {
+    this.currentOrder = supplyRequest;
+    this.getProducts();
+
+    form.form.markAsPristine();
+  };
+
+  delete(supplyRequest: SupplyRequest) {
     this.loading = true;
-    this.supplyRequestService.delete(supplyOrder.Id).subscribe((deleted: boolean) => {
-      let cIndex = this.supplyRequests.findIndex((c) => c.Id === supplyOrder.Id);
+    this.supplyRequestService.delete(supplyRequest.Id).subscribe((deleted: boolean) => {
+      let cIndex = this.supplyRequests.findIndex((c) => c.Id === supplyRequest.Id);
       this.supplyRequests.splice(cIndex, 1);
       this.toastrService.success('Se ha eliminado correctamente', 'Orden Eliminada');
       this.loading = false;
@@ -163,10 +174,46 @@ export class SupplyOrdersComponent implements OnInit {
     this.currentOrder = new SupplyRequest();
   };
 
-  deleteSupplyOrderDetail(supplyOrderDetail: SupplyRequestDetail) {
-    if (!supplyOrderDetail)
+  deleteSupplyRequestDetail(supplyRequestDetail: SupplyRequestDetail) {
+    if (!supplyRequestDetail)
       return;
+
+    if (supplyRequestDetail.SupplyRequestId) {
+      supplyRequestDetail.Active = false;
+    }
+    else {
+      let index = this.currentOrder.SupplyRequestDetails.findIndex((c) => c.ProductId === supplyRequestDetail.ProductId);
+      this.currentOrder.SupplyRequestDetails.splice(index, 1);
+    }
   };
+
+  undoSupplyRequestDetail(supplyRequestDetail: SupplyRequestDetail) {
+    if (!supplyRequestDetail)
+      return;
+
+    supplyRequestDetail.Active = true;
+  };
+
+  send(supplyRequest: SupplyRequest) {
+    this.loading = true;
+    supplyRequest.StateId = SupplyRequestStates.Sended;
+    // update order state 
+    this.supplyRequestService
+      .put(supplyRequest.Id, supplyRequest)
+      .subscribe((edited: SupplyRequest) => {
+        let cIndex = this.supplyRequests.findIndex((c) => c.Id === edited.Id);
+        this.supplyRequests.splice(cIndex, 1, edited);
+        this.loading = false;
+        this.toastrService.success('Se ha editado correctamente', 'Orden Enviada');
+      }, (error) => {
+        this.loading = false;
+        let message = 'Error al enviar la orden';
+        if (error.status === 400) {
+          message = error.error;
+        }
+        this.toastrService.error(message, 'Error');
+      });
+  }
 
   getSelectedProductUnitOfMeasurement(productId) {
     if (!productId || !this.products || this.products.length === 0)
@@ -177,13 +224,13 @@ export class SupplyOrdersComponent implements OnInit {
       return product.MeasurementUnit.Code;
   };
 
-  addSupplyOrderDetail() {
+  addSupplyRequestDetail() {
     if (!this.currentOrder)
       return;
 
     let defaultSupplyOrderDetail = new SupplyRequestDetail();
-    if (!this.currentOrder.SupplyOrderDetails.find(x => x.SupplyOrderId === defaultSupplyOrderDetail.SupplyOrderId && x.ProductId === defaultSupplyOrderDetail.ProductId && x.Count === defaultSupplyOrderDetail.Count))
-      this.currentOrder.SupplyOrderDetails.push(defaultSupplyOrderDetail);
+    if (!this.currentOrder.SupplyRequestDetails.find(x => x.SupplyRequestId === defaultSupplyOrderDetail.SupplyRequestId && x.ProductId === defaultSupplyOrderDetail.ProductId && x.Count === defaultSupplyOrderDetail.Count))
+      this.currentOrder.SupplyRequestDetails.push(defaultSupplyOrderDetail);
   };
 
   getFormControlName(text: string, index: number) {
@@ -191,7 +238,7 @@ export class SupplyOrdersComponent implements OnInit {
   };
 
   getOnlyUnselectedProducts(supplyOrderDetail: SupplyRequestDetail) {
-    let unselectedProducts = this.products.filter(product => supplyOrderDetail.ProductId === product.Id || !this.currentOrder.SupplyOrderDetails.find(rd => rd.ProductId === product.Id));
+    let unselectedProducts = this.products.filter(product => supplyOrderDetail.ProductId === product.Id || !this.currentOrder.SupplyRequestDetails.find(rd => rd.ProductId === product.Id));
     return unselectedProducts;
   };
 

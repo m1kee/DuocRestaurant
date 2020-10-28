@@ -13,14 +13,20 @@ namespace DuocRestaurant.API.Controllers
     {
         private ISupplyRequestService supplyRequestService { get; set; }
         private IProductService productService { get; set; }
+        private IProviderService providerService { get; set; }
+        private IMailService mailService { get; set; }
         private RestaurantDatabaseSettings dbSettings { get; set; }
 
         public SupplyRequestController(ISupplyRequestService supplyRequestService,
             IProductService productService,
+            IProviderService providerService,
+            IMailService mailService,
             IOptions<RestaurantDatabaseSettings> databaseContext)
         {
             this.supplyRequestService = supplyRequestService;
             this.productService = productService;
+            this.providerService = providerService;
+            this.mailService = mailService;
             this.dbSettings = databaseContext.Value;
         }
 
@@ -91,7 +97,7 @@ namespace DuocRestaurant.API.Controllers
 
         [HttpGet]
         [ActionName("GetById")]
-        [Route("[action]/{id:string}")]
+        [Route("[action]/{id}")]
         public IActionResult Get([FromRoute(Name = "id")] string supplyRequestCode)
         {
             IActionResult result;
@@ -133,6 +139,9 @@ namespace DuocRestaurant.API.Controllers
                     }
                 }
 
+                created.State = this.supplyRequestService.GetState(this.dbSettings, created.StateId);
+                created.Provider = this.providerService.Get(this.dbSettings, created.ProviderId);
+
                 result = Ok(created.Map(this.dbSettings, true));
             }
             catch (Exception ex)
@@ -150,6 +159,14 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
+                bool sendMail = false;
+                if (supplyRequest.StateId == (int)Enums.SupplyRequestState.Sended)
+                {
+                    var bdSupplyRequest = this.supplyRequestService.Get(this.dbSettings, supplyRequestId);
+                    if (bdSupplyRequest.StateId == (int)Enums.SupplyRequestState.Created)
+                        sendMail = true;
+                }
+
                 var edited = this.supplyRequestService.Edit(this.dbSettings, supplyRequestId, supplyRequest);
 
                 edited.SupplyRequestDetails = this.supplyRequestService.Get(this.dbSettings, edited).ToList();
@@ -161,6 +178,15 @@ namespace DuocRestaurant.API.Controllers
                     {
                         supplyRequestDetail.Product = products.FirstOrDefault(x => x.Id == supplyRequestDetail.ProductId);
                     }
+                }
+
+                edited.State = this.supplyRequestService.GetState(this.dbSettings, edited.StateId);
+                edited.Provider = this.providerService.Get(this.dbSettings, edited.ProviderId);
+
+                if (sendMail)
+                {
+                    // insert here the logic of the email 
+                    this.mailService.SendMail("michael.nunezb@outlook.com", "test", "Esta es una prueba");
                 }
 
                 result = Ok(edited.Map(this.dbSettings, true));

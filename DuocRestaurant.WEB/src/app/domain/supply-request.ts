@@ -10,13 +10,14 @@ export class SupplyRequest {
     StateId: number;
     CreationDate: Date;
     
-    SupplyOrderDetails: SupplyRequestDetail[];
+    SupplyRequestDetails: SupplyRequestDetail[];
     Provider: Provider;
     State: SupplyRequestState;
     StateEnum: SupplyRequestStates;
 
     constructor() {
-        this.ProviderId = null;
-        this.SupplyOrderDetails = [new SupplyRequestDetail()];
+      this.ProviderId = null;
+      this.SupplyRequestDetails = [new SupplyRequestDetail()];
+      this.StateEnum = SupplyRequestStates.Created;
     }
 }
