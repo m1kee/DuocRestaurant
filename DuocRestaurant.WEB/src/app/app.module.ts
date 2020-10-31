@@ -37,6 +37,7 @@ import { SupplyRequestComponent } from './components/supply-request/supply-reque
 // validators
 import { PasswordValidatorDirective } from '@helpers/validations/password.validator';
 import { RecipesComponent } from './components/maintenance/recipes/recipes.component';
+import { SupplyCodePipe } from './pipes/supply-code.pipe';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { RecipesComponent } from './components/maintenance/recipes/recipes.compo
     ProductComponent,
     ProviderComponent,
     RecipesComponent,
-    SupplyRequestComponent
+    SupplyRequestComponent,
+    SupplyCodePipe
   ],
   imports: [
     BrowserModule,

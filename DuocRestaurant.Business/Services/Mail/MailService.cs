@@ -41,7 +41,6 @@ namespace Business.Services
             catch (Exception ex)
             {
                 // log error
-
             }
         }
     }

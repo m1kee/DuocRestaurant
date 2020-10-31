@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { SupplyRequestReceptionPageRoutingModule } from './supply-request-reception-routing.module';
 
 import { SupplyRequestReceptionPage } from './supply-request-reception.page';
+import { SupplyCodePipe } from '@pipes/supply-code.pipe';
 
 @NgModule({
   imports: [
@@ -15,6 +16,6 @@ import { SupplyRequestReceptionPage } from './supply-request-reception.page';
     IonicModule,
     SupplyRequestReceptionPageRoutingModule
   ],
-  declarations: [SupplyRequestReceptionPage]
+  declarations: [SupplyRequestReceptionPage, SupplyCodePipe]
 })
 export class SupplyRequestReceptionPageModule {}

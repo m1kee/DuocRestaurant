@@ -8,7 +8,8 @@
       "@components/*": [ "app/components/*" ],
       "@domain/*": [ "app/domain/*" ],
       "@services/*": [ "app/services/*" ],
-      "@helpers/*": [ "app/helpers/*" ]
+      "@helpers/*": [ "app/helpers/*" ],
+      "@pipes/*": [ "app/pipes/*" ]
     },
     "outDir": "./dist/out-tsc",
     "sourceMap": true,

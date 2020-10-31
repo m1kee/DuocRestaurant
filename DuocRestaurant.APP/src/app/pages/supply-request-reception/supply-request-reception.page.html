@@ -1,51 +1,50 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Orden de compra</ion-title>
-  </ion-toolbar>
+    <ion-toolbar color="primary">
+        <ion-title>Orden de compra</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <form #form="ngForm">
-    <ion-grid>
-      <ion-row>
-        <ion-col>
-          <ion-item>
-            <ion-label> C&oacute;digo Orden: </ion-label>
-            <ion-input type="number" pattern="^[0-9]+$" required name="code" [(ngModel)]="code">
-            </ion-input>
-          </ion-item>
-          <br>
-          <ion-button color="primary" expand="block" (click)="searchSupplyOrder(code)" [disabled]="form.invalid">Buscar
-            orden</ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </form>
+    <form #form="ngForm">
+        <ion-grid>
+            <ion-row>
+                <ion-col>
+                    <ion-item>
+                        <ion-label> C&oacute;digo Orden: </ion-label>
+                        <ion-input type="number" pattern="^[0-9]+$" required name="code" [(ngModel)]="supplyRequestCode"></ion-input>
+                    </ion-item>
+                    <br>
+                    <ion-button color="primary" expand="block" (click)="searchSupplyRequest(code)" [disabled]="form.invalid">Buscar orden
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col>
+                    <ion-list>
+                        <ion-list-header lines="inset">
+                            <ion-label>
+                                <h1>Órdenes de compra</h1>
+                                <p><i>(pendientes de confirmaci&oacute;n)</i></p>
+                                <br>
+                            </ion-label>
+                        </ion-list-header>
+                        <ion-item lines="none" *ngFor="let pendingSupplyRequest of pendingSupplyRequests" button (click)="showSupplyRequest(pendingSupplyRequest)">
+                            <ion-label>
+                                <p><b>Orden: {{pendingSupplyRequest.Code | supplyCode}}</b> ({{pendingSupplyRequest.CreationDate | date}})</p>
+                            </ion-label>
 
-
-  <ion-list>
-    <ion-list-header>
-      <ion-label>{{ supplyRequest.Provider.Name }}</ion-label>
-      <ion-label>{{ supplyRequest.Date | date:'dd/MM/yyyy HH:mm:ss' }}</ion-label>
-    </ion-list-header>
-
-    <ion-item-sliding *ngFor="let supplyRequestDetail of supplyRequest.SupplyRequestDetails">
-      <ion-item>
-        <ion-badge slot="start" color="primary">
-          {{supplyRequestDetail.Count}} {{supplyRequestDetail.MeasurementUnit.Code}}
-        </ion-badge>
-
-        <ion-label>
-          <h2><b>{{ supplyRequestDetail.Product.Name }}</b></h2>
-          <h3>{{ supplyRequestDetail.Product.Detail }}</h3>
-        </ion-label>
-        
-        <ion-checkbox slot="end" [(ngModel)]="supplyRequestDetail.isChecked"></ion-checkbox>
-      </ion-item>
-    </ion-item-sliding>
-  </ion-list>
-
-  <ion-button color="primary" expand="block" (click)="completeSupplyRequest()">
-    Confirmar recepci&oacute;n
-  </ion-button>
+                            <ion-badge slot="end" color="primary">
+                                {{pendingSupplyRequest.Provider.Name}}
+                            </ion-badge>
+                        </ion-item>
+                        <ion-item lines="none" *ngIf="!pendingSupplyRequests || pendingSupplyRequests.length === 0">
+                            <ion-label>
+                                <p> No hay &oacute;rdenes de compra pendientes de recepci&oacute;n</p>
+                            </ion-label>
+                        </ion-item>
+                    </ion-list>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </form>
 </ion-content>

@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using Business.Services;
 using Domain;
+using DuocRestaurant.API.Model;
+using DuocRestaurant.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 
 namespace DuocRestaurant.API.Controllers
 {
@@ -15,18 +19,21 @@ namespace DuocRestaurant.API.Controllers
         private IProductService productService { get; set; }
         private IProviderService providerService { get; set; }
         private IMailService mailService { get; set; }
+        private IUserService userService { get; set; }
         private RestaurantDatabaseSettings dbSettings { get; set; }
 
         public SupplyRequestController(ISupplyRequestService supplyRequestService,
             IProductService productService,
             IProviderService providerService,
             IMailService mailService,
+            IUserService userService,
             IOptions<RestaurantDatabaseSettings> databaseContext)
         {
             this.supplyRequestService = supplyRequestService;
             this.productService = productService;
             this.providerService = providerService;
             this.mailService = mailService;
+            this.userService = userService;
             this.dbSettings = databaseContext.Value;
         }
 
@@ -186,7 +193,21 @@ namespace DuocRestaurant.API.Controllers
                 if (sendMail)
                 {
                     // insert here the logic of the email 
-                    this.mailService.SendMail("michael.nunezb@outlook.com", "test", "Esta es una prueba");
+                    StringBuilder sb = new StringBuilder();
+                    if (edited.SupplyRequestDetails != null && edited.SupplyRequestDetails.Any())
+                    {
+                        sb.AppendLine($"<ul>");
+                        foreach (var detail in edited.SupplyRequestDetails)
+                        {
+                            sb.AppendLine($"<li><b>{detail.Count} x</b> {detail.Product.Name}</li>");
+                        }
+                        sb.AppendLine($"</ul>");
+                    }
+
+
+                    this.mailService.SendMail(edited.Provider.Email,
+                        $"Orden de compra: {string.Format(new FormatterHelper(), "{0:G}", edited.Code)}",
+                        $"Estimado: <b>{edited.Provider.Name}</b> <br/><br/> Hemos emitido la siguiente orden de compra con código: <b>{string.Format(new FormatterHelper(), "{0:G}", edited.Code)}</b>. La cual contiene el siguiente detalle: <br/><br/> {sb} <br/><br/> Se despide atentamente <b>Restaurant Siglo XXI</b>.");
                 }
 
                 result = Ok(edited.Map(this.dbSettings, true));
@@ -207,6 +228,81 @@ namespace DuocRestaurant.API.Controllers
             try
             {
                 result = Ok(this.supplyRequestService.Delete(this.dbSettings, supplyRequestId));
+            }
+            catch (Exception ex)
+            {
+                result = BadRequest(ex.Message);
+            }
+
+            return result;
+        }
+
+        [ActionName("FilterBy")]
+        [Route("[action]")]
+        public IActionResult FilterBy([FromBody] JObject filters)
+        {
+            IActionResult result;
+
+            try
+            {
+                var supplyRequests = this.supplyRequestService.Get(this.dbSettings);
+
+                if (filters.ContainsKey("StateId"))
+                {
+                    int stateId = Convert.ToInt32(filters.GetValue("StateId").ToString());
+
+                    supplyRequests = supplyRequests.Where(x => x.StateId == stateId).ToList();
+                }
+
+                if (filters.ContainsKey("Code"))
+                {
+                    string code = filters.GetValue("Code").ToString();
+
+                    supplyRequests = supplyRequests.Where(x => x.Code.Contains(code)).ToList();
+                }
+
+                result = Ok(supplyRequests.MapAll(this.dbSettings, true));
+            }
+            catch (Exception ex)
+            {
+                result = BadRequest(ex.Message);
+            }
+
+            return result;
+        }
+
+        [ActionName("Finalize")]
+        [Route("[action]")]
+        public IActionResult Finalize([FromBody] FinalizeSupplyRequest request)
+        {
+            IActionResult result;
+
+            try
+            {
+                User user = this.userService.Get(this.dbSettings, request.UserId);
+                var supplyRequest = this.supplyRequestService.Get(this.dbSettings, request.SupplyRequestId);
+                supplyRequest.StateId = (int)request.SupplyRequestState;
+
+                var edited = this.supplyRequestService.Edit(this.dbSettings, request.SupplyRequestId, supplyRequest);
+
+                StringBuilder finalizeMessage = new StringBuilder();
+                finalizeMessage.AppendLine($"Estimado: <b>{edited.Provider.Name}</b> <br/><br/>");
+                if (request.SupplyRequestState == Enums.SupplyRequestState.Confirmed)
+                {
+                    finalizeMessage.AppendLine($"El usuario <b>{user.Name} {user.LastName}</b> ha confirmado la recepción de la orden de compra con código: <b>{string.Format(new FormatterHelper(), "{0:G}", edited.Code)}</b>");
+                }
+                else if (request.SupplyRequestState == Enums.SupplyRequestState.Rejected)
+                {
+                    finalizeMessage.AppendLine($"El usuario <b>{user.Name} {user.LastName}</b> ha rechazado la recepción de la orden de compra con código: <b>{string.Format(new FormatterHelper(), "{0:G}", edited.Code)}</b> <br/><br/>");
+                    finalizeMessage.AppendLine($"Razón: {request.Reason}");
+                }
+                finalizeMessage.AppendLine($"<br/><br/> Se despide atentamente <b>Restaurant Siglo XXI</b>.");
+
+                this.mailService.SendMail(edited.Provider.Email,
+                        $"Orden {(request.SupplyRequestState == Enums.SupplyRequestState.Confirmed ? "Recepcionada" : "Rechazada")}: {string.Format(new FormatterHelper(), "{0:G}", edited.Code)}",
+                        $"{finalizeMessage}");
+
+                result = Ok(edited.Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {

@@ -6,6 +6,9 @@ export class SupplyRequestDetail {
     Count: number;
     Active: boolean;
 
+    // to confirm reception when all details are checked
+    isChecked: boolean;
+
     Product: Product;
 
     constructor() {

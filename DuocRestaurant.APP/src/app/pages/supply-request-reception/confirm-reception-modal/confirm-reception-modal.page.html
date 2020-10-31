@@ -1,33 +1,45 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Recepci&oacute;n</ion-title>
-  </ion-toolbar>
+    <ion-toolbar color="primary">
+        <ion-title>Recepci&oacute;n: {{ (supplyRequest && supplyRequest.Provider ? supplyRequest.Provider.Name : '') }}</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="dismiss()">
+                <ion-icon name="close-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-list>
-    <ion-list-header>
-      <ion-label>{{ supplyRequest.Provider.Name }}</ion-label>
-      <ion-label>{{ supplyRequest.Date | date:'dd/MM/yyyy HH:mm:ss' }}</ion-label>
-    </ion-list-header>
+<ion-content *ngIf="!loading">
+    <ion-list>
+        <ion-list-header>
+            <ion-label>
+                <h3>
+                    C&oacute;digo: <b>{{ supplyRequest.Code | supplyCode }}</b>
+                </h3>
+            </ion-label>
+        </ion-list-header>
 
-    <ion-item-sliding *ngFor="let supplyRequestDetail of supplyRequest.SupplyRequestDetails">
-      <ion-item>
-        <ion-badge slot="start" color="primary">
-          {{supplyRequestDetail.Count}} {{supplyRequestDetail.MeasurementUnit.Code}}
-        </ion-badge>
+        <ion-item-sliding *ngFor="let supplyRequestDetail of supplyRequest.SupplyRequestDetails">
+            <ion-item>
 
-        <ion-label>
-          <h2><b>{{ supplyRequestDetail.Product.Name }}</b></h2>
-          <h3>{{ supplyRequestDetail.Product.Detail }}</h3>
-        </ion-label>
-        
-        <ion-checkbox slot="end" [(ngModel)]="supplyRequestDetail.isChecked"></ion-checkbox>
-      </ion-item>
-    </ion-item-sliding>
-  </ion-list>
+                <ion-badge slot="start" color="primary">
+                    {{supplyRequestDetail.Count}} un.
+                </ion-badge>
 
-  <ion-button color="primary" expand="block" (click)="completeSupplyRequest()">
-    Confirmar recepci&oacute;n
-  </ion-button>
+                <ion-label>
+                    {{ supplyRequestDetail.Product.Name }}
+
+                </ion-label>
+
+                <ion-checkbox slot="end" [(ngModel)]="supplyRequestDetail.isChecked"></ion-checkbox>
+            </ion-item>
+        </ion-item-sliding>
+    </ion-list>
+
+    <ion-button color="primary" expand="block" (click)="confirmOrder()" [disabled]="disableConfirmButton()">
+        Confirmar recepci&oacute;n
+    </ion-button>
+    <ion-button color="danger" expand="block" (click)="rejectOrder()">
+        Rechazar pedido
+    </ion-button>
 </ion-content>
