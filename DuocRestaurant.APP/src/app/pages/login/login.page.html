@@ -1,29 +1,29 @@
 <ion-content>
-  <form #form="ngForm" (ngSubmit)="signIn()">
-    <ion-grid>
-      <ion-row>
-        <ion-col align-self-center offset="2" size-xs="8" size-lg="4" offset-lg="4">
-          <ion-img src="assets/siglo-xxi-login-logo.png">
-          </ion-img>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col align-self-center size-md="6" size-lg="4" size-xs="10" offset-xs="1" offset-lg="4" offset-md="3">
-          <div class="ion-padding-bottom">
-            <ion-item>
-              <ion-label position="floating"> Correo </ion-label>
-              <ion-input type="email" [email]="true" [(ngModel)]="credentials.Username" name="username" required></ion-input>
-            </ion-item>
-            <ion-item class="ion-padding-top">
-              <ion-label position="floating"> Contraseña </ion-label>
-              <ion-input type="password" [(ngModel)]="credentials.Password" name="password" required></ion-input>
-            </ion-item>
-          </div>
-          <div class="ion-padding-top">
-            <ion-button type="submit" [disabled]="form.invalid" expand="block">Entrar</ion-button>
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </form>
+    <form #form="ngForm" (ngSubmit)="signIn()">
+        <ion-grid>
+            <ion-row>
+                <ion-col align-self-center offset="2" size-xs="8" size-lg="4" offset-lg="4" class="ion-padding-top">
+                    <ion-img src="assets/siglo-xxi-title.png">
+                    </ion-img>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col align-self-center size-md="6" size-lg="4" size-xs="10" offset-xs="1" offset-lg="4" offset-md="3">
+                    <div class="ion-padding-bottom">
+                        <ion-item>
+                            <ion-label position="floating"> Correo </ion-label>
+                            <ion-input type="email" [email]="true" [(ngModel)]="credentials.Username" name="username" required></ion-input>
+                        </ion-item>
+                        <ion-item class="ion-padding-top">
+                            <ion-label position="floating"> Contraseña </ion-label>
+                            <ion-input type="password" [(ngModel)]="credentials.Password" name="password" required></ion-input>
+                        </ion-item>
+                    </div>
+                    <div class="ion-padding-top">
+                        <ion-button type="submit" [disabled]="form.invalid" expand="block">Entrar</ion-button>
+                    </div>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </form>
 </ion-content>

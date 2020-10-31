@@ -14,6 +14,7 @@ export class SupplyRequestReceptionPage implements OnInit {
 
     supplyRequestCode: string = null;
     pendingSupplyRequests: SupplyRequest[] = [];
+    filteredSupplyRequests: SupplyRequest[] = [];
 
     constructor(public loadingController: LoadingController,
         public supplyRequestService: SupplyRequestService,
@@ -21,10 +22,10 @@ export class SupplyRequestReceptionPage implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.getPendingSupplyRequests();
+        this.getPendingSupplyRequests(null);
     }
 
-    async getPendingSupplyRequests() {
+    async getPendingSupplyRequests(event) {
         let loading = await this.loadingController.create({
             message: `Cargando órdenes de compra`
         });
@@ -35,10 +36,14 @@ export class SupplyRequestReceptionPage implements OnInit {
         };
         this.supplyRequestService.filterBy(filters).subscribe((supplyRequests: SupplyRequest[]) => {
             this.pendingSupplyRequests = supplyRequests;
+            this.filteredSupplyRequests = supplyRequests;
             loading.dismiss();
+            if (event)
+                event.target.complete();
         }, (error) => {
             loading.dismiss();
-
+            if (event)
+                event.target.complete();
         });
     }
 
@@ -63,6 +68,21 @@ export class SupplyRequestReceptionPage implements OnInit {
 
         });
 
+    }
+
+    async filterSupplyRequests(evt) {
+        this.filteredSupplyRequests = this.pendingSupplyRequests;
+        const searchTerm = evt.srcElement.value;
+
+        if (!searchTerm) {
+            return;
+        }
+
+        this.filteredSupplyRequests = this.filteredSupplyRequests.filter(x => {
+            if (x.Code && searchTerm) {
+                return (x.Code.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1);
+            }
+        });
     }
 
     async showSupplyRequest(supplyRequest: SupplyRequest) {

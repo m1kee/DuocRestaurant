@@ -1,127 +1,97 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" *ngIf="isAuthenticated()">
-  <button class="navbar-toggler"
-          type="button"
-          (click)="menuBehavior.isCollapsed = !menuBehavior.isCollapsed"
-          aria-controls="collapse-menu"
-          [attr.aria-expanded]="!menuBehavior.isCollapsed">
+    <button class="navbar-toggler" type="button" (click)="menuBehavior.isCollapsed = !menuBehavior.isCollapsed" aria-controls="collapse-menu" [attr.aria-expanded]="!menuBehavior.isCollapsed">
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <a class="navbar-brand" [routerLink]="['']">
-    <b>
-      <span class="text-success">Siglo</span>&nbsp;<span class="text-white">XXI</span>
-    </b>
-  </a>
+    <a class="navbar-brand" [routerLink]="['']">
+        <img src="assets/siglo-xxi-title-white.png" class="centered" style="width: 130px !important;" />
+    </a>
 
-  <div id="collapse-menu" class="collapse navbar-collapse" [collapse]="menuBehavior.isCollapsed">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])">
-        <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
+    <div id="collapse-menu" class="collapse navbar-collapse" [collapse]="menuBehavior.isCollapsed">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])">
+                <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
           Mantenimiento
         </a>
 
-        <div class="dropdown-menu dropdown-menu-right"
-             aria-labelledby="navbarDropdown"
-             *dropdownMenu>
-          <a [routerLink]="['/product-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])"
-             class="dropdown-item clickable">
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" *dropdownMenu>
+                    <a [routerLink]="['/product-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])" class="dropdown-item clickable">
             Productos
           </a>
-          <a [routerLink]="['/tables-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator])"
-             class="dropdown-item clickable">
+                    <a [routerLink]="['/tables-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator])" class="dropdown-item clickable">
             Mesas
           </a>
-          <a [routerLink]="['/users-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator])"
-             class="dropdown-item clickable">
+                    <a [routerLink]="['/users-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator])" class="dropdown-item clickable">
             Usuarios
           </a>
-          <a [routerLink]="['/recipe-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])"
-             class="dropdown-item clickable">
+                    <a [routerLink]="['/recipe-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])" class="dropdown-item clickable">
             Recetas
           </a>
-          <a [routerLink]="['/provider-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])"
-             class="dropdown-item clickable">
+                    <a [routerLink]="['/provider-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])" class="dropdown-item clickable">
             Proveedores
           </a>
-        </div>
-      </li>
-      <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Customer])">
-        <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
+                </div>
+            </li>
+            <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Customer])">
+                <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
           Reservas
         </a>
 
-        <div class="dropdown-menu dropdown-menu-right"
-             aria-labelledby="navbarDropdown"
-             *dropdownMenu>
-          <a [routerLink]="['/bookings']" routerLinkActive="active"
-             class="dropdown-item clickable">
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" *dropdownMenu>
+                    <a [routerLink]="['/bookings']" routerLinkActive="active" class="dropdown-item clickable">
             Agendar reserva
           </a>
-          <a [routerLink]="['/booking-search']" routerLinkActive="active"
-             class="dropdown-item clickable">
+                    <a [routerLink]="['/booking-search']" routerLinkActive="active" class="dropdown-item clickable">
             Consultar reserva
           </a>
-        </div>
-      </li>
-      <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])">
-        <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
+                </div>
+            </li>
+            <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])">
+                <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
           Bodega
         </a>
 
-        <div class="dropdown-menu dropdown-menu-right"
-             aria-labelledby="navbarDropdown"
-             *dropdownMenu>
-          <a [routerLink]="['/stock-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Warehouse])"
-             class="dropdown-item clickable">
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" *dropdownMenu>
+                    <a [routerLink]="['/stock-maintenance']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Warehouse])" class="dropdown-item clickable">
             Stock
           </a>
-          <a [routerLink]="['/supply-request']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])"
-             class="dropdown-item clickable">
+                    <a [routerLink]="['/supply-request']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])" class="dropdown-item clickable">
             Pedidos
           </a>
-        </div>
-      </li>
-      <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Administrator, profiles.Finance])">
-        <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
+                </div>
+            </li>
+            <li class="nav-item dropdown" dropdown [autoClose]="true" *ngIf="hasPermissions([profiles.Administrator, profiles.Finance])">
+                <a class="nav-link text-white" id="navbarDropdown" role="button" dropdownToggle data-toggle="dropdown">
           Finanzas
         </a>
 
-        <div class="dropdown-menu dropdown-menu-right"
-             aria-labelledby="navbarDropdown"
-             *dropdownMenu>
-          <a [routerLink]="['/finance-movements']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Finance])"
-             class="dropdown-item clickable">
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" *dropdownMenu>
+                    <a [routerLink]="['/finance-movements']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Finance])" class="dropdown-item clickable">
             Movimientos
           </a>
-          <a [routerLink]="['/finance-utilities']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Finance])"
-             class="dropdown-item clickable">
+                    <a [routerLink]="['/finance-utilities']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Finance])" class="dropdown-item clickable">
             Utilidades
           </a>
-        </div>
-      </li>
-      <li class="nav-item" *ngIf="hasPermissions([profiles.Kitchen])">
-        <a class="nav-link text-white" [routerLink]="['/kitchen-orders']" routerLinkActive="active">
+                </div>
+            </li>
+            <li class="nav-item" *ngIf="hasPermissions([profiles.Kitchen])">
+                <a class="nav-link text-white" [routerLink]="['/kitchen-orders']" routerLinkActive="active">
           Tablero &oacute;rdenes
         </a>
-      </li>
-    </ul>
-  </div>
+            </li>
+        </ul>
+    </div>
 
-  <!-- Logged user menu -->
-  <div class="btn-group mr-1" dropdown>
-    <a class="nav-link dropdown-toggle clickable text-white"
-       id="navbarDropdown"
-       dropdownToggle
-       role="button"
-       aria-controls="dropdown-animated">
+    <!-- Logged user menu -->
+    <div class="btn-group mr-1" dropdown>
+        <a class="nav-link dropdown-toggle clickable text-white" id="navbarDropdown" dropdownToggle role="button" aria-controls="dropdown-animated">
       {{ user.Name }} {{ user.LastName }} <br />
       <small> {{ user.Role.Description }} </small>
     </a>
-    <div id="dropdown-animated" *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="navbarDropdown">
-      <a class="dropdown-item clickable" (click)="logout()">
-        <fa-icon [icon]="icons.faSignOutAlt" [fixedWidth]="true"></fa-icon>&nbsp;
-        Salir
-      </a>
+        <div id="dropdown-animated" *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item clickable" (click)="logout()">
+                <fa-icon [icon]="icons.faSignOutAlt" [fixedWidth]="true"></fa-icon>&nbsp; Salir
+            </a>
+        </div>
     </div>
-  </div>
 </nav>

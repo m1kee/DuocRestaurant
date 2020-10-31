@@ -1,21 +1,21 @@
 <div class="row justify-content-center">
-  <div class="col-xs-2 xs-offset-5 mt-5 col-lg-2 lg-offset-5 col-sm-4 sm-offset-4 col-md-2 md-offset-5">
-    <img src="assets/siglo-xxi-login-logo.png" style="width: inherit;"/>
-  </div>
+    <div class="col-xs-2 xs-offset-5 mt-5 col-lg-4 lg-offset-4 col-sm-4 sm-offset-4 col-md-6 md-offset-3">
+        <img src="assets/siglo-xxi-title.png" style="width: inherit;" />
+    </div>
 </div>
 <div class="row justify-content-center">
-  <div class="col-9 col-sm-9 col-md-9 col-lg-4 col-xl-4">
-    <form #login="ngForm" novalidate>
-      <hr />
-      <div class="form-group">
-        <label for="username">Correo:</label>
-        <input type="email" class="form-control" name="username" id="username" #username="ngModel" [(ngModel)]="credentials.Username" (keydown)="tryLogin($event)" placeholder="Ingrese su correo" required>
-      </div>
-      <div class="form-group mb-4">
-        <label for="password">Contraseña:</label>
-        <input type="password" class="form-control" name="password" id="password" #password="ngModel" [(ngModel)]="credentials.Password" (keydown)="tryLogin($event)" placeholder="Ingrese su contraseña" required>
-      </div>
-      <button type="button" class="btn btn-primary btn-block" (click)="signIn()" [disabled]="login.invalid || loading">Login</button>
-    </form>
-  </div>
+    <div class="col-9 col-sm-9 col-md-9 col-lg-4 col-xl-4">
+        <form #login="ngForm" novalidate>
+            <hr />
+            <div class="form-group">
+                <label for="username">Correo:</label>
+                <input type="email" class="form-control" name="username" id="username" #username="ngModel" [(ngModel)]="credentials.Username" (keydown)="tryLogin($event)" placeholder="Ingrese su correo" required>
+            </div>
+            <div class="form-group mb-4">
+                <label for="password">Contraseña:</label>
+                <input type="password" class="form-control" name="password" id="password" #password="ngModel" [(ngModel)]="credentials.Password" (keydown)="tryLogin($event)" placeholder="Ingrese su contraseña" required>
+            </div>
+            <button type="button" class="btn btn-primary btn-block" (click)="signIn()" [disabled]="login.invalid || loading">Login</button>
+        </form>
+    </div>
 </div>
