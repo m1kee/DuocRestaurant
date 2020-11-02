@@ -1,5 +1,9 @@
 ﻿ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY hh24:mi:ss';
 
+DROP TABLE SeguimientoOrden;
+DROP TABLE DetalleOrden;
+DROP TABLE Orden;
+DROP TABLE Compra;
 DROP TABLE DetalleReceta;
 DROP TABLE Receta;
 DROP TABLE Reserva;
@@ -147,6 +151,66 @@ CREATE TABLE DetallePedidoInsumo(
     CONSTRAINT FK_DetallePedidoInsumo_Producto FOREIGN KEY (ProductoId) REFERENCES Producto(Id)
 ); 
 
+CREATE TABLE Compra (
+    Id INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    MesaId INTEGER NOT NULL,
+    UsuarioId INTEGER NOT NULL,
+    Fecha DATE NOT NULL,
+    EstadoId INTEGER NOT NULL,
+    CONSTRAINT PK_Compra PRIMARY KEY (Id),
+    CONSTRAINT FK_Compra_Usuario FOREIGN KEY (UsuarioId) REFERENCES Usuario(Id),
+    CONSTRAINT FK_Compra_Mesa FOREIGN KEY (MesaId) REFERENCES Mesa(Id)
+);
+
+CREATE TABLE Orden(
+    Id INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    CompraId INTEGER NOT NULL,
+    EstadoId INTEGER NOT NULL,
+    CONSTRAINT PK_Orden PRIMARY KEY (Id),
+    CONSTRAINT FK_Orden_Compra FOREIGN KEY (CompraId) REFERENCES Compra(Id)
+);
+
+CREATE TABLE DetalleOrden(
+    OrdenId INTEGER NOT NULL,
+    ProductoId INTEGER NULL,
+    RecetaId INTEGER NULL,
+    Cantidad INTEGER NOT NULL,
+    Precio INTEGER NOT NULL,
+    CONSTRAINT PK_DetalleOrden PRIMARY KEY (OrdenId, RecetaId, ProductoId),
+    CONSTRAINT FK_DetalleOrden_Orden FOREIGN KEY (OrdenId) REFERENCES Orden(Id),
+    CONSTRAINT FK_DetalleOrden_Producto FOREIGN KEY (ProductoId) REFERENCES Producto(Id),
+    CONSTRAINT FK_DetalleOrden_Receta FOREIGN KEY (RecetaId) REFERENCES Receta(Id),
+    CONSTRAINT CHK_DetalleOrden CHECK ((ProductoId IS NOT NULL AND RecetaId IS NULL) OR (ProductoId IS NULL AND RecetaId IS NOT NULL))
+);
+
+CREATE TABLE SeguimientoOrden(
+    Id INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    OrdenId INTEGER NOT NULL,
+    EstadoId INTEGER NOT NULL,
+    Fecha DATE NOT NULL,
+    CONSTRAINT FK_SeguimientoOrden_Orden FOREIGN KEY (OrdenId) REFERENCES Orden(Id)
+);
+
+--Trigger par seguimiento de orden
+--CREATE OR REPLACE TRIGGER seguirOrden
+--    AFTER 
+--    INSERT
+--    ON Orden
+--    FOR EACH ROW    
+--DECLARE
+--    IdSeg number;
+--    estadoSeg number;
+--BEGIN
+--    --select para insertar datos
+--    SELECT Id, EstadoId 
+--    into IdSeg, estadoSeg 
+--    from (select * from Orden order by rownum desc)
+--    where rownum <= 1;
+--    -- insert en la tabla   
+--    INSERT INTO SeguimientoOrden (OrdenId, EstadoId, Fecha)
+--    VALUES(IdSeg, estadoSeg, SYSDATE);
+--END;
+
 -- INSERTS
 INSERT INTO Rol (Descripcion) VALUES ('Administrador');
 INSERT INTO Rol (Descripcion) VALUES ('Bodega');
@@ -188,7 +252,7 @@ VALUES (6,'Maria', 'Bella', 'maripe@yopmail.com', '03ac674216f3e15c761ee1a5e255f
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (7,'Recepción', 'Siglo XXI', 'recepcion@sigloxxi.cl', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56978221199', '3 Poniente, 2242, Maipu', 1);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
-VALUES (8,'Mesa 1', '', 'mesa-1@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56900004533', '4 Poniente 5044, Maipu', 1);
+VALUES (8,'Mesa', '1', 'mesa-1@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56900004533', '4 Poniente 5044, Maipu', 1);
 
 INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa, UsuarioId) VALUES (1,'mesa interior',2,0,1, NULL);
 INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa, UsuarioId) VALUES (2,'mesa interior',4,0,1, NULL);
