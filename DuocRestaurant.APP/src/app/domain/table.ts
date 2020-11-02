@@ -1,3 +1,5 @@
+import { User } from './user';
+
 export class Table {
     Id: number;
     Number: number;
@@ -5,6 +7,9 @@ export class Table {
     Capacity: number;
     Active: boolean;
     InUse: boolean;
+    UserId?: number;
+
+    User: User;
 
   public constructor() {
     this.Active = true;
