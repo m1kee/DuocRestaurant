@@ -16,7 +16,7 @@ namespace Domain
         public bool Active { get; set; }
 
         public SupplyRequestState State { get; set; }
-        public Enums.SupplyRequestState StateEnum
+        public Enums.SupplyRequestState SupplyRequestState
         {
             get
             {
@@ -66,7 +66,7 @@ namespace Domain
                 if (this.State != null)
                     result.State = this.State.Map(ctx, false);
 
-                result.StateEnum = this.StateEnum;
+                result.SupplyRequestState = this.SupplyRequestState;
             }
 
             return result;

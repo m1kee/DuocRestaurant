@@ -42,6 +42,7 @@ CREATE TABLE Mesa (
     Capacidad INTEGER,
     Activa NUMBER(1) NOT NULL,
     EnUso NUMBER(1) NOT NULL,
+    UsuarioId NUMBER(1) NULL,
     CONSTRAINT PK_Mesa PRIMARY KEY (Id)
 );
 
@@ -153,6 +154,8 @@ INSERT INTO Rol (Descripcion) VALUES ('Finanzas');
 INSERT INTO Rol (Descripcion) VALUES ('Cocina');
 INSERT INTO Rol (Descripcion) VALUES ('Garzon');
 INSERT INTO Rol (Descripcion) VALUES ('Cliente');
+INSERT INTO Rol (Descripcion) VALUES ('Recepción');
+INSERT INTO Rol (Descripcion) VALUES ('Mesa');
 
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (1,'Segismundo', 'Morat', 'Segi_Mora168@SigloXXI.cl', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56922223760', 'Victoria,2251,Maipu', 1);
@@ -183,17 +186,17 @@ VALUES (5,'Pablo', 'Mamani', 'perezpe3@hotmail.com', '03ac674216f3e15c761ee1a5e2
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (6,'Maria', 'Bella', 'maripe@yopmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56975797876', '5 de abril,2220,Maipu', 0);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
-VALUES (6,'Carla', 'Brio', 'carlitax-5654@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56978221199', '3 Poniente, 2242, Maipu', 1);
+VALUES (7,'Recepción', 'Siglo XXI', 'recepcion@sigloxxi.cl', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56978221199', '3 Poniente, 2242, Maipu', 1);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
-VALUES (6,'Flor', 'Monsalva', 'for-mañanera@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56900004533', '4 Poniente 5044, Maipu', 1);
+VALUES (8,'Mesa 1', '', 'mesa-1@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56900004533', '4 Poniente 5044, Maipu', 1);
 
-INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa) VALUES (1,'mesa interior',2,0,1);
-INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa) VALUES (2,'mesa interior',4,0,1);
-INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa) VALUES (3,'mesa interior',4,0,1);
-INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa) VALUES (4,'mesa tv',6,0,1);
-INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa) VALUES (5,'barra bar',1,0,1);
-INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa) VALUES (6,'barra bar',1,0,1);
-INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa) VALUES (7,'mesa exterior',4,0,1);
+INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa, UsuarioId) VALUES (1,'mesa interior',2,0,1, NULL);
+INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa, UsuarioId) VALUES (2,'mesa interior',4,0,1, NULL);
+INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa, UsuarioId) VALUES (3,'mesa interior',4,0,1, NULL);
+INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa, UsuarioId) VALUES (4,'mesa tv',6,0,1, NULL);
+INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa, UsuarioId) VALUES (5,'barra bar',1,0,1, NULL);
+INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa, UsuarioId) VALUES (6,'barra bar',1,0,1, NULL);
+INSERT INTO Mesa (Numero, Descripcion, Capacidad, EnUso, Activa, UsuarioId) VALUES (7,'mesa exterior',4,0,1, NULL);
 
 INSERT INTO TipoProducto (Descripcion) VALUES ('Insumo');
 INSERT INTO TipoProducto (Descripcion) VALUES ('Consumible');

@@ -13,7 +13,7 @@ export class SupplyRequest {
     SupplyRequestDetails: SupplyRequestDetail[];
     Provider: Provider;
     State: SupplyRequestState;
-    StateEnum: SupplyRequestStates;
+    SupplyRequestState: SupplyRequestStates;
 
     constructor() {
         this.ProviderId = null;
