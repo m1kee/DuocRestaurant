@@ -1,12 +1,12 @@
 <ion-content>
     <ion-tabs>
         <ion-tab-bar slot="bottom">
-            <ion-tab-button tab="orders" *ngIf="hasPermissions([profiles.Customer])">
+            <ion-tab-button tab="orders" *ngIf="hasPermissions([profiles.Customer, profiles.Table])">
                 <ion-icon name="restaurant-outline"></ion-icon>
                 <ion-label>Pedidos</ion-label>
             </ion-tab-button>
 
-            <ion-tab-button tab="bookings" *ngIf="hasPermissions([profiles.Administrator,profiles.Customer])">
+            <ion-tab-button tab="bookings" *ngIf="hasPermissions([profiles.Customer])">
                 <ion-icon name="calendar-outline"></ion-icon>
                 <ion-label>Reservas</ion-label>
             </ion-tab-button>
@@ -21,7 +21,7 @@
                 <ion-label>&Oacute;rdenes</ion-label>
             </ion-tab-button>
 
-            <ion-tab-button tab="reception" *ngIf="hasPermissions([profiles.Waiter])">
+            <ion-tab-button tab="reception" *ngIf="hasPermissions([profiles.Reception])">
                 <ion-icon name="apps-outline"></ion-icon>
                 <ion-label>Recepci&oacute;n</ion-label>
             </ion-tab-button>

@@ -21,7 +21,9 @@ namespace Domain
             Finance = 3,
             Kitchen = 4,
             Waiter = 5,
-            Customer = 6
+            Customer = 6,
+            Reception = 7,
+            Table = 8
         }
 
         public enum SupplyRequestState
