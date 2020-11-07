@@ -46,10 +46,11 @@ namespace Domain
         public enum PurchaseState
         {
             NotAssigned = 0,
-            PendingPayment = 1,
-            PaidInCash = 2,
-            PaidByCredit = 3,
-            PaidByDebit = 4
+            Canceled = 1,
+            PendingPayment = 2,
+            PaidInCash = 3,
+            PaidByCredit = 4,
+            PaidByDebit = 5
         }
 
         public enum OrderState

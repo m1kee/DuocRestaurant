@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Table } from '@domain/table';
 import { TableService } from '@services/table.service';
-import { ToastController, LoadingController } from '@ionic/angular';
+import { ToastController, LoadingController, ModalController } from '@ionic/angular';
+import { AssignUserModalPage } from './assign-user-modal/assign-user-modal.page';
 
 @Component({
     selector: 'app-availability',
@@ -13,8 +14,10 @@ export class AvailabilityPage implements OnInit {
 
     constructor(private tableService: TableService,
         private toastController: ToastController,
-        private loadingController: LoadingController) {
-        
+        private loadingController: LoadingController,
+        private modalController: ModalController
+    ) {
+
     }
 
     ngOnInit() {
@@ -40,19 +43,48 @@ export class AvailabilityPage implements OnInit {
     }
 
     async updateAvailability(table: Table) {
+        if (table.InUse) {
+            this.freeTable(table);
+        }
+        else {
+            const modal = await this.modalController.create({
+                component: AssignUserModalPage,
+                componentProps: {
+                    table: table
+                }
+            });
+
+            modal.onWillDismiss().then((editedTable) => {
+                if (editedTable.data) {
+                    let cIndex = this.tables.findIndex((c) => c.Id === editedTable.data.Id);
+                    this.tables.splice(cIndex, 1, editedTable.data);
+                }
+            });
+
+            return await modal.present();
+        }
+    }
+
+    async freeTable(table: Table) {
         let loading = await this.loadingController.create({
             message: `Actualizando mesa ${table.Number}`
         });
         await loading.present();
 
-        table.InUse = !table.InUse;
+        table.InUse = false;
+        table.UserId = null;
         this.tableService.put(table.Id, table).subscribe((editedTable: Table) => {
             let cIndex = this.tables.findIndex((c) => c.Id === editedTable.Id);
             this.tables.splice(cIndex, 1, editedTable);
             loading.dismiss();
         }, async (error) => {
+            table.InUse = true;
+            table.UserId = table.User.Id;
             loading.dismiss();
-            let message = 'Ocurri� un error al actualizar la mesa.';
+            let message = 'Ocurrió un error al actualizar la mesa.';
+
+            if (error.error)
+                message = error.error;
 
             const toast = await this.toastController.create({
                 message: message,
@@ -62,5 +94,5 @@ export class AvailabilityPage implements OnInit {
             });
             toast.present();
         });
-    }
+    };
 }

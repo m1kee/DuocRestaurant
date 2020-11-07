@@ -27,3 +27,19 @@ export enum BookingState {
     Canceled = 2,
     Expired = 3
 }
+
+export enum PurchaseState {
+    NotAssigned = 0,
+    Canceled = 1,
+    PendingPayment = 2,
+    PaidInCash = 3,
+    PaidByCredit = 4,
+    PaidByDebit = 5
+}
+
+export enum OrderState {
+    NotAssigned = 0,
+    Pending = 1,
+    InPreparation = 2,
+    Ready = 3
+}

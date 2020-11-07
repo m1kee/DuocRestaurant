@@ -9,6 +9,7 @@ namespace Domain
         public int Id { get; set; }
         public int PurchaseId { get; set; }
         public int StateId { get; set; }
+        public string Note { get; set; }
 
         public Purchase Purchase { get; set; }
         public Enums.OrderState OrderState
@@ -41,6 +42,7 @@ namespace Domain
             public const string Id = "Id";
             public const string PurchaseId = "CompraId";
             public const string StateId = "EstadoId";
+            public const string Note = "Nota";
         }
     }
 }

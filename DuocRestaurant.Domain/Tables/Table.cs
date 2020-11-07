@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,6 +17,7 @@ namespace Domain
 
         public User User { get; set; }
 
+        public const string TableName = "Mesa";
         public struct ColumnNames
         {
             public const string Id = "Id";
@@ -25,6 +27,19 @@ namespace Domain
             public const string Active = "Activa";
             public const string InUse = "EnUso";
             public const string UserId = "UsuarioId";
+        }
+
+        public override JObject Map(RestaurantDatabaseSettings ctx, bool customMap = true)
+        {
+            dynamic result = base.Map(ctx, customMap);
+
+            if (customMap)
+            {
+                if (this.UserId != null && this.User != null)
+                    result.User = this.User.Map(ctx, true);
+            }
+
+            return result;
         }
     }
 }

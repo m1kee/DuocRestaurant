@@ -19,6 +19,7 @@ namespace Domain
 
         public Role Role { get; set; }
 
+        public const string TableName = "Usuario";
         public struct ColumnNames
         {
             public const string Id = "Id";

@@ -16,11 +16,15 @@ namespace DuocRestaurant.API.Controllers
     public class TableController : ControllerBase
     {
         private ITableService tableService { get; set; }
+        private IUserService userService { get; set; }
         private RestaurantDatabaseSettings dbSettings { get; set; }
 
-        public TableController(ITableService authService, IOptions<RestaurantDatabaseSettings> databaseContext)
+        public TableController(ITableService authService, 
+            IUserService userService,
+            IOptions<RestaurantDatabaseSettings> databaseContext)
         {
             this.tableService = authService;
+            this.userService = userService;
             this.dbSettings = databaseContext.Value;
         }
 
@@ -73,7 +77,12 @@ namespace DuocRestaurant.API.Controllers
                 if (tables.Any(x => x.Number.Equals(table.Number)))
                     throw new Exception($"Ya existe una mesa con el número: { table.Number }");
 
-                result = Ok(this.tableService.Add(this.dbSettings, table).Map(this.dbSettings, true));
+                var created = this.tableService.Add(this.dbSettings, table);
+
+                if (created.UserId != null)
+                    created.User = this.userService.Get(this.dbSettings, (int)created.UserId);
+
+                result = Ok(created.Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -93,8 +102,15 @@ namespace DuocRestaurant.API.Controllers
                 var tables = this.tableService.Get(this.dbSettings);
                 if (tables.Any(x => x.Id != tableId && x.Number.Equals(table.Number)))
                     throw new Exception($"Ya existe una mesa con el número: { table.Number }");
+                if (tables.Any(x => x.Id != tableId && table.UserId != null && x.UserId.Equals(table.UserId)))
+                    throw new Exception($"Ya existe una mesa asociada al usuario {table.UserId}");
 
-                result = Ok(this.tableService.Edit(this.dbSettings, tableId, table).Map(this.dbSettings, true));
+                var edited = this.tableService.Edit(this.dbSettings, tableId, table);
+
+                if (edited.UserId != null)
+                    edited.User = this.userService.Get(this.dbSettings, (int)edited.UserId);
+
+                result = Ok(edited.Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {
@@ -150,6 +166,13 @@ namespace DuocRestaurant.API.Controllers
                     bool inUse = Convert.ToBoolean(filters.GetValue("InUse").ToString());
 
                     tables = tables.Where(x => x.InUse == inUse).ToList();
+                }
+
+                if (filters.ContainsKey("UserId"))
+                {
+                    int userId = Convert.ToInt32(filters.GetValue("UserId").ToString());
+
+                    tables = tables.Where(x => x.UserId == userId).ToList();
                 }
 
                 result = Ok(tables.MapAll(this.dbSettings, true));

@@ -79,9 +79,15 @@ namespace Business.Services
                     $"{Table.ColumnNames.Capacity} = {table.Capacity}, " +
                     $"{Table.ColumnNames.Description} = '{table.Description}', " +
                     $"{Table.ColumnNames.Active} = {(table.Active ? 1 : 0)}, " +
-                    $"{Table.ColumnNames.InUse} = {(table.InUse ? 1 : 0)} " +
+                    $"{Table.ColumnNames.InUse} = {(table.InUse ? 1 : 0)}, " +
+                    $"{Table.ColumnNames.UserId} = :{Table.ColumnNames.UserId} " +
                     $"WHERE {Table.ColumnNames.Id} = {tableId}";
                 OracleCommand cmd = new OracleCommand(query, conn);
+                cmd.Parameters.Add(new OracleParameter() { 
+                    Value = table.UserId,
+                    ParameterName = $":{Table.ColumnNames.UserId}",
+                    DbType = System.Data.DbType.Int32
+                });
                 conn.Open();
 
                 cmd.ExecuteNonQuery();
@@ -99,20 +105,30 @@ namespace Business.Services
             using (OracleConnection conn = new OracleConnection(ctx.ConnectionString))
             {
                 string query = $"SELECT " +
-                    $"{Table.ColumnNames.Id}, " +
-                    $"{Table.ColumnNames.Number}, " +
-                    $"{Table.ColumnNames.Capacity}, " +
-                    $"{Table.ColumnNames.Description}, " +
-                    $"{Table.ColumnNames.Active}, " +
-                    $"{Table.ColumnNames.InUse} " +
-                    $"FROM Mesa";
+                    $"m.{Table.ColumnNames.Id}, " +
+                    $"m.{Table.ColumnNames.Number}, " +
+                    $"m.{Table.ColumnNames.Capacity}, " +
+                    $"m.{Table.ColumnNames.Description}, " +
+                    $"m.{Table.ColumnNames.Active}, " +
+                    $"m.{Table.ColumnNames.InUse}, " +
+                    $"u.{User.ColumnNames.Id} AS {User.TableName}{User.ColumnNames.Id}, " +
+                    $"u.{User.ColumnNames.RoleId} AS {User.TableName}{User.ColumnNames.RoleId}, " +
+                    $"u.{User.ColumnNames.Name} AS {User.TableName}{User.ColumnNames.Name}, " +
+                    $"u.{User.ColumnNames.LastName} AS {User.TableName}{User.ColumnNames.LastName}, " +
+                    $"u.{User.ColumnNames.Email} AS {User.TableName}{User.ColumnNames.Email}, " +
+                    $"u.{User.ColumnNames.Phone} AS {User.TableName}{User.ColumnNames.Phone}, " +
+                    $"u.{User.ColumnNames.Address} AS {User.TableName}{User.ColumnNames.Address}, " +
+                    $"u.{User.ColumnNames.Password} AS {User.TableName}{User.ColumnNames.Password}, " +
+                    $"u.{User.ColumnNames.Active}  AS {User.TableName}{User.ColumnNames.Active} " +
+                    $"FROM {Table.TableName} m " +
+                    $"LEFT JOIN {User.TableName} u ON u.{User.ColumnNames.Id} = m.{Table.ColumnNames.UserId}";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 conn.Open();
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    result.Add(new Table()
+                    var table = new Table()
                     {
                         Id = Convert.ToInt32(reader[Table.ColumnNames.Id]),
                         Number = Convert.ToInt32(reader[Table.ColumnNames.Number]),
@@ -120,7 +136,24 @@ namespace Business.Services
                         Description = reader[Table.ColumnNames.Description]?.ToString(),
                         Active = Convert.ToBoolean(reader[Table.ColumnNames.Active]),
                         InUse = Convert.ToBoolean(reader[Table.ColumnNames.InUse])
-                    });
+                    };
+
+                    if (reader[Table.ColumnNames.UserId] != DBNull.Value)
+                    {
+                        table.UserId = Convert.ToInt32(reader[Table.ColumnNames.UserId]);
+                        table.User = new User()
+                        {
+                            Id = Convert.ToInt32(reader[$"{User.TableName}{User.ColumnNames.Id}"]),
+                            Email = reader[$"{User.TableName}{User.ColumnNames.Email}"]?.ToString(),
+                            Name = reader[$"{User.TableName}{User.ColumnNames.Name}"]?.ToString(),
+                            LastName = reader[$"{User.TableName}{User.ColumnNames.LastName}"]?.ToString(),
+                            Address = reader[$"{User.TableName}{User.ColumnNames.Address}"]?.ToString(),
+                            Phone = reader[$"{User.TableName}{User.ColumnNames.Phone}"]?.ToString(),
+                            RoleId = Convert.ToInt32(reader[$"{User.TableName}{User.ColumnNames.RoleId}"])
+                        };
+                    }
+
+                    result.Add(table);
                 }
 
                 reader.Dispose();
@@ -136,13 +169,22 @@ namespace Business.Services
             using (OracleConnection conn = new OracleConnection(ctx.ConnectionString))
             {
                 string query = $"SELECT " +
-                    $"{Table.ColumnNames.Id}, " +
-                    $"{Table.ColumnNames.Number}, " +
-                    $"{Table.ColumnNames.Capacity}, " +
-                    $"{Table.ColumnNames.Description}, " +
-                    $"{Table.ColumnNames.Active}, " +
-                    $"{Table.ColumnNames.InUse} " +
-                    $"FROM Mesa " +
+                    $"m.{Table.ColumnNames.Id}, " +
+                    $"m.{Table.ColumnNames.Number}, " +
+                    $"m.{Table.ColumnNames.Capacity}, " +
+                    $"m.{Table.ColumnNames.Description}, " +
+                    $"m.{Table.ColumnNames.Active}, " +
+                    $"m.{Table.ColumnNames.InUse}, " +
+                    $"u.{User.ColumnNames.RoleId} AS {User.TableName}{User.ColumnNames.RoleId}, " +
+                    $"u.{User.ColumnNames.Name} AS {User.TableName}{User.ColumnNames.Name}, " +
+                    $"u.{User.ColumnNames.LastName} AS {User.TableName}{User.ColumnNames.LastName}, " +
+                    $"u.{User.ColumnNames.Email} AS {User.TableName}{User.ColumnNames.Email}, " +
+                    $"u.{User.ColumnNames.Phone} AS {User.TableName}{User.ColumnNames.Phone}, " +
+                    $"u.{User.ColumnNames.Address} AS {User.TableName}{User.ColumnNames.Address}, " +
+                    $"u.{User.ColumnNames.Password} AS {User.TableName}{User.ColumnNames.Password}, " +
+                    $"u.{User.ColumnNames.Active}  AS {User.TableName}{User.ColumnNames.Active} " +
+                    $"FROM {Table.TableName} m " +
+                    $"LEFT JOIN {User.TableName} u ON u.{User.ColumnNames.Id} = m.{Table.ColumnNames.UserId} " +
                     $"WHERE {Table.ColumnNames.Id} = {tableId}";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 conn.Open();
@@ -157,8 +199,24 @@ namespace Business.Services
                         Capacity = Convert.ToInt32(reader[Table.ColumnNames.Capacity]),
                         Description = reader[Table.ColumnNames.Description]?.ToString(),
                         Active = Convert.ToBoolean(reader[Table.ColumnNames.Active]),
-                        InUse = Convert.ToBoolean(reader[Table.ColumnNames.InUse])
+                        InUse = Convert.ToBoolean(reader[Table.ColumnNames.InUse]),
+                        UserId = Convert.ToInt32(reader[Table.ColumnNames.UserId])
                     };
+
+                    if (reader[Table.ColumnNames.UserId] != DBNull.Value)
+                    {
+                        result.UserId = Convert.ToInt32(reader[Table.ColumnNames.UserId]);
+                        result.User = new User()
+                        {
+                            Id = Convert.ToInt32(reader[$"{User.TableName}{User.ColumnNames.Id}"]),
+                            Email = reader[$"{User.TableName}{User.ColumnNames.Email}"]?.ToString(),
+                            Name = reader[$"{User.TableName}{User.ColumnNames.Name}"]?.ToString(),
+                            LastName = reader[$"{User.TableName}{User.ColumnNames.LastName}"]?.ToString(),
+                            Address = reader[$"{User.TableName}{User.ColumnNames.Address}"]?.ToString(),
+                            Phone = reader[$"{User.TableName}{User.ColumnNames.Phone}"]?.ToString(),
+                            RoleId = Convert.ToInt32(reader[$"{User.TableName}{User.ColumnNames.RoleId}"])
+                        };
+                    }
                 }
 
                 reader.Dispose();

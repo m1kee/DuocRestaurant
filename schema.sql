@@ -46,7 +46,7 @@ CREATE TABLE Mesa (
     Capacidad INTEGER,
     Activa NUMBER(1) NOT NULL,
     EnUso NUMBER(1) NOT NULL,
-    UsuarioId NUMBER(1) NULL,
+    UsuarioId INTEGER NULL,
     CONSTRAINT PK_Mesa PRIMARY KEY (Id)
 );
 
@@ -166,6 +166,7 @@ CREATE TABLE Orden(
     Id INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     CompraId INTEGER NOT NULL,
     EstadoId INTEGER NOT NULL,
+    Nota     VARCHAR2(250) NULL,
     CONSTRAINT PK_Orden PRIMARY KEY (Id),
     CONSTRAINT FK_Orden_Compra FOREIGN KEY (CompraId) REFERENCES Compra(Id)
 );
@@ -230,7 +231,7 @@ VALUES (3,'Diego', 'Torres', 'diegox_ushiha@hotmail.com', '03ac674216f3e15c761ee
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (4,'Valentina', 'Pincheira', 'valery-uwu@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56978902121', 'Gamero,529,Independencia', 1);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
-VALUES (4,'Henry', 'Zamora', 'dracula_darks@hotmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56934523033', 'Gamero,567,Independencia', 1);
+VALUES (6,'Henry', 'Zamora', 'dracula_darks@hotmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56934523033', 'Gamero,567,Independencia', 1);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (4,'Mario', 'Pino', 'mariop1993@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56923408485', 'San Martin,575,Santiago', 1);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
@@ -238,17 +239,17 @@ VALUES (4,'Claudia', 'Salfate', 'salfate_clau94@outlook.com', '03ac674216f3e15c7
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (5,'Perla', 'San Martin', 'gema-ruby3@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56940331111', 'Recoleta,598,Recoleta', 1);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
-VALUES (5,'Alberto', 'Rivera', 'albersoto@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56925340555', 'Dominicana,200,Recoleta', 1);
+VALUES (6,'Alberto', 'Rivera', 'albersoto@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56925340555', 'Dominicana,200,Recoleta', 1);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
-VALUES (5,'Julia', 'Aries', 'juliana-kawaii@hotmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56934506653', 'Francisco Bilbao,6052,Providencia', 1);
+VALUES (6,'Julia', 'Aries', 'juliana-kawaii@hotmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56934506653', 'Francisco Bilbao,6052,Providencia', 1);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
-VALUES (5,'Ares', 'Martines', 'fe4-jp@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56949492332', 'Gamero,531,Independencia', 1);
+VALUES (6,'Ares', 'Martines', 'fe4-jp@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56949492332', 'Gamero,531,Independencia', 1);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
-VALUES (5,'Eubanz', 'Brando', 'banz-87@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56922523042', 'Victoria,666,Maipu', 1);
+VALUES (6,'Eubanz', 'Brando', 'banz-87@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56922523042', 'Victoria,666,Maipu', 1);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
-VALUES (5,'Pablo', 'Mamani', 'perezpe3@hotmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56978924721', 'Duble almeyda,3755,Nuñoa', 1);
+VALUES (6,'Pablo', 'Mamani', 'perezpe3@hotmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56978924721', 'Duble almeyda,3755,Nuñoa', 1);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
-VALUES (6,'Maria', 'Bella', 'maripe@yopmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56975797876', '5 de abril,2220,Maipu', 0);
+VALUES (6,'Maria', 'Bella', 'maripe@yopmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56975797876', '5 de abril,2220,Maipu', 1);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)
 VALUES (7,'Recepción', 'Siglo XXI', 'recepcion@sigloxxi.cl', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '+56978221199', '3 Poniente, 2242, Maipu', 1);
 INSERT INTO Usuario (RolId, Nombre, Apellido, Email, Contrasena, Telefono, Direccion, Activo)

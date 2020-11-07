@@ -5,7 +5,12 @@ using System.Text;
 
 namespace Business.Services
 {
-    public class IOrderService : RestaurantTable
+    public interface IOrderService
     {
+        IList<Order> Get();
+        Order Get(int orderId);
+        Order Add(Order order);
+        Order Edit(int orderId, Order order);
+        bool Delete(int orderId);
     }
 }

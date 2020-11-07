@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 
 namespace DuocRestaurant.API.Controllers
 {
@@ -131,6 +132,33 @@ namespace DuocRestaurant.API.Controllers
             try
             {
                 result = Ok(this.userService.Delete(this.dbSettings, userId));
+            }
+            catch (Exception ex)
+            {
+                result = BadRequest(ex.Message);
+            }
+
+            return result;
+        }
+
+        [ActionName("FilterBy")]
+        [Route("[action]")]
+        public IActionResult FilterBy([FromBody] JObject filters)
+        {
+            IActionResult result;
+
+            try
+            {
+                var users = this.userService.Get(this.dbSettings);
+
+                if (filters.ContainsKey("RoleId"))
+                {
+                    List<int> roles = Newtonsoft.Json.JsonConvert.DeserializeObject<List<int>>(filters.GetValue("RoleId").ToString());
+
+                    users = users.Where(x => roles.Any(y => y == x.RoleId)).ToList();
+                }
+
+                result = Ok(users.MapAll(this.dbSettings, true));
             }
             catch (Exception ex)
             {

@@ -16,6 +16,10 @@
                 <ion-label>
                     <h2> Mesa {{table.Number}} </h2>
                     <p> {{table.Description}} </p>
+                    <p *ngIf="table.User">
+                        <ion-icon name="people-outline"></ion-icon>
+                        {{ table.User.Name }} {{ table.User.LastName }}
+                    </p>
                     <ion-text color="{{table.InUse ? 'warning' : 'success'}}">
                         {{ table.InUse ? 'Ocupada' : 'Disponible' }}
                     </ion-text>
