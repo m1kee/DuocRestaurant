@@ -38,9 +38,11 @@ namespace DuocRestaurant.API
             services.AddScoped<IBookingService, BookingService>();
             services.AddScoped<IMailService, MailService>();
             services.AddScoped<IMeasurementUnitService, MeasurementUnitService>();
+            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IProductTypeService, ProductTypeService>();
             services.AddScoped<IProviderService, ProviderService>();
+            services.AddScoped<IPurchaseService, PurchaseService>();
             services.AddScoped<IRecipeService, RecipeService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ISupplyRequestService, SupplyRequestService>();
