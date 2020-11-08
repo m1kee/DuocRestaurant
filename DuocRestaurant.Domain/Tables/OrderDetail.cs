@@ -11,6 +11,7 @@ namespace Domain
         public int? RecipeId { get; set; }
         public int Count { get; set; }
         public decimal Price { get; set; }
+        public bool Active { get; set; }
 
         public const string TableName = "DetalleOrden";
 
@@ -21,6 +22,7 @@ namespace Domain
             public const string RecipeId = "RecetaId";
             public const string Count = "Cantidad";
             public const string Price = "Precio";
+            public const string Active = "Activa";
         }
     }
 }

@@ -56,9 +56,10 @@ namespace Domain
         public enum OrderState
         {
             NotAssigned = 0,
-            Pending = 1,
-            InPreparation = 2,
-            Ready = 3
+            Canceled = 1,
+            Pending = 2,
+            InPreparation = 3,
+            Ready = 4
         }
     }
 }

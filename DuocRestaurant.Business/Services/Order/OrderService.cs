@@ -1,7 +1,9 @@
 ﻿using Domain;
 using Microsoft.Extensions.Options;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Services
@@ -16,32 +18,526 @@ namespace Business.Services
 
         public Order Add(Order order)
         {
-            throw new NotImplementedException();
+            Order result = null;
+
+            using (OracleConnection conn = new OracleConnection(dbSettings.ConnectionString))
+            {
+                conn.Open();
+                OracleTransaction transaction = conn.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
+
+                order.StateId = (int)Enums.OrderState.NotAssigned;
+
+                string query = $"INSERT INTO {Order.TableName} (" +
+                    $"{Order.ColumnNames.PurchaseId}, " +
+                    $"{Order.ColumnNames.StateId}, " +
+                    $"{Order.ColumnNames.Note} " +
+                    $") VALUES (" +
+                    $"{order.PurchaseId}, " +
+                    $"{order.StateId}, " +
+                    $"'{order.Note}' " +
+                    $") RETURNING {Order.ColumnNames.Id} INTO :{Order.ColumnNames.Id}";
+                OracleCommand cmd = new OracleCommand(query, conn)
+                {
+                    Transaction = transaction
+                };
+                cmd.Parameters.Add(new OracleParameter()
+                {
+                    ParameterName = $":{Order.ColumnNames.Id}",
+                    OracleDbType = OracleDbType.Decimal,
+                    Direction = System.Data.ParameterDirection.Output
+                });
+
+                try
+                {
+                    cmd.ExecuteNonQuery();
+
+                    order.Id = Convert.ToInt32(cmd.Parameters[$":{Order.ColumnNames.Id}"].Value.ToString());
+
+                    if (order.OrderDetails != null)
+                    {
+                        List<OrderDetail> orderDetails = new List<OrderDetail>();
+                        foreach (var orderDetail in order.OrderDetails)
+                        {
+                            OrderDetail createdRecipeDetail = this.Add(conn, transaction, order.Id, orderDetail);
+                            orderDetails.Add(createdRecipeDetail);
+                        }
+                    }
+
+                    transaction.Commit();
+
+                    result = order;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+
+            return result;
         }
 
         public OrderDetail Add(OrderDetail orderDetail)
         {
-            throw new NotImplementedException();
+            OrderDetail result = null;
+
+            using (OracleConnection conn = new OracleConnection(dbSettings.ConnectionString))
+            {
+                conn.Open();
+
+                string query = $"INSERT INTO {OrderDetail.TableName} (" +
+                    $"{OrderDetail.ColumnNames.OrderId}, " +
+                    $"{OrderDetail.ColumnNames.ProductId}, " +
+                    $"{OrderDetail.ColumnNames.RecipeId}, " +
+                    $"{OrderDetail.ColumnNames.Count}, " +
+                    $"{OrderDetail.ColumnNames.Price} " +
+                    $") VALUES (" +
+                    $"{orderDetail.OrderId}, " +
+                    $"{orderDetail.ProductId}, " +
+                    $"{orderDetail.RecipeId}, " +
+                    $"{orderDetail.Count}, " +
+                    $"{orderDetail.Price} " +
+                    $")";
+                OracleCommand cmd = new OracleCommand(query, conn);
+                cmd.ExecuteNonQuery();
+
+                result = orderDetail;
+            }
+
+            return result;
+        }
+
+        private OrderDetail Add(OracleConnection connection, OracleTransaction transaction, int orderId, OrderDetail orderDetail)
+        {
+            string query = $"INSERT INTO {OrderDetail.TableName} (" +
+                $"{OrderDetail.ColumnNames.OrderId}, " +
+                $"{OrderDetail.ColumnNames.ProductId}, " +
+                $"{OrderDetail.ColumnNames.RecipeId}, " +
+                $"{OrderDetail.ColumnNames.Count}, " +
+                $"{OrderDetail.ColumnNames.Price} " +
+                $") VALUES (" +
+                $"{orderId}, " +
+                $"{orderDetail.ProductId}, " +
+                $"{orderDetail.RecipeId}, " +
+                $"{orderDetail.Count}, " +
+                $"{orderDetail.Price} " +
+                $")";
+            OracleCommand cmd = new OracleCommand(query, connection)
+            {
+                Transaction = transaction
+            };
+            cmd.ExecuteNonQuery();
+
+            orderDetail.OrderId = orderId;
+
+            OrderDetail result = orderDetail;
+
+            return result;
         }
 
         public bool Delete(int orderId)
         {
-            throw new NotImplementedException();
+            bool result = false;
+
+            using (OracleConnection conn = new OracleConnection(dbSettings.ConnectionString))
+            {
+                string query = $"UPDATE {Order.TableName} " +
+                    $"SET {Order.ColumnNames.StateId} = {(int)Enums.OrderState.Canceled} " +
+                    $"WHERE {Order.ColumnNames.Id} = {orderId}";
+                OracleCommand cmd = new OracleCommand(query, conn);
+                conn.Open();
+
+                cmd.ExecuteNonQuery();
+
+                result = true;
+            }
+
+            return result;
+        }
+
+        private bool Delete(OracleConnection conn, OracleTransaction transaction, OrderDetail orderDetail)
+        {
+            string query = $"DELETE FROM {OrderDetail.TableName} " +
+                $"WHERE {OrderDetail.ColumnNames.OrderId} = {orderDetail.OrderId} " +
+                $"AND {OrderDetail.ColumnNames.ProductId} = :{OrderDetail.ColumnNames.ProductId} " +
+                $"AND {OrderDetail.ColumnNames.RecipeId} = :{OrderDetail.ColumnNames.RecipeId}";
+            OracleCommand deleteCommand = new OracleCommand(query, conn)
+            {
+                Transaction = transaction
+            };
+            deleteCommand.Parameters.Add(new OracleParameter()
+            {
+                Value = orderDetail.ProductId,
+                ParameterName = $":{OrderDetail.ColumnNames.ProductId}",
+                DbType = System.Data.DbType.Int32
+            });
+            deleteCommand.Parameters.Add(new OracleParameter()
+            {
+                Value = orderDetail.RecipeId,
+                ParameterName = $":{OrderDetail.ColumnNames.RecipeId}",
+                DbType = System.Data.DbType.Int32
+            });
+            deleteCommand.ExecuteNonQuery();
+
+            bool result = true;
+
+            return result;
+        }
+
+        public bool Delete(OrderDetail orderDetail)
+        {
+            bool result = false;
+            using (OracleConnection conn = new OracleConnection(dbSettings.ConnectionString))
+            {
+                conn.Open();
+
+                string query = $"DELETE FROM {OrderDetail.TableName} " +
+                $"WHERE {OrderDetail.ColumnNames.OrderId} = {orderDetail.OrderId} " +
+                $"AND {OrderDetail.ColumnNames.ProductId} = :{OrderDetail.ColumnNames.ProductId} " +
+                $"AND {OrderDetail.ColumnNames.RecipeId} = :{OrderDetail.ColumnNames.RecipeId}";
+                OracleCommand deleteCommand = new OracleCommand(query, conn);
+                deleteCommand.Parameters.Add(new OracleParameter()
+                {
+                    Value = orderDetail.ProductId,
+                    ParameterName = $":{OrderDetail.ColumnNames.ProductId}",
+                    DbType = System.Data.DbType.Int32
+                });
+                deleteCommand.Parameters.Add(new OracleParameter()
+                {
+                    Value = orderDetail.RecipeId,
+                    ParameterName = $":{OrderDetail.ColumnNames.RecipeId}",
+                    DbType = System.Data.DbType.Int32
+                });
+                deleteCommand.ExecuteNonQuery();
+
+                result = true;
+            }
+
+            return result;
         }
 
         public Order Edit(int orderId, Order order)
         {
-            throw new NotImplementedException();
+            Order result = null;
+
+            using (OracleConnection conn = new OracleConnection(dbSettings.ConnectionString))
+            {
+                conn.Open();
+                OracleTransaction transaction = conn.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
+
+                string query = $"UPDATE {Order.TableName} " +
+                    $"SET " +
+                    $"{Order.ColumnNames.StateId} = {order.StateId} " +
+                    $"WHERE {Order.ColumnNames.Id} = {orderId}";
+                OracleCommand cmd = new OracleCommand(query, conn);
+                cmd.Transaction = transaction;
+
+                try
+                {
+                    cmd.ExecuteNonQuery();
+
+                    // check order details
+                    if (order.OrderDetails != null)
+                    {
+                        if (order.OrderDetails.Any(x => !x.Active))
+                        {
+                            // delete inactive order details
+                            foreach (var deletedOrderDetail in order.OrderDetails.Where(x => !x.Active))
+                            {
+                                this.Delete(conn, transaction, deletedOrderDetail);
+                            }
+                        }
+
+                        // get bd order details to compare if exist or not
+                        List<OrderDetail> currentOrderDetails = Get(conn, order).ToList();
+
+                        // edit active order details
+                        foreach (var editedOrderDetail in order.OrderDetails.Where(x => x.Active && currentOrderDetails.Any(y => x.OrderId == y.OrderId && x.ProductId == y.ProductId && x.RecipeId == y.RecipeId)))
+                        {
+                            this.Edit(conn, transaction, editedOrderDetail);
+                        }
+
+                        // create new order details
+                        foreach (var createdOrderDetail in order.OrderDetails.Where(x => x.Active && !currentOrderDetails.Any(y => x.OrderId == y.OrderId && x.ProductId == y.ProductId && x.RecipeId == y.RecipeId)))
+                        {
+                            this.Add(conn, transaction, orderId, createdOrderDetail);
+                        }
+
+                        foreach (var deletedOrderDetail in currentOrderDetails.Where(x => !order.OrderDetails.Any(y => x.OrderId == y.OrderId && x.ProductId == y.ProductId && x.RecipeId == y.RecipeId)))
+                        {
+                            this.Delete(conn, transaction, deletedOrderDetail);
+                        }
+                    }
+
+                    transaction.Commit();
+
+                    result = order;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+
+            return result;
+        }
+
+        private OrderDetail Edit(OracleConnection conn, OracleTransaction transaction, OrderDetail orderDetail)
+        {
+            string query = $"UPDATE {OrderDetail.TableName} " +
+                $"SET " +
+                $"{OrderDetail.ColumnNames.Count} = {orderDetail.Count} " +
+                $"WHERE {OrderDetail.ColumnNames.OrderId} = {orderDetail.OrderId} " +
+                $"AND {OrderDetail.ColumnNames.ProductId} = :{OrderDetail.ColumnNames.ProductId} " + 
+                $"AND {OrderDetail.ColumnNames.RecipeId} = :{OrderDetail.ColumnNames.RecipeId}";
+            OracleCommand editCommand = new OracleCommand(query, conn);
+            editCommand.Transaction = transaction;
+            editCommand.Parameters.Add(new OracleParameter()
+            {
+                Value = orderDetail.ProductId,
+                ParameterName = $":{OrderDetail.ColumnNames.ProductId}",
+                DbType = System.Data.DbType.Int32
+            });
+            editCommand.Parameters.Add(new OracleParameter()
+            {
+                Value = orderDetail.RecipeId,
+                ParameterName = $":{OrderDetail.ColumnNames.RecipeId}",
+                DbType = System.Data.DbType.Int32
+            });
+
+            editCommand.ExecuteNonQuery();
+
+            OrderDetail result = orderDetail;
+
+            return result;
         }
 
         public IList<Order> Get()
         {
-            throw new NotImplementedException();
+            IList<Order> result = new List<Order>();
+
+            using (OracleConnection conn = new OracleConnection(dbSettings.ConnectionString))
+            {
+                string query = $"SELECT " +
+                    $"o.{Order.ColumnNames.Id}, " +
+                    $"o.{Order.ColumnNames.PurchaseId}, " +
+                    $"o.{Order.ColumnNames.StateId}, " +
+                    $"o.{Order.ColumnNames.Note}, " +
+                    $"p.{Purchase.ColumnNames.Id} AS {Purchase.TableName}{Purchase.ColumnNames.Id}, " +
+                    $"p.{Purchase.ColumnNames.StateId} AS {Purchase.TableName}{Purchase.ColumnNames.StateId}, " +
+                    $"p.{Purchase.ColumnNames.TableId} AS {Purchase.TableName}{Purchase.ColumnNames.TableId}, " +
+                    $"p.{Purchase.ColumnNames.UserId} AS {Purchase.TableName}{Purchase.ColumnNames.UserId}, " +
+                    $"p.{Purchase.ColumnNames.CreationDate} AS {Purchase.TableName}{Purchase.ColumnNames.CreationDate} " +
+                    $"FROM {Order.TableName} o " +
+                    $"JOIN {Purchase.TableName} p on p.{Purchase.ColumnNames.Id} = o.{Order.ColumnNames.PurchaseId} " +
+                    $"WHERE o.{Order.ColumnNames.StateId} <> {(int)Enums.OrderState.Canceled}";
+                OracleCommand cmd = new OracleCommand(query, conn);
+                conn.Open();
+
+                OracleDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    Order order = new Order()
+                    {
+                        Id = Convert.ToInt32(reader[$"{Order.ColumnNames.Id}"]),
+                        PurchaseId = Convert.ToInt32(reader[$"{Order.ColumnNames.PurchaseId}"]),
+                        StateId = Convert.ToInt32(reader[$"{Order.ColumnNames.StateId}"]),
+                        Note = reader[$"{Order.ColumnNames.Note}"]?.ToString(),
+
+                        Purchase = new Purchase()
+                        {
+                            Id = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.Id}"]),
+                            StateId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.StateId}"]),
+                            TableId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.TableId}"]),
+                            UserId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.UserId}"]),
+                            CreationDate = Convert.ToDateTime(reader[$"{Purchase.TableName}{Purchase.ColumnNames.CreationDate}"]).ToLocalTime()
+                        }
+                    };
+
+                    order.OrderDetails = this.Get(conn, order).ToList();
+                    result.Add(order);
+                }
+
+                reader.Dispose();
+            }
+
+            return result;
+        }
+
+        private IList<OrderDetail> Get(OracleConnection connection, Order order)
+        {
+            IList<OrderDetail> result = new List<OrderDetail>();
+
+            string query = $"SELECT " +
+                $"{OrderDetail.ColumnNames.OrderId}, " +
+                $"{OrderDetail.ColumnNames.ProductId}, " +
+                $"{OrderDetail.ColumnNames.RecipeId}, " +
+                $"{OrderDetail.ColumnNames.Count}, " +
+                $"{OrderDetail.ColumnNames.Active} " +
+                $"FROM {OrderDetail.TableName} " +
+                $"WHERE {OrderDetail.ColumnNames.Active} = {1} " +
+                $"AND {OrderDetail.ColumnNames.OrderId} = {order.Id}";
+            OracleCommand cmd = new OracleCommand(query, connection);
+
+            OracleDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                OrderDetail orderDetail = new OrderDetail()
+                {
+                    OrderId = Convert.ToInt32(reader[OrderDetail.ColumnNames.OrderId]),
+                    ProductId = Convert.ToInt32(reader[OrderDetail.ColumnNames.ProductId]),
+                    RecipeId = Convert.ToInt32(reader[OrderDetail.ColumnNames.RecipeId]),
+                    Count = Convert.ToInt32(reader[OrderDetail.ColumnNames.Count]),
+                    Active = Convert.ToBoolean(Convert.ToInt16(reader[OrderDetail.ColumnNames.Active].ToString()))
+                };
+
+                result.Add(orderDetail);
+            }
+
+            reader.Dispose();
+
+            return result;
+        }
+
+        public IList<OrderDetail> Get(Order order)
+        {
+            IList<OrderDetail> result = new List<OrderDetail>();
+            using (OracleConnection conn = new OracleConnection(dbSettings.ConnectionString))
+            {
+                conn.Open();
+
+                string query = $"SELECT " +
+                $"{OrderDetail.ColumnNames.OrderId}, " +
+                $"{OrderDetail.ColumnNames.ProductId}, " +
+                $"{OrderDetail.ColumnNames.RecipeId}, " +
+                $"{OrderDetail.ColumnNames.Count}, " +
+                $"{OrderDetail.ColumnNames.Active} " +
+                $"FROM {OrderDetail.TableName} " +
+                $"WHERE {OrderDetail.ColumnNames.Active} = {1} " +
+                $"AND {OrderDetail.ColumnNames.OrderId} = {order.Id}";
+                OracleCommand cmd = new OracleCommand(query, conn);
+
+                OracleDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    OrderDetail orderDetail = new OrderDetail()
+                    {
+                        OrderId = Convert.ToInt32(reader[OrderDetail.ColumnNames.OrderId]),
+                        ProductId = Convert.ToInt32(reader[OrderDetail.ColumnNames.ProductId]),
+                        RecipeId = Convert.ToInt32(reader[OrderDetail.ColumnNames.RecipeId]),
+                        Count = Convert.ToInt32(reader[OrderDetail.ColumnNames.Count]),
+                        Active = Convert.ToBoolean(Convert.ToInt16(reader[OrderDetail.ColumnNames.Active].ToString()))
+                    };
+
+                    result.Add(orderDetail);
+                }
+
+                reader.Dispose();
+            }
+
+            return result;
         }
 
         public Order Get(int orderId)
         {
-            throw new NotImplementedException();
+            Order result = null;
+
+            using (OracleConnection conn = new OracleConnection(dbSettings.ConnectionString))
+            {
+                string query = $"SELECT " +
+                    $"o.{Order.ColumnNames.Id}, " +
+                    $"o.{Order.ColumnNames.PurchaseId}, " +
+                    $"o.{Order.ColumnNames.StateId}, " +
+                    $"o.{Order.ColumnNames.Note}, " +
+                    $"p.{Purchase.ColumnNames.Id} AS {Purchase.TableName}{Purchase.ColumnNames.Id}, " +
+                    $"p.{Purchase.ColumnNames.StateId} AS {Purchase.TableName}{Purchase.ColumnNames.StateId}, " +
+                    $"p.{Purchase.ColumnNames.TableId} AS {Purchase.TableName}{Purchase.ColumnNames.TableId}, " +
+                    $"p.{Purchase.ColumnNames.UserId} AS {Purchase.TableName}{Purchase.ColumnNames.UserId}, " +
+                    $"p.{Purchase.ColumnNames.CreationDate} AS {Purchase.TableName}{Purchase.ColumnNames.CreationDate} " +
+                    $"FROM {Order.TableName} o " +
+                    $"JOIN {Purchase.TableName} p on p.{Purchase.ColumnNames.Id} = o.{Order.ColumnNames.PurchaseId} " +
+                    $"WHERE o.{Order.ColumnNames.Id} = {orderId}";
+                OracleCommand cmd = new OracleCommand(query, conn);
+                conn.Open();
+
+                OracleDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    result = new Order()
+                    {
+                        Id = Convert.ToInt32(reader[$"{Order.ColumnNames.Id}"]),
+                        PurchaseId = Convert.ToInt32(reader[$"{Order.ColumnNames.PurchaseId}"]),
+                        StateId = Convert.ToInt32(reader[$"{Order.ColumnNames.StateId}"]),
+                        Note = reader[$"{Order.ColumnNames.Note}"]?.ToString(),
+
+                        Purchase = new Purchase()
+                        {
+                            Id = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.Id}"]),
+                            StateId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.StateId}"]),
+                            TableId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.TableId}"]),
+                            UserId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.UserId}"]),
+                            CreationDate = Convert.ToDateTime(reader[$"{Purchase.TableName}{Purchase.ColumnNames.CreationDate}"]).ToLocalTime()
+                        }
+                    };
+
+                    result.OrderDetails = this.Get(conn, result).ToList();
+                }
+
+                reader.Dispose();
+            }
+
+            return result;
+        }
+
+        public OrderDetail Get(int orderId, int? productId, int? recipeId)
+        {
+            OrderDetail result = null;
+
+            using (OracleConnection conn = new OracleConnection(dbSettings.ConnectionString))
+            {
+                string query = $"SELECT " +
+                $"{OrderDetail.ColumnNames.OrderId}, " +
+                $"{OrderDetail.ColumnNames.ProductId}, " +
+                $"{OrderDetail.ColumnNames.RecipeId}, " +
+                $"{OrderDetail.ColumnNames.Count}, " +
+                $"{OrderDetail.ColumnNames.Active} " +
+                $"FROM {OrderDetail.TableName} " +
+                $"WHERE {OrderDetail.ColumnNames.OrderId} = {orderId} " +
+                $"AND {OrderDetail.ColumnNames.ProductId} = :{OrderDetail.ColumnNames.ProductId}" + 
+                $"AND {OrderDetail.ColumnNames.RecipeId} = :{OrderDetail.ColumnNames.RecipeId}";
+                OracleCommand cmd = new OracleCommand(query, conn);
+                cmd.Parameters.Add(new OracleParameter()
+                {
+                    Value = productId,
+                    ParameterName = $":{OrderDetail.ColumnNames.ProductId}",
+                    DbType = System.Data.DbType.Int32
+                });
+                cmd.Parameters.Add(new OracleParameter()
+                {
+                    Value = recipeId,
+                    ParameterName = $":{OrderDetail.ColumnNames.RecipeId}",
+                    DbType = System.Data.DbType.Int32
+                });
+                conn.Open();
+
+                OracleDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    result = new OrderDetail()
+                    {
+                        OrderId = Convert.ToInt32(reader[OrderDetail.ColumnNames.OrderId]),
+                        ProductId = Convert.ToInt32(reader[OrderDetail.ColumnNames.ProductId]),
+                        RecipeId = Convert.ToInt32(reader[OrderDetail.ColumnNames.RecipeId]),
+                        Count = Convert.ToInt32(reader[OrderDetail.ColumnNames.Count]),
+                        Active = Convert.ToBoolean(Convert.ToInt16(reader[OrderDetail.ColumnNames.Active].ToString()))
+                    };
+                }
+
+                reader.Dispose();
+            }
+
+            return result;
         }
     }
 }
