@@ -25,15 +25,19 @@ namespace Business.Services
                 conn.Open();
                 OracleTransaction transaction = conn.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
 
-                order.StateId = (int)Enums.OrderState.NotAssigned;
+                order.StateId = (int)Enums.OrderState.Pending;
 
                 string query = $"INSERT INTO {Order.TableName} (" +
                     $"{Order.ColumnNames.PurchaseId}, " +
                     $"{Order.ColumnNames.StateId}, " +
+                    $"{Order.ColumnNames.TableId}, " +
+                    $"{Order.ColumnNames.UserId}, " +
                     $"{Order.ColumnNames.Note} " +
                     $") VALUES (" +
-                    $"{order.PurchaseId}, " +
+                    $":{Order.ColumnNames.PurchaseId}, " +
                     $"{order.StateId}, " +
+                    $"{order.TableId}, " +
+                    $"{order.UserId}, " +
                     $"'{order.Note}' " +
                     $") RETURNING {Order.ColumnNames.Id} INTO :{Order.ColumnNames.Id}";
                 OracleCommand cmd = new OracleCommand(query, conn)
@@ -42,10 +46,17 @@ namespace Business.Services
                 };
                 cmd.Parameters.Add(new OracleParameter()
                 {
+                    Value = order.PurchaseId,
+                    ParameterName = $":{Order.ColumnNames.PurchaseId}",
+                    DbType = System.Data.DbType.Int32
+                });
+                cmd.Parameters.Add(new OracleParameter()
+                {
                     ParameterName = $":{Order.ColumnNames.Id}",
                     OracleDbType = OracleDbType.Decimal,
                     Direction = System.Data.ParameterDirection.Output
                 });
+
 
                 try
                 {
@@ -117,8 +128,8 @@ namespace Business.Services
                 $"{OrderDetail.ColumnNames.Price} " +
                 $") VALUES (" +
                 $"{orderId}, " +
-                $"{orderDetail.ProductId}, " +
-                $"{orderDetail.RecipeId}, " +
+                $":{OrderDetail.ColumnNames.ProductId}, " +
+                $":{OrderDetail.ColumnNames.RecipeId}, " +
                 $"{orderDetail.Count}, " +
                 $"{orderDetail.Price} " +
                 $")";
@@ -126,6 +137,18 @@ namespace Business.Services
             {
                 Transaction = transaction
             };
+            cmd.Parameters.Add(new OracleParameter()
+            {
+                Value = orderDetail.ProductId,
+                ParameterName = $":{OrderDetail.ColumnNames.ProductId}",
+                DbType = System.Data.DbType.Int32
+            });
+            cmd.Parameters.Add(new OracleParameter()
+            {
+                Value = orderDetail.RecipeId,
+                ParameterName = $":{OrderDetail.ColumnNames.RecipeId}",
+                DbType = System.Data.DbType.Int32
+            });
             cmd.ExecuteNonQuery();
 
             orderDetail.OrderId = orderId;
@@ -227,10 +250,17 @@ namespace Business.Services
 
                 string query = $"UPDATE {Order.TableName} " +
                     $"SET " +
-                    $"{Order.ColumnNames.StateId} = {order.StateId} " +
+                    $"{Order.ColumnNames.StateId} = {order.StateId}, " +
+                    $"{Order.ColumnNames.PurchaseId} = :{Order.ColumnNames.PurchaseId} " +
                     $"WHERE {Order.ColumnNames.Id} = {orderId}";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 cmd.Transaction = transaction;
+                cmd.Parameters.Add(new OracleParameter()
+                {
+                    Value = order.PurchaseId,
+                    ParameterName = $":{Order.ColumnNames.PurchaseId}",
+                    DbType = System.Data.DbType.Int32
+                });
 
                 try
                 {
@@ -289,7 +319,7 @@ namespace Business.Services
                 $"SET " +
                 $"{OrderDetail.ColumnNames.Count} = {orderDetail.Count} " +
                 $"WHERE {OrderDetail.ColumnNames.OrderId} = {orderDetail.OrderId} " +
-                $"AND {OrderDetail.ColumnNames.ProductId} = :{OrderDetail.ColumnNames.ProductId} " + 
+                $"AND {OrderDetail.ColumnNames.ProductId} = :{OrderDetail.ColumnNames.ProductId} " +
                 $"AND {OrderDetail.ColumnNames.RecipeId} = :{OrderDetail.ColumnNames.RecipeId}";
             OracleCommand editCommand = new OracleCommand(query, conn);
             editCommand.Transaction = transaction;
@@ -324,13 +354,13 @@ namespace Business.Services
                     $"o.{Order.ColumnNames.PurchaseId}, " +
                     $"o.{Order.ColumnNames.StateId}, " +
                     $"o.{Order.ColumnNames.Note}, " +
+                    $"o.{Order.ColumnNames.TableId}, " +
+                    $"o.{Order.ColumnNames.UserId}, " +
                     $"p.{Purchase.ColumnNames.Id} AS {Purchase.TableName}{Purchase.ColumnNames.Id}, " +
                     $"p.{Purchase.ColumnNames.StateId} AS {Purchase.TableName}{Purchase.ColumnNames.StateId}, " +
-                    $"p.{Purchase.ColumnNames.TableId} AS {Purchase.TableName}{Purchase.ColumnNames.TableId}, " +
-                    $"p.{Purchase.ColumnNames.UserId} AS {Purchase.TableName}{Purchase.ColumnNames.UserId}, " +
                     $"p.{Purchase.ColumnNames.CreationDate} AS {Purchase.TableName}{Purchase.ColumnNames.CreationDate} " +
                     $"FROM {Order.TableName} o " +
-                    $"JOIN {Purchase.TableName} p on p.{Purchase.ColumnNames.Id} = o.{Order.ColumnNames.PurchaseId} " +
+                    $"LEFT JOIN {Purchase.TableName} p on p.{Purchase.ColumnNames.Id} = o.{Order.ColumnNames.PurchaseId} " +
                     $"WHERE o.{Order.ColumnNames.StateId} <> {(int)Enums.OrderState.Canceled}";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 conn.Open();
@@ -341,19 +371,22 @@ namespace Business.Services
                     Order order = new Order()
                     {
                         Id = Convert.ToInt32(reader[$"{Order.ColumnNames.Id}"]),
-                        PurchaseId = Convert.ToInt32(reader[$"{Order.ColumnNames.PurchaseId}"]),
                         StateId = Convert.ToInt32(reader[$"{Order.ColumnNames.StateId}"]),
                         Note = reader[$"{Order.ColumnNames.Note}"]?.ToString(),
+                        TableId = Convert.ToInt32(reader[$"{Order.ColumnNames.TableId}"]),
+                        UserId = Convert.ToInt32(reader[$"{Order.ColumnNames.UserId}"]),
+                    };
 
-                        Purchase = new Purchase()
+                    if (reader[$"{Order.ColumnNames.PurchaseId}"] != DBNull.Value)
+                    {
+                        order.PurchaseId = Convert.ToInt32(reader[$"{Order.ColumnNames.PurchaseId}"]);
+                        order.Purchase = new Purchase()
                         {
                             Id = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.Id}"]),
                             StateId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.StateId}"]),
-                            TableId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.TableId}"]),
-                            UserId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.UserId}"]),
                             CreationDate = Convert.ToDateTime(reader[$"{Purchase.TableName}{Purchase.ColumnNames.CreationDate}"]).ToLocalTime()
-                        }
-                    };
+                        };
+                    }
 
                     order.OrderDetails = this.Get(conn, order).ToList();
                     result.Add(order);
@@ -373,11 +406,10 @@ namespace Business.Services
                 $"{OrderDetail.ColumnNames.OrderId}, " +
                 $"{OrderDetail.ColumnNames.ProductId}, " +
                 $"{OrderDetail.ColumnNames.RecipeId}, " +
-                $"{OrderDetail.ColumnNames.Count}, " +
-                $"{OrderDetail.ColumnNames.Active} " +
+                $"{OrderDetail.ColumnNames.Price}, " +
+                $"{OrderDetail.ColumnNames.Count} " +
                 $"FROM {OrderDetail.TableName} " +
-                $"WHERE {OrderDetail.ColumnNames.Active} = {1} " +
-                $"AND {OrderDetail.ColumnNames.OrderId} = {order.Id}";
+                $"WHERE {OrderDetail.ColumnNames.OrderId} = {order.Id} ";
             OracleCommand cmd = new OracleCommand(query, connection);
 
             OracleDataReader reader = cmd.ExecuteReader();
@@ -386,10 +418,10 @@ namespace Business.Services
                 OrderDetail orderDetail = new OrderDetail()
                 {
                     OrderId = Convert.ToInt32(reader[OrderDetail.ColumnNames.OrderId]),
-                    ProductId = Convert.ToInt32(reader[OrderDetail.ColumnNames.ProductId]),
-                    RecipeId = Convert.ToInt32(reader[OrderDetail.ColumnNames.RecipeId]),
+                    ProductId = Convert.ToInt32(reader[OrderDetail.ColumnNames.ProductId] == DBNull.Value ? null : reader[OrderDetail.ColumnNames.ProductId]),
+                    RecipeId = Convert.ToInt32(reader[OrderDetail.ColumnNames.RecipeId] == DBNull.Value ? null : reader[OrderDetail.ColumnNames.RecipeId]),
                     Count = Convert.ToInt32(reader[OrderDetail.ColumnNames.Count]),
-                    Active = Convert.ToBoolean(Convert.ToInt16(reader[OrderDetail.ColumnNames.Active].ToString()))
+                    Price = Convert.ToInt32(reader[OrderDetail.ColumnNames.Price])
                 };
 
                 result.Add(orderDetail);
@@ -411,11 +443,10 @@ namespace Business.Services
                 $"{OrderDetail.ColumnNames.OrderId}, " +
                 $"{OrderDetail.ColumnNames.ProductId}, " +
                 $"{OrderDetail.ColumnNames.RecipeId}, " +
-                $"{OrderDetail.ColumnNames.Count}, " +
-                $"{OrderDetail.ColumnNames.Active} " +
+                $"{OrderDetail.ColumnNames.Price}, " +
+                $"{OrderDetail.ColumnNames.Count} " +
                 $"FROM {OrderDetail.TableName} " +
-                $"WHERE {OrderDetail.ColumnNames.Active} = {1} " +
-                $"AND {OrderDetail.ColumnNames.OrderId} = {order.Id}";
+                $"WHERE {OrderDetail.ColumnNames.OrderId} = {order.Id} ";
                 OracleCommand cmd = new OracleCommand(query, conn);
 
                 OracleDataReader reader = cmd.ExecuteReader();
@@ -424,10 +455,10 @@ namespace Business.Services
                     OrderDetail orderDetail = new OrderDetail()
                     {
                         OrderId = Convert.ToInt32(reader[OrderDetail.ColumnNames.OrderId]),
-                        ProductId = Convert.ToInt32(reader[OrderDetail.ColumnNames.ProductId]),
-                        RecipeId = Convert.ToInt32(reader[OrderDetail.ColumnNames.RecipeId]),
+                        ProductId = Convert.ToInt32(reader[OrderDetail.ColumnNames.ProductId] == DBNull.Value ? null : reader[OrderDetail.ColumnNames.ProductId]),
+                        RecipeId = Convert.ToInt32(reader[OrderDetail.ColumnNames.RecipeId] == DBNull.Value ? null : reader[OrderDetail.ColumnNames.RecipeId]),
                         Count = Convert.ToInt32(reader[OrderDetail.ColumnNames.Count]),
-                        Active = Convert.ToBoolean(Convert.ToInt16(reader[OrderDetail.ColumnNames.Active].ToString()))
+                        Price = Convert.ToInt32(reader[OrderDetail.ColumnNames.Price])
                     };
 
                     result.Add(orderDetail);
@@ -450,10 +481,10 @@ namespace Business.Services
                     $"o.{Order.ColumnNames.PurchaseId}, " +
                     $"o.{Order.ColumnNames.StateId}, " +
                     $"o.{Order.ColumnNames.Note}, " +
+                    $"o.{Order.ColumnNames.TableId}, " +
+                    $"o.{Order.ColumnNames.UserId}, " +
                     $"p.{Purchase.ColumnNames.Id} AS {Purchase.TableName}{Purchase.ColumnNames.Id}, " +
                     $"p.{Purchase.ColumnNames.StateId} AS {Purchase.TableName}{Purchase.ColumnNames.StateId}, " +
-                    $"p.{Purchase.ColumnNames.TableId} AS {Purchase.TableName}{Purchase.ColumnNames.TableId}, " +
-                    $"p.{Purchase.ColumnNames.UserId} AS {Purchase.TableName}{Purchase.ColumnNames.UserId}, " +
                     $"p.{Purchase.ColumnNames.CreationDate} AS {Purchase.TableName}{Purchase.ColumnNames.CreationDate} " +
                     $"FROM {Order.TableName} o " +
                     $"JOIN {Purchase.TableName} p on p.{Purchase.ColumnNames.Id} = o.{Order.ColumnNames.PurchaseId} " +
@@ -467,19 +498,22 @@ namespace Business.Services
                     result = new Order()
                     {
                         Id = Convert.ToInt32(reader[$"{Order.ColumnNames.Id}"]),
-                        PurchaseId = Convert.ToInt32(reader[$"{Order.ColumnNames.PurchaseId}"]),
                         StateId = Convert.ToInt32(reader[$"{Order.ColumnNames.StateId}"]),
                         Note = reader[$"{Order.ColumnNames.Note}"]?.ToString(),
+                        TableId = Convert.ToInt32(reader[$"{Order.ColumnNames.TableId}"]),
+                        UserId = Convert.ToInt32(reader[$"{Order.ColumnNames.UserId}"]),
+                    };
 
-                        Purchase = new Purchase()
+                    if (reader[$"{Order.ColumnNames.PurchaseId}"] != DBNull.Value)
+                    {
+                        result.PurchaseId = Convert.ToInt32(reader[$"{Order.ColumnNames.PurchaseId}"]);
+                        result.Purchase = new Purchase()
                         {
                             Id = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.Id}"]),
                             StateId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.StateId}"]),
-                            TableId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.TableId}"]),
-                            UserId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.UserId}"]),
                             CreationDate = Convert.ToDateTime(reader[$"{Purchase.TableName}{Purchase.ColumnNames.CreationDate}"]).ToLocalTime()
-                        }
-                    };
+                        };
+                    }
 
                     result.OrderDetails = this.Get(conn, result).ToList();
                 }
@@ -500,11 +534,11 @@ namespace Business.Services
                 $"{OrderDetail.ColumnNames.OrderId}, " +
                 $"{OrderDetail.ColumnNames.ProductId}, " +
                 $"{OrderDetail.ColumnNames.RecipeId}, " +
-                $"{OrderDetail.ColumnNames.Count}, " +
-                $"{OrderDetail.ColumnNames.Active} " +
+                $"{OrderDetail.ColumnNames.Price}, " +
+                $"{OrderDetail.ColumnNames.Count} " +
                 $"FROM {OrderDetail.TableName} " +
                 $"WHERE {OrderDetail.ColumnNames.OrderId} = {orderId} " +
-                $"AND {OrderDetail.ColumnNames.ProductId} = :{OrderDetail.ColumnNames.ProductId}" + 
+                $"AND {OrderDetail.ColumnNames.ProductId} = :{OrderDetail.ColumnNames.ProductId} " +
                 $"AND {OrderDetail.ColumnNames.RecipeId} = :{OrderDetail.ColumnNames.RecipeId}";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 cmd.Parameters.Add(new OracleParameter()
@@ -527,10 +561,10 @@ namespace Business.Services
                     result = new OrderDetail()
                     {
                         OrderId = Convert.ToInt32(reader[OrderDetail.ColumnNames.OrderId]),
-                        ProductId = Convert.ToInt32(reader[OrderDetail.ColumnNames.ProductId]),
-                        RecipeId = Convert.ToInt32(reader[OrderDetail.ColumnNames.RecipeId]),
+                        ProductId = Convert.ToInt32(reader[OrderDetail.ColumnNames.ProductId] == DBNull.Value ? null : reader[OrderDetail.ColumnNames.ProductId]),
+                        RecipeId = Convert.ToInt32(reader[OrderDetail.ColumnNames.RecipeId] == DBNull.Value ? null : reader[OrderDetail.ColumnNames.RecipeId]),
                         Count = Convert.ToInt32(reader[OrderDetail.ColumnNames.Count]),
-                        Active = Convert.ToBoolean(Convert.ToInt16(reader[OrderDetail.ColumnNames.Active].ToString()))
+                        Price = Convert.ToInt32(reader[OrderDetail.ColumnNames.Price])
                     };
                 }
 

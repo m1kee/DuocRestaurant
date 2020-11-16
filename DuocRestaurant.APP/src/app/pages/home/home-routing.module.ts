@@ -9,8 +9,8 @@ const routes: Routes = [
         component: HomePage,
         children: [
             {
-                path: 'orders',
-                loadChildren: () => import('../orders/orders.module').then(m => m.OrdersPageModule)
+                path: 'menu',
+                loadChildren: () => import('../menu/menu.module').then(m => m.MenuPageModule)
             },
             {
                 path: 'reception',

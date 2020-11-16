@@ -27,14 +27,12 @@ namespace Business.Services
                 purchase.CreationDate = DateTime.Now;
 
                 string query = $"INSERT INTO {Purchase.TableName} (" +
+                    $"{Purchase.ColumnNames.Total}, " +
                     $"{Purchase.ColumnNames.StateId}, " +
-                    $"{Purchase.ColumnNames.TableId}, " +
-                    $"{Purchase.ColumnNames.UserId}, " +
                     $"{Purchase.ColumnNames.CreationDate} " +
                     $") VALUES (" +
+                    $"{purchase.Total}, " +
                     $"{purchase.StateId}, " +
-                    $"{purchase.TableId}, " +
-                    $"{purchase.UserId}, " +
                     $"TO_DATE('{purchase.CreationDate:ddMMyyyyHHmm}', 'DDMMYYYYHH24MI') " +
                     $") RETURNING {Purchase.ColumnNames.Id} INTO :{Purchase.ColumnNames.Id}";
                 OracleCommand cmd = new OracleCommand(query, conn);
@@ -48,6 +46,7 @@ namespace Business.Services
                 cmd.ExecuteNonQuery();
 
                 purchase.Id = Convert.ToInt32(cmd.Parameters[$":{Purchase.ColumnNames.Id}"].Value.ToString());
+                result = purchase;
             }
 
             return result;
@@ -103,8 +102,7 @@ namespace Business.Services
                 string query = $"SELECT " +
                     $"{Purchase.ColumnNames.Id}, " +
                     $"{Purchase.ColumnNames.StateId}, " +
-                    $"{Purchase.ColumnNames.TableId}, " +
-                    $"{Purchase.ColumnNames.UserId}, " +
+                    $"{Purchase.ColumnNames.Total}, " +
                     $"{Purchase.ColumnNames.CreationDate} " +
                     $"FROM {Purchase.TableName} ";
                 OracleCommand cmd = new OracleCommand(query, conn);
@@ -117,8 +115,7 @@ namespace Business.Services
                     {
                         Id = Convert.ToInt32(reader[$"{Purchase.ColumnNames.Id}"]),
                         StateId = Convert.ToInt32(reader[$"{Purchase.ColumnNames.StateId}"]),
-                        TableId = Convert.ToInt32(reader[$"{Purchase.ColumnNames.TableId}"]),
-                        UserId = Convert.ToInt32(reader[$"{Purchase.ColumnNames.UserId}"]),
+                        Total = Convert.ToInt32(reader[$"{Purchase.ColumnNames.Total}"]),
                         CreationDate = Convert.ToDateTime(reader[$"{Purchase.ColumnNames.CreationDate}"]).ToLocalTime()
                     };
 
@@ -140,8 +137,7 @@ namespace Business.Services
                 string query = $"SELECT " +
                     $"{Purchase.ColumnNames.Id}, " +
                     $"{Purchase.ColumnNames.StateId}, " +
-                    $"{Purchase.ColumnNames.TableId}, " +
-                    $"{Purchase.ColumnNames.UserId}, " +
+                    $"{Purchase.ColumnNames.Total}, " +
                     $"{Purchase.ColumnNames.CreationDate} " +
                     $"FROM {Purchase.TableName} " +
                     $"WHERE {Purchase.ColumnNames.Id} = {purchaseId}";
@@ -155,8 +151,7 @@ namespace Business.Services
                     {
                         Id = Convert.ToInt32(reader[$"{Purchase.ColumnNames.Id}"]),
                         StateId = Convert.ToInt32(reader[$"{Purchase.ColumnNames.StateId}"]),
-                        TableId = Convert.ToInt32(reader[$"{Purchase.ColumnNames.TableId}"]),
-                        UserId = Convert.ToInt32(reader[$"{Purchase.ColumnNames.UserId}"]),
+                        Total = Convert.ToInt32(reader[$"{Purchase.ColumnNames.Total}"]),
                         CreationDate = Convert.ToDateTime(reader[$"{Purchase.ColumnNames.CreationDate}"]).ToLocalTime()
                     };
                 }

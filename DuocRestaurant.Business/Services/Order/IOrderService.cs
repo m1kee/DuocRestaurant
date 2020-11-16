@@ -8,6 +8,7 @@ namespace Business.Services
     public interface IOrderService
     {
         IList<Order> Get();
+        IList<OrderDetail> Get(Order order);
         Order Get(int orderId);
         Order Add(Order order);
         Order Edit(int orderId, Order order);

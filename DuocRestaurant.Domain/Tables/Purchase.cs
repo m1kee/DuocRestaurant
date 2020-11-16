@@ -7,13 +7,9 @@ namespace Domain
     public class Purchase : RestaurantTable
     {
         public int Id { get; set; }
-        public int TableId { get; set; }
-        public int UserId { get; set; }
+        public int Total { get; set; }
         public DateTime CreationDate { get; set; }
         public int StateId { get; set; }
-
-        public Table Table { get; set; }
-        public User User { get; set; }
         public Enums.PurchaseState PurchaseState
         {
             get
@@ -45,8 +41,7 @@ namespace Domain
         public struct ColumnNames
         {
             public const string Id = "Id";
-            public const string TableId = "MesaId";
-            public const string UserId = "UsuarioId";
+            public const string Total = "Total";
             public const string CreationDate = "Fecha";
             public const string StateId = "EstadoId";
         }

@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.AspNetCore.Http.Features;
+using DuocRestaurant.API.Hubs;
 
 namespace DuocRestaurant.API
 {
@@ -51,6 +52,8 @@ namespace DuocRestaurant.API
 
             services.AddControllers();
 
+            services.AddSignalR();
+
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
@@ -84,6 +87,8 @@ namespace DuocRestaurant.API
                 endpoints.MapControllers();
                 endpoints.MapControllerRoute(name: "controllerMethod",
                    pattern: "api/{controller}/{action}/{id?}");
+                endpoints.MapHub<OrdersHub>("/hubs/orders");
+                endpoints.MapHub<NotificationsHub>("/hubs/notifications");
             });
         }
     }

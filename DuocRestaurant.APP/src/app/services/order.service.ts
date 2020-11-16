@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
 import { HttpClient } from '@angular/common/http';
-import { Product } from '@domain/product';
+import { Order } from '@domain/order';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
-export class ProductService {
+export class OrderService {
     private env = environment;
-    private controllerName: string = 'Product';
+    private controllerName: string = 'Order';
     private controllerUrl: string = `${this.env.apiUrl}/${this.controllerName}`;
     constructor(private httpClient: HttpClient) { }
 
@@ -20,12 +20,12 @@ export class ProductService {
         return this.httpClient.get(`${this.controllerUrl}/GetById/${id}`);
     }
 
-    post(product: Product) {
-        return this.httpClient.post(`${this.controllerUrl}`, product);
+    post(order: Order) {
+        return this.httpClient.post(`${this.controllerUrl}`, order);
     }
 
-    put(id: number, product: Product) {
-        return this.httpClient.put(`${this.controllerUrl}/${id}`, product);
+    put(id: number, order: Order) {
+        return this.httpClient.put(`${this.controllerUrl}/${id}`, order);
     }
 
     delete(id: number) {

@@ -175,17 +175,16 @@ namespace Business.Services
                     $"m.{Table.ColumnNames.Description}, " +
                     $"m.{Table.ColumnNames.Active}, " +
                     $"m.{Table.ColumnNames.InUse}, " +
+                    $"m.{Table.ColumnNames.UserId}, " +
                     $"u.{User.ColumnNames.RoleId} AS {User.TableName}{User.ColumnNames.RoleId}, " +
                     $"u.{User.ColumnNames.Name} AS {User.TableName}{User.ColumnNames.Name}, " +
                     $"u.{User.ColumnNames.LastName} AS {User.TableName}{User.ColumnNames.LastName}, " +
                     $"u.{User.ColumnNames.Email} AS {User.TableName}{User.ColumnNames.Email}, " +
                     $"u.{User.ColumnNames.Phone} AS {User.TableName}{User.ColumnNames.Phone}, " +
-                    $"u.{User.ColumnNames.Address} AS {User.TableName}{User.ColumnNames.Address}, " +
-                    $"u.{User.ColumnNames.Password} AS {User.TableName}{User.ColumnNames.Password}, " +
-                    $"u.{User.ColumnNames.Active}  AS {User.TableName}{User.ColumnNames.Active} " +
+                    $"u.{User.ColumnNames.Address} AS {User.TableName}{User.ColumnNames.Address} " +
                     $"FROM {Table.TableName} m " +
                     $"LEFT JOIN {User.TableName} u ON u.{User.ColumnNames.Id} = m.{Table.ColumnNames.UserId} " +
-                    $"WHERE {Table.ColumnNames.Id} = {tableId}";
+                    $"WHERE m.{Table.ColumnNames.Id} = {tableId}";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 conn.Open();
 
@@ -208,7 +207,7 @@ namespace Business.Services
                         result.UserId = Convert.ToInt32(reader[Table.ColumnNames.UserId]);
                         result.User = new User()
                         {
-                            Id = Convert.ToInt32(reader[$"{User.TableName}{User.ColumnNames.Id}"]),
+                            Id = (int)result.UserId,
                             Email = reader[$"{User.TableName}{User.ColumnNames.Email}"]?.ToString(),
                             Name = reader[$"{User.TableName}{User.ColumnNames.Name}"]?.ToString(),
                             LastName = reader[$"{User.TableName}{User.ColumnNames.LastName}"]?.ToString(),

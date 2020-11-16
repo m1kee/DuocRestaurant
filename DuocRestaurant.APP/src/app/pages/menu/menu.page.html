@@ -1,0 +1,94 @@
+﻿<ion-header>
+    <ion-toolbar color="primary">
+        <ion-title>Pedidos</ion-title>
+        <ion-buttons slot="end" *ngIf="table">
+            <ion-button (click)="viewCart()">
+                <ion-icon name="cart-outline"></ion-icon>
+                <ion-badge color="danger" *ngIf="order && order.OrderDetails && order.OrderDetails.length > 0"> {{ order.OrderDetails.length }} </ion-badge>
+            </ion-button>
+            <ion-button (click)="viewOrders()">
+                <ion-icon name="restaurant-outline"></ion-icon>
+                <ion-badge color="danger" *ngIf="orders && orders.length > 0"> {{ orders.length }} </ion-badge>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="checkTableAssociate($event)">
+        <ion-refresher-content>
+        </ion-refresher-content>
+    </ion-refresher>
+
+    <ion-grid *ngIf="!table">
+        <ion-row>
+            <ion-col>
+                <p>
+                    Su usuario no est&aacute; asociado a una mesa, si est&aacute; en el local, comun&iacute;quese con el garz&oacute;n m&aacute;s cercano.
+                </p>
+                <small>
+                    Si ya habl&oacute; con el garz&oacute;n, deslice hacia abajo.
+                </small>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-icon name="restaurant-outline" size="large"></ion-icon>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-grid *ngIf="table">
+        <ion-row>
+            <ion-col>
+                <ion-button expand="block" [fill]="view === viewModes.Recipes ? 'solid' : 'outline'" (click)="changeViewMode(viewModes.Recipes)">Platos</ion-button>
+            </ion-col>
+            <ion-col>
+                <ion-button expand="block" [fill]="view === viewModes.Consumables ? 'solid' : 'outline'" (click)="changeViewMode(viewModes.Consumables)">Bebestibles</ion-button>
+            </ion-col>
+        </ion-row>
+        <ion-row *ngIf="view === viewModes.Recipes">
+            <ion-col *ngFor="let recipe of recipes" size-xs="12" size-sm="12" size-lg="3">
+                <ion-card>
+                    <div style="display: flex; align-items: center;justify-content: center;">
+                        <img src="assets/default-order.png" style="width: auto; height: 150px;" />
+                    </div>
+                    <ion-card-header>
+                        <ion-card-subtitle>{{ recipe.Name }}</ion-card-subtitle>
+                        <ion-card-title style="text-align: right;">{{ recipe.Price | currency:'CLP' }}</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <p>{{ recipe.Description }}</p>
+                        <div>
+                            <ion-button expand="block" fill="solid" color="danger" size="small" 
+                                        (click)="addRecipe(recipe)">
+                                <ion-icon name="cart-outline"></ion-icon> Agregar
+                            </ion-button>
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+        <ion-row *ngIf="view === viewModes.Consumables">
+            <ion-col *ngFor="let consumable of consumables" size="3">
+                <ion-card>
+                    <div style="display: flex; align-items: center;justify-content: center;">
+                        <img src="assets/default-consumable.png" style="width: auto; height: 150px;" />
+                    </div>
+                    <ion-card-header>
+                        <ion-card-subtitle>{{consumable.Name}}</ion-card-subtitle>
+                        <ion-card-title style="text-align: right;">{{consumable.Price | currency:'CLP'}}</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <p>{{ consumable.Details }}</p>
+                        <div>
+                            <ion-button expand="block" fill="solid" color="danger" size="small"
+                                        (click)="addConsumable(consumable)">
+                                <ion-icon name="cart-outline"></ion-icon> Agregar
+                            </ion-button>
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
