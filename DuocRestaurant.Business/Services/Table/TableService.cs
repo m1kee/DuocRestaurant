@@ -198,8 +198,7 @@ namespace Business.Services
                         Capacity = Convert.ToInt32(reader[Table.ColumnNames.Capacity]),
                         Description = reader[Table.ColumnNames.Description]?.ToString(),
                         Active = Convert.ToBoolean(reader[Table.ColumnNames.Active]),
-                        InUse = Convert.ToBoolean(reader[Table.ColumnNames.InUse]),
-                        UserId = Convert.ToInt32(reader[Table.ColumnNames.UserId])
+                        InUse = Convert.ToBoolean(reader[Table.ColumnNames.InUse])
                     };
 
                     if (reader[Table.ColumnNames.UserId] != DBNull.Value)

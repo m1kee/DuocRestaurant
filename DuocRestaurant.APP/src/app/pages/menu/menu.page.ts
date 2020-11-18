@@ -30,6 +30,7 @@ export class MenuPage implements OnInit {
     order: Order = new Order();
     orders: Order[] = [];
     orderStates = OrderState;
+    currentUser: User = null;
 
     constructor(private tableService: TableService,
         private orderService: OrderService,
@@ -51,8 +52,9 @@ export class MenuPage implements OnInit {
         await loading.present();
 
         this.authService.loggedUser.subscribe((user: User) => {
+            this.currentUser = user;
             let tableFilter = {
-                UserId: user.Id
+                UserId: this.currentUser.Id
             };
 
             this.tableService.filterBy(tableFilter).subscribe((tables: Table[]) => {
@@ -61,7 +63,7 @@ export class MenuPage implements OnInit {
                 if (tables && tables[0]) {
                     this.table = tables[0];
 
-                    this.order.UserId = user.Id;
+                    this.order.UserId = this.currentUser.Id
                     this.order.TableId = this.table.Id;
 
                     this.getRecipes();
@@ -81,7 +83,7 @@ export class MenuPage implements OnInit {
                 });
 
             let orderFilter = {
-                UserId: user.Id,
+                UserId: this.currentUser.Id,
                 States: [this.orderStates.Pending, this.orderStates.InPreparation, this.orderStates.Ready],
                 PurchaseId: null
             };
@@ -103,6 +105,8 @@ export class MenuPage implements OnInit {
             if (value.data) {
                 if (value.data.Id) {
                     this.order = new Order();
+                    this.order.UserId = this.currentUser.Id
+                    this.order.TableId = this.table.Id;
                     this.orders.push(value.data);
                 }
             }
