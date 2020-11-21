@@ -60,6 +60,12 @@ namespace Domain
             {
                 if (this.OrderDetails != null)
                     result.OrderDetails = this.OrderDetails.MapAll(ctx, true);
+
+                if (this.Table != null)
+                    result.Table = this.Table.Map(ctx, false);
+
+                if (this.User != null)
+                    result.User = this.User.Map(ctx, true);
             }
 
             return result;

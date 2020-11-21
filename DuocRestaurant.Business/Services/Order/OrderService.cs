@@ -487,7 +487,7 @@ namespace Business.Services
                     $"p.{Purchase.ColumnNames.StateId} AS {Purchase.TableName}{Purchase.ColumnNames.StateId}, " +
                     $"p.{Purchase.ColumnNames.CreationDate} AS {Purchase.TableName}{Purchase.ColumnNames.CreationDate} " +
                     $"FROM {Order.TableName} o " +
-                    $"JOIN {Purchase.TableName} p on p.{Purchase.ColumnNames.Id} = o.{Order.ColumnNames.PurchaseId} " +
+                    $"LEFT JOIN {Purchase.TableName} p on p.{Purchase.ColumnNames.Id} = o.{Order.ColumnNames.PurchaseId} " +
                     $"WHERE o.{Order.ColumnNames.Id} = {orderId}";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 conn.Open();

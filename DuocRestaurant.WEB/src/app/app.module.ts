@@ -33,6 +33,7 @@ import { BookingSearchComponent } from '@components/bookings/booking-search/book
 import { ProductComponent } from './components/maintenance/product/product.component';
 import { ProviderComponent } from './components/maintenance/provider/provider.component';
 import { SupplyRequestComponent } from './components/supply-request/supply-request.component';
+import { OrderBoardComponent } from './components/order-board/order-board.component';
 
 // validators
 import { PasswordValidatorDirective } from '@helpers/validations/password.validator';
@@ -55,7 +56,8 @@ import { SupplyCodePipe } from './pipes/supply-code.pipe';
     ProviderComponent,
     RecipesComponent,
     SupplyRequestComponent,
-    SupplyCodePipe
+    SupplyCodePipe,
+    OrderBoardComponent
   ],
   imports: [
     BrowserModule,

@@ -22,6 +22,7 @@ namespace DuocRestaurant.API.Controllers
         private IProductService productService { get; set; }
         private IPurchaseService purchaseService { get; set; }
         private IRecipeService recipeService { get; set; }
+        private ITableService tableService { get; set; }
         private IUserService userService { get; set; }
         private RestaurantDatabaseSettings dbSettings { get; set; }
         private IHubContext<OrdersHub, IOrderClient> ordersHub { get; set; }
@@ -32,6 +33,7 @@ namespace DuocRestaurant.API.Controllers
             IPurchaseService purchaseService,
             IRecipeService recipeService,
             IProviderService providerService,
+            ITableService tableService,
             IUserService userService,
             IOptions<RestaurantDatabaseSettings> databaseContext,
             IHubContext<OrdersHub, IOrderClient> ordersHub,
@@ -42,6 +44,7 @@ namespace DuocRestaurant.API.Controllers
             this.productService = productService;
             this.purchaseService = purchaseService;
             this.recipeService = recipeService;
+            this.tableService = tableService;
             this.userService = userService;
             this.dbSettings = databaseContext.Value;
             this.ordersHub = ordersHub;
@@ -68,7 +71,7 @@ namespace DuocRestaurant.API.Controllers
                         {
                             if (orderDetail.ProductId != null)
                                 orderDetail.Product = products.FirstOrDefault(x => x.Id == orderDetail.ProductId);
-                            
+
                             if (orderDetail.RecipeId != null)
                                 orderDetail.Recipe = recipes.FirstOrDefault(x => x.Id == orderDetail.RecipeId);
                         }
@@ -76,6 +79,9 @@ namespace DuocRestaurant.API.Controllers
 
                     if (order.PurchaseId != null)
                         order.Purchase = this.purchaseService.Get((int)order.PurchaseId);
+
+                    order.Table = this.tableService.Get(this.dbSettings, (int)order.TableId);
+                    order.User = this.userService.Get(this.dbSettings, (int)order.UserId);
                 }
 
                 result = Ok(orders.MapAll(this.dbSettings, true));
@@ -119,6 +125,9 @@ namespace DuocRestaurant.API.Controllers
                 if (order.PurchaseId != null)
                     order.Purchase = this.purchaseService.Get((int)order.PurchaseId);
 
+                order.Table = this.tableService.Get(this.dbSettings, (int)order.TableId);
+                order.User = this.userService.Get(this.dbSettings, (int)order.UserId);
+
                 result = Ok(order.Map(this.dbSettings, true));
             }
             catch (Exception ex)
@@ -157,6 +166,9 @@ namespace DuocRestaurant.API.Controllers
 
                 if (created.PurchaseId != null)
                     created.Purchase = this.purchaseService.Get((int)created.PurchaseId);
+
+                created.Table = this.tableService.Get(this.dbSettings, (int)created.TableId);
+                created.User = this.userService.Get(this.dbSettings, (int)created.UserId);
 
                 // call reload orders in all connected clients
                 this.ordersHub.Clients.All.ReloadOrders();
@@ -206,6 +218,9 @@ namespace DuocRestaurant.API.Controllers
 
                 if (edited.PurchaseId != null)
                     edited.Purchase = this.purchaseService.Get((int)edited.PurchaseId);
+
+                edited.Table = this.tableService.Get(this.dbSettings, (int)edited.TableId);
+                edited.User = this.userService.Get(this.dbSettings, (int)edited.UserId);
 
                 if (sendReadyNotification)
                 {
@@ -306,6 +321,9 @@ namespace DuocRestaurant.API.Controllers
 
                         if (order.PurchaseId != null)
                             order.Purchase = this.purchaseService.Get((int)order.PurchaseId);
+
+                        order.Table = this.tableService.Get(this.dbSettings, (int)order.TableId);
+                        order.User = this.userService.Get(this.dbSettings, (int)order.UserId);
                     }
                 }
 

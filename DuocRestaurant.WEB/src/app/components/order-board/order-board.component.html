@@ -1,0 +1,80 @@
+
+<div class="row mt-3">
+  <div class="col-12 text-center" *ngIf="!orders || orders.length === 0">
+    <h1>
+      No tenemos órdenes pendientes
+    </h1>
+    <hr />
+    <img src="assets/chef.png" alt="Chef feliz" style="opacity: 0.6;" />
+  </div>
+  <div class="col-6 col-sm-6 col-md-4 col-lg-4 col-xl-2 mb-2" *ngFor="let order of orders">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col" *ngIf="getMaxPreparationTime(order)">
+            <h6 class="card-subtitle text-muted">
+              <fa-icon [icon]="icons.faHourglassHalf" [fixedWidth]="true"></fa-icon>
+              {{getMaxPreparationTime(order)}} mins.
+            </h6>
+          </div>
+          <div class="col">
+            <h6 class="card-subtitle text-muted text-right">
+              <fa-icon [icon]="icons.faUtensils" [fixedWidth]="true"></fa-icon>
+              Mesa: {{order.Table.Number}}
+            </h6>
+          </div>
+          <div class="col-12 mt-1 text-right">
+            <span class="badge {{getOrderStateColor(order)}}">
+              {{ getOrderStateText(order) }}
+            </span>
+          </div>
+        </div>
+
+        <h5 class="card-title">
+          <fa-icon [icon]="icons.faUser" [fixedWidth]="true"></fa-icon>
+          {{order.User.Name}}
+        </h5>
+
+        <p class="card-text" *ngIf="order.Note">
+          NOTA: <span class="font-italic">{{order.Note}}</span>
+        </p>
+
+        <div class="pt-1">
+          <button (click)="changeOrderState(order, orderStates.InPreparation, orderStates.Pending)"
+                  *ngIf="order.StateId === orderStates.Pending"
+                  class="btn btn-block btn-warning btn-sm">
+            <fa-icon *ngIf="!order._isLoading" [icon]="icons.faUtensils" [fixedWidth]="true"></fa-icon>
+            <fa-icon *ngIf="order._isLoading" [icon]="icons.faSpinner" [fixedWidth]="true" [spin]="true"></fa-icon>
+            {{ order._isLoading ? 'Guardando...' : 'Preparar' }}
+          </button>
+          <button (click)="changeOrderState(order, orderStates.Ready, orderStates.InPreparation)"
+                  *ngIf="order.StateId === orderStates.InPreparation"
+                  class="btn btn-block btn-success btn-sm">
+            <fa-icon *ngIf="!order._isLoading" [icon]="icons.faCheck" [fixedWidth]="true"></fa-icon>
+            <fa-icon *ngIf="order._isLoading" [icon]="icons.faSpinner" [fixedWidth]="true" [spin]="true"></fa-icon>
+            {{ order._isLoading ? 'Guardando...' : 'Completar' }}
+          </button>
+        </div>
+      </div>
+
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item clickable bg-light" (click)="toggleDetails(order)">
+          <label class="clickable mb-0">
+            <fa-icon *ngIf="!order._showDetails" [icon]="icons.faAngleRight" [fixedWidth]="true"></fa-icon>
+            <fa-icon *ngIf="order._showDetails" [icon]="icons.faAngleDown" [fixedWidth]="true"></fa-icon>
+            Detalles
+          </label>
+        </li>
+        <li class="list-group-item pt-1 pb-1" [hidden]="!order._showDetails" *ngFor="let detail of order.OrderDetails">
+          <span>
+            <fa-icon *ngIf="detail.Recipe" [icon]="icons.faHamburger" [fixedWidth]="true"></fa-icon>
+            <fa-icon *ngIf="detail.Product" [icon]="icons.faWineGlassAlt" [fixedWidth]="true"></fa-icon>
+          </span>
+          <small>
+            {{detail.Count}} x {{ detail.ProductId ? detail.Product.Name : detail.Recipe.Name }}
+          </small>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

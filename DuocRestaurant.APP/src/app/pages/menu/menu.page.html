@@ -47,7 +47,7 @@
             </ion-col>
         </ion-row>
         <ion-row *ngIf="view === viewModes.Recipes">
-            <ion-col *ngFor="let recipe of recipes" size-xs="12" size-sm="12" size-lg="3">
+            <ion-col *ngFor="let recipe of recipes" size-xs="12" size-sm="6" size-lg="3">
                 <ion-card>
                     <div style="display: flex; align-items: center;justify-content: center;">
                         <img src="assets/default-order.png" style="width: auto; height: 150px;" />
@@ -69,7 +69,7 @@
             </ion-col>
         </ion-row>
         <ion-row *ngIf="view === viewModes.Consumables">
-            <ion-col *ngFor="let consumable of consumables" size="3">
+            <ion-col *ngFor="let consumable of consumables" size-xs="12" size-sm="6" size-lg="3">
                 <ion-card>
                     <div style="display: flex; align-items: center;justify-content: center;">
                         <img src="assets/default-consumable.png" style="width: auto; height: 150px;" />

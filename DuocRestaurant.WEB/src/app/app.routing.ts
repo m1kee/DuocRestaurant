@@ -11,6 +11,7 @@ import { ProductComponent } from '@components/maintenance/product/product.compon
 import { ProviderComponent } from '@components/maintenance/provider/provider.component';
 import { RecipesComponent } from '@components/maintenance/recipes/recipes.component';
 import { SupplyRequestComponent } from './components/supply-request/supply-request.component';
+import { OrderBoardComponent } from './components/order-board/order-board.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -24,7 +25,7 @@ const routes: Routes = [
   { path: 'booking-search', component: BookingSearchComponent, canActivate: [AuthGuard] },
   { path: 'recipe-maintenance', component: RecipesComponent, canActivate: [AuthGuard] },
   { path: 'supply-request', component: SupplyRequestComponent, canActivate: [AuthGuard] },
-  
+  { path: 'orders-board', component: OrderBoardComponent, canActivate: [AuthGuard] },
   { path: '**', component: PageNotFoundComponent, canActivate: [AuthGuard] }
 ];
 

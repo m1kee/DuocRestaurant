@@ -50,15 +50,13 @@ namespace DuocRestaurant.API
             services.AddScoped<ITableService, TableService>();
             services.AddScoped<IUserService, UserService>();
 
-            services.AddControllers();
-
-            services.AddSignalR();
-
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
 
+            services.AddSignalR();
+            services.AddControllers();
             services.Configure<FormOptions>(option =>
             {
                 option.ValueLengthLimit = int.MaxValue;
@@ -72,7 +70,11 @@ namespace DuocRestaurant.API
         {
             if (env.IsDevelopment())
             {
-                app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+                app.UseCors(builder =>
+                            builder.WithOrigins("http://localhost:4200", "http://localhost:8100")
+                                   .AllowAnyMethod()
+                                   .AllowAnyHeader()
+                                   .AllowCredentials());
                 app.UseDeveloperExceptionPage();
             }
 
