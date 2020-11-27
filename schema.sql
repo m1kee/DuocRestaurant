@@ -400,7 +400,6 @@ INSERT INTO DetalleReceta (RecetaId, ProductoId, Cantidad, Activo) VALUES (2,82,
 INSERT INTO DetalleReceta (RecetaId, ProductoId, Cantidad, Activo) VALUES (2,44,0.020, 1);
 INSERT INTO DetalleReceta (RecetaId, ProductoId, Cantidad, Activo) VALUES (2,76,0.005, 1);
 
-
 INSERT INTO EstadoPedidoInsumo (Descripcion) VALUES ('Creada');
 INSERT INTO EstadoPedidoInsumo (Descripcion) VALUES ('Enviada');
 INSERT INTO EstadoPedidoInsumo (Descripcion) VALUES ('Confirmada');
