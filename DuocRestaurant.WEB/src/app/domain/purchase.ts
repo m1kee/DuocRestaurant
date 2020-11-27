@@ -1,19 +1,18 @@
-﻿import { Table } from './table';
-import { User } from './user';
+import { Order } from './order';
 
 export class Purchase {
-    Id: number;
-    TableId: number;
-    UserId: number;
-    CreationDate: Date;
-    StateId: number;
+  Id: number;
+  Total: number;
+  CreationDate: Date;
+  StateId: number;
+  URL?: string;
+  Token?: string;
+  FlowOrder?: number;
 
-    Table: Table;
-    User: User;
+  Orders: Order[];
 
-    public constructor() {
-        this.Id = 0;
-        this.Table = null;
-        this.User = null;
-    }
+  public constructor() {
+    this.Id = 0;
+    this.Orders = [];
+  }
 }

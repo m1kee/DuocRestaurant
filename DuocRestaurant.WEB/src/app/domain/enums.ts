@@ -30,11 +30,10 @@ export enum BookingState {
 
 export enum PurchaseState {
   NotAssigned = 0,
-  Canceled = 1,
-  PendingPayment = 2,
-  PaidInCash = 3,
-  PaidByCredit = 4,
-  PaidByDebit = 5
+  PendingPayment = 1,
+  Paid = 2,
+  Rejected = 3,
+  Canceled = 4
 }
 
 export enum OrderState {
@@ -42,5 +41,6 @@ export enum OrderState {
   Canceled = 1,
   Pending = 2,
   InPreparation = 3,
-  Ready = 4
+  Ready = 4,
+  Delivered = 5
 }

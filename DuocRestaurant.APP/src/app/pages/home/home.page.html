@@ -3,7 +3,7 @@
         <ion-tab-bar slot="bottom">
             <ion-tab-button tab="menu" *ngIf="hasPermissions([profiles.Customer, profiles.Table])">
                 <ion-icon name="restaurant-outline"></ion-icon>
-                <ion-label>Pedidos</ion-label>
+                <ion-label>Carta</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="bookings" *ngIf="hasPermissions([profiles.Customer])">
@@ -16,14 +16,24 @@
                 <ion-label>Disponibilidad</ion-label>
             </ion-tab-button>
 
+            <ion-tab-button tab="order-list" *ngIf="hasPermissions([profiles.Administrator, profiles.Waiter])">
+                <ion-icon name="pizza-outline"></ion-icon>
+                <ion-label>&Oacute;rdenes</ion-label>
+            </ion-tab-button>
+
             <ion-tab-button tab="supply-request-reception" *ngIf="hasPermissions([profiles.Administrator, profiles.Warehouse])">
                 <ion-icon name="albums-outline"></ion-icon>
-                <ion-label>&Oacute;rdenes</ion-label>
+                <ion-label>Pedidos</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="reception" *ngIf="hasPermissions([profiles.Reception])">
                 <ion-icon name="apps-outline"></ion-icon>
                 <ion-label>Recepci&oacute;n</ion-label>
+            </ion-tab-button>
+
+            <ion-tab-button tab="my-purchases" *ngIf="hasPermissions([profiles.Customer])">
+                <ion-icon name="cash-outline"></ion-icon>
+                <ion-label>Mis compras</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="account">

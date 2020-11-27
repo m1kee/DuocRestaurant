@@ -1,0 +1,32 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-title>Detalle de compra</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="close()">
+                <ion-icon name="close-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-list style="margin-bottom: 30px;">
+        <ion-item *ngFor="let order of orders">
+            <ion-label>
+                <h2><b> {{ getOrderTotal(order) | currency:'CLP' }} </b></h2>
+                <ul>
+                    <li *ngFor="let detail of order.OrderDetails">
+                        {{detail.Count}} x {{ detail.ProductId ? detail.Product.Name : detail.Recipe.Name }}
+                    </li>
+                </ul>
+                <span *ngIf="order.Note">Nota: <i> {{ order.Note }}</i></span>
+            </ion-label>
+        </ion-item>
+    </ion-list>
+
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="purchase.StateId === purchaseStates.PendingPayment">
+        <ion-fab-button (click)="sendPayEmail()">
+            <ion-icon name="mail-outline"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+</ion-content>

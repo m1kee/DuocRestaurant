@@ -1,0 +1,40 @@
+﻿<ion-header>
+    <ion-toolbar color="primary">
+        <ion-title>&Oacute;rdenes en preparaci&oacute;n</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="reloadOrders($event)">
+        <ion-refresher-content>
+        </ion-refresher-content>
+    </ion-refresher>
+
+    <ion-list>
+        <ion-item-sliding *ngFor="let order of orders">
+            <ion-item>
+                <ion-label>
+                    <h2>
+                        <ion-icon name="restaurant-outline"></ion-icon>
+                        <b> Mesa: {{order.Table.Number }} </b>
+                    </h2>
+                    <ul>
+                        <li *ngFor="let detail of order.OrderDetails">
+                            {{detail.Count}} x {{ detail.ProductId ? detail.Product.Name : detail.Recipe.Name }}
+                        </li>
+                    </ul>
+                    <span *ngIf="order.Note">Nota: <i> {{ order.Note }}</i></span>
+                </ion-label>
+                <ion-badge slot="end" [color]="getStateBadgeColor(order)">
+                    {{getStateBadge(order)}}
+                </ion-badge>
+            </ion-item>
+            <ion-item-options side="end" *ngIf="canDeliver(order)">
+                <ion-item-option (click)="deliver(order)"
+                                 color="primary">
+                    Entregar
+                </ion-item-option>
+            </ion-item-options>
+        </ion-item-sliding>
+    </ion-list>
+</ion-content>

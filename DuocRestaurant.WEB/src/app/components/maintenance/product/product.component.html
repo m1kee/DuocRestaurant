@@ -64,20 +64,36 @@
             <small *ngIf="measurementUnit.errors?.required" class="form-text text-muted">Campo requerido.</small>
           </div>
         </div>
+        <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12" *ngIf="currentProduct.ProductTypeId === productTypeEnum.Consumable">
+          <div class="form-group">
+            <label for="salePrice">Precio de venta:</label>
+            <input name="salePrice"
+                   #salePrice="ngModel"
+                   [(ngModel)]="currentProduct.SalePrice"
+                   [required]="currentProduct.ProductTypeId === productTypeEnum.Consumable"
+                   type="text"
+                   class="form-control"
+                   [pattern]="numberPattern"
+                   id="salePrice"
+                   placeholder="Ingresa el precio de venta">
+            <small *ngIf="salePrice.errors?.required" class="form-text text-muted">Campo requerido.</small>
+            <small *ngIf="salePrice.errors?.pattern" class="form-text text-muted">Solo se aceptan n&uacute;meros.</small>
+          </div>
+        </div>
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
           <div class="form-group">
-            <label for="price">Precio por unidad:</label>
-            <input name="price"
-                   #price="ngModel"
-                   [(ngModel)]="currentProduct.Price"
+            <label for="costPrice">Precio de costo:</label>
+            <input name="costPrice"
+                   #costPrice="ngModel"
+                   [(ngModel)]="currentProduct.CostPrice"
                    required
                    type="text"
                    class="form-control"
                    [pattern]="numberPattern"
-                   id="price"
-                   placeholder="Ingresa el precio">
-            <small *ngIf="price.errors?.required" class="form-text text-muted">Campo requerido.</small>
-            <small *ngIf="price.errors?.pattern" class="form-text text-muted">Solo se aceptan n&uacute;meros.</small>
+                   id="costPrice"
+                   placeholder="Ingresa el precio de costo">
+            <small *ngIf="costPrice.errors?.required" class="form-text text-muted">Campo requerido.</small>
+            <small *ngIf="costPrice.errors?.pattern" class="form-text text-muted">Solo se aceptan n&uacute;meros.</small>
           </div>
         </div>
         <div class="col-xl-6 col-lg-12 col-md-6 col-sm-6 col-xs-12">
@@ -114,7 +130,7 @@
             <fa-icon [icon]="icons.faSave" [fixedWidth]="true"></fa-icon>&nbsp;
             Guardar
           </button>
-          <button (click)="cancel()" name="cancel-btn" type="button" class="btn btn-danger">
+          <button (click)="cancel(productForm)" name="cancel-btn" type="button" class="btn btn-danger">
             <fa-icon [icon]="icons.faTimes" [fixedWidth]="true"></fa-icon>&nbsp;
             Cancelar
           </button>
@@ -128,23 +144,23 @@
     <table class="table table-hover table-sm">
       <thead class="thead-light">
         <tr>
-          <th scope="col">#</th>
           <th scope="col">Nombre</th>
           <th scope="col">Stock</th>
           <th scope="col">Categor&iacute;a</th>
           <th scope="col">Proveedor</th>
-          <th scope="col">Precio</th>
+          <th scope="col">Precio Venta</th>
+          <th scope="col">Precio Costo</th>
           <th scope="col">Acciones </th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let product of products | paginate: paginationConfig">
-          <td>{{ product.Id }}</td>
           <td>{{ product.Name }}</td>
           <td>{{ product.Count }} {{ product.MeasurementUnit.Code }}</td>
           <td>{{ product.ProductType.Description }}</td>
           <td>{{ product.Provider.Name }}</td>
-          <td>{{ product.Price }}</td>
+          <td>{{ product.SalePrice | currency:'CLP':'symbol-narrow' }}</td>
+          <td>{{ product.CostPrice | currency:'CLP':'symbol-narrow' }}</td>
           <td>
             <button (click)="edit(product, productForm)" type="button" class="btn btn-sm btn-default" style="margin-right: 5px;">
               <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>

@@ -67,10 +67,7 @@
 
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" *dropdownMenu>
           <a [routerLink]="['/finance-movements']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Finance])" class="dropdown-item clickable">
-            Movimientos
-          </a>
-          <a [routerLink]="['/finance-utilities']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Finance])" class="dropdown-item clickable">
-            Utilidades
+            Compras
           </a>
         </div>
       </li>

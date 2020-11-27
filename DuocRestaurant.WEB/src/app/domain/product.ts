@@ -9,7 +9,8 @@ export class Product {
   ProductTypeId: number;
   Count: number;
   MeasurementUnitId: number;
-  Price: number;
+  CostPrice: number;
+  SalePrice?: number;
   ProviderId: number;
   Active: boolean;
 
@@ -19,9 +20,10 @@ export class Product {
 
   public constructor() {
     this.Active = true;
-    this.Price = 0;
+    this.CostPrice = 0;
+    this.SalePrice = null;
     this.ProductTypeId = null;
     this.MeasurementUnitId = null;
-    this.ProviderId = null; 
+    this.ProviderId = null;
   }
 }

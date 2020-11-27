@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -34,10 +35,14 @@ import { ProductComponent } from './components/maintenance/product/product.compo
 import { ProviderComponent } from './components/maintenance/provider/provider.component';
 import { SupplyRequestComponent } from './components/supply-request/supply-request.component';
 import { OrderBoardComponent } from './components/order-board/order-board.component';
+import { PurchaseListComponent } from './components/purchase-list/purchase-list.component';
+import { RecipesComponent } from './components/maintenance/recipes/recipes.component';
+import { ModalContentComponent } from './components/purchase-list/purchase-list.component';
 
 // validators
 import { PasswordValidatorDirective } from '@helpers/validations/password.validator';
-import { RecipesComponent } from './components/maintenance/recipes/recipes.component';
+
+// pipes
 import { SupplyCodePipe } from './pipes/supply-code.pipe';
 
 @NgModule({
@@ -57,7 +62,9 @@ import { SupplyCodePipe } from './pipes/supply-code.pipe';
     RecipesComponent,
     SupplyRequestComponent,
     SupplyCodePipe,
-    OrderBoardComponent
+    OrderBoardComponent,
+    PurchaseListComponent,
+    ModalContentComponent
   ],
   imports: [
     BrowserModule,
@@ -93,9 +100,13 @@ import { SupplyCodePipe } from './pipes/supply-code.pipe';
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#dc3545'
     }),
-    NgxMaskModule.forRoot(maskConfig)
+    NgxMaskModule.forRoot(maskConfig),
+    ModalModule.forRoot()
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [
+    ModalContentComponent
+  ]
 })
 export class AppModule { }

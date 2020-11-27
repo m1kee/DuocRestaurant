@@ -11,6 +11,7 @@ import { ProviderService } from '../../../services/provider.service';
 import { MeasurementUnitService } from '../../../services/measurement-unit.service';
 import { ProductTypeService } from '../../../services/product-type.service';
 import { NUMBER_REGEX } from '@app/helpers/validations/common-regex';
+import { ProductTypes } from '../../../domain/enums';
 
 @Component({
   selector: 'app-product',
@@ -38,7 +39,8 @@ export class ProductComponent implements OnInit {
   };
 
   loading: boolean = false;
-  numberPattern = NUMBER_REGEX; 
+  numberPattern = NUMBER_REGEX;
+  productTypeEnum = ProductTypes;
 
   constructor(private toastrService: ToastrService,
     private productService: ProductService,
@@ -106,10 +108,10 @@ export class ProductComponent implements OnInit {
         this.productService
           .post(this.currentProduct)
           .subscribe((createdProduct: Product) => {
-            this.currentProduct = createdProduct;
             this.products.push(createdProduct);
             this.loading = false;
             this.toastrService.success('Se ha creado correctamente', 'Producto Creado');
+            this.cancel(form);
           }, (error) => {
             this.loading = false;
             let message = 'Error al crear el producto';
@@ -127,6 +129,7 @@ export class ProductComponent implements OnInit {
             this.products.splice(cIndex, 1, editedProduct);
             this.loading = false;
             this.toastrService.success('Se ha editado correctamente', 'Producto Editado');
+            this.cancel(form);
           }, (error) => {
             this.loading = false;
             let message = 'Error al editar el producto';
@@ -160,7 +163,8 @@ export class ProductComponent implements OnInit {
     });
   };
 
-  cancel() {
+  cancel(form: NgForm) {
     this.currentProduct = new Product();
+    form.form.markAsPristine();
   };
 }

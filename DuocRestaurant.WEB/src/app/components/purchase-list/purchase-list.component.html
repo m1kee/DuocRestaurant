@@ -1,0 +1,43 @@
+<div class="row m-3 justify-content-center">
+  <div class="col-lg-8">
+    <h1> Compras </h1>
+    <hr />
+    <table class="table table-hover table-sm">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Fecha</th>
+          <th scope="col">Total</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Acciones </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let purchase of purchases | paginate: paginationConfig; index as index">
+          <td>{{ purchase.CreationDate | date:'short' }}</td>
+          <td>{{ purchase.Total | currency:'CLP':'symbol-narrow'}}</td>
+          <td>
+            <span class="badge badge-pill badge-{{getStateBadgeColor(purchase)}}">
+              {{ getStateBadge(purchase) }}
+            </span>
+          </td>
+          <td>
+            <button (click)="view(purchase, template)"
+                    type="button" class="btn btn-sm btn-default" title="Ver detalle de compra">
+              <fa-icon [icon]="icons.faEye" [fixedWidth]="true"></fa-icon>
+            </button>
+            <button *ngIf="purchase.StateId === purchaseStates.PendingPayment"
+                    (click)="validate(purchase)"
+                    type="button" class="btn btn-sm btn-default" title="Validar pago">
+              <fa-icon [icon]="icons.faMoneyBillAlt" [fixedWidth]="true"></fa-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="pagination" class="text-center">
+      <pagination-controls (pageChange)="pageChanged($event)" previousLabel="Atrás" nextLabel="Siguiente" autoHide="true" responsive="true">
+      </pagination-controls>
+    </div>
+  </div>
+</div>
+

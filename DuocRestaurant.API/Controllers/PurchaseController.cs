@@ -13,19 +13,25 @@ namespace DuocRestaurant.API.Controllers
     public class PurchaseController : ControllerBase
     {
         private IPurchaseService purchaseService{ get; set; }
+        private IOrderService orderService { get; set; }
+        private IFlowService flowService { get; set; }
         private IUserService userService { get; set; }
         private ITableService tableService { get; set; }
         private RestaurantDatabaseSettings dbSettings { get; set; }
 
         public PurchaseController(IPurchaseService purchaseService,
+            IOrderService orderService,
+            IFlowService flowService,
             IUserService userService,
             ITableService tableService,
             IOptions<RestaurantDatabaseSettings> databaseContext)
         {
             this.purchaseService = purchaseService;
             this.userService = userService;
+            this.flowService = flowService;
             this.tableService = tableService;
             this.dbSettings = databaseContext.Value;
+            this.orderService = orderService;
         }
 
         [HttpGet]
@@ -74,6 +80,37 @@ namespace DuocRestaurant.API.Controllers
             try
             {
                 var created = this.purchaseService.Add(purchase);
+
+                if (created != null && created.Id > 0)
+                {
+                    User user = null;
+                    Table table = null;
+                    if (purchase.Orders != null && purchase.Orders.Any())
+                    {
+                        foreach (var order in purchase.Orders)
+                        {
+                            if (order == purchase.Orders.First())
+                            {
+                                user = order.User ?? this.userService.Get(this.dbSettings, order.UserId);
+                                table = order.Table ?? this.tableService.Get(this.dbSettings, order.TableId);
+                            }
+
+                            order.PurchaseId = purchase.Id;
+                            this.orderService.Edit(order.Id, order);
+                        }
+                    }
+
+                    // generate flow payment
+                    var response = this.flowService.CreateEmailPayment(user.Email, created.Total, $"Pago cuenta mesa: {table.Number} - {user.Name} {user.LastName}", purchase.Id);
+                    if (response != null)
+                    {
+                        created.URL = response.URL;
+                        created.Token = response.Token;
+                        created.FlowOrder = response.FlowOrder;
+
+                        created = this.purchaseService.Edit(created.Id, created);
+                    }
+                }
 
                 result = Ok(created.Map(this.dbSettings, true));
             }
@@ -138,7 +175,67 @@ namespace DuocRestaurant.API.Controllers
                     purchases = purchases.Where(x => x.StateId == stateId).ToList();
                 }
 
+                if (filters.ContainsKey("UserId"))
+                {
+                    int userId = Convert.ToInt32(filters.GetValue("UserId").ToString());
+                    var orders = this.orderService.Get();
+                    if (orders != null && orders.Any())
+                    {
+                        var userOrders = orders.Where(x => x.UserId == userId).ToList();
+                        purchases = purchases.Where(x => orders.Any(y => y.PurchaseId == x.Id)).ToList();
+                    }
+                }
+
                 result = Ok(purchases.MapAll(this.dbSettings, true));
+            }
+            catch (Exception ex)
+            {
+                result = BadRequest(ex.Message);
+            }
+
+            return result;
+        }
+
+        [HttpGet]
+        [ActionName("ValidatePayment")]
+        [Route("[action]/{id:int}")]
+        public IActionResult ValidatePayment([FromRoute(Name = "id")] int purchaseId)
+        {
+            IActionResult result;
+
+            try
+            {
+                // get purchase
+                var purchase = this.purchaseService.Get(purchaseId);
+                if (purchase == null)
+                    throw new Exception($"No existe una compra con ID: {purchaseId}");
+
+                // get status of the payment
+                var paymentStatus = this.flowService.GetStatus(purchaseId);
+                if (paymentStatus != null)
+                {
+                    switch (paymentStatus.Status)
+                    {
+                        case (int)Enums.PurchaseState.PendingPayment:
+                            purchase.StateId = (int)Enums.PurchaseState.PendingPayment;
+                            break;
+                        case (int)Enums.PurchaseState.Paid:
+                            purchase.StateId = (int)Enums.PurchaseState.Paid;
+                            break;
+                        case (int)Enums.PurchaseState.Rejected:
+                            purchase.StateId = (int)Enums.PurchaseState.Rejected;
+                            break;
+                        case (int)Enums.PurchaseState.Canceled:
+                            purchase.StateId = (int)Enums.PurchaseState.Canceled;
+                            break;
+                    }
+
+                    // edit the payment status
+                    this.purchaseService.Edit(purchaseId, purchase);
+                }
+
+                // return the edited purchase
+                result = Ok(purchase.Map(this.dbSettings, true));
             }
             catch (Exception ex)
             {

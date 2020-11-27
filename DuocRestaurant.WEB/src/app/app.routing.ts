@@ -10,8 +10,9 @@ import { BookingsComponent } from '@components/bookings/booking/bookings.compone
 import { ProductComponent } from '@components/maintenance/product/product.component';
 import { ProviderComponent } from '@components/maintenance/provider/provider.component';
 import { RecipesComponent } from '@components/maintenance/recipes/recipes.component';
-import { SupplyRequestComponent } from './components/supply-request/supply-request.component';
-import { OrderBoardComponent } from './components/order-board/order-board.component';
+import { SupplyRequestComponent } from '@components/supply-request/supply-request.component';
+import { OrderBoardComponent } from '@components/order-board/order-board.component';
+import { PurchaseListComponent } from '@components/purchase-list/purchase-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -26,6 +27,7 @@ const routes: Routes = [
   { path: 'recipe-maintenance', component: RecipesComponent, canActivate: [AuthGuard] },
   { path: 'supply-request', component: SupplyRequestComponent, canActivate: [AuthGuard] },
   { path: 'orders-board', component: OrderBoardComponent, canActivate: [AuthGuard] },
+  { path: 'finance-movements', component: PurchaseListComponent, canActivate: [AuthGuard] },
   { path: '**', component: PageNotFoundComponent, canActivate: [AuthGuard] }
 ];
 

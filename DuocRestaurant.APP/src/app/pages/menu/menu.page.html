@@ -1,6 +1,6 @@
 ﻿<ion-header>
     <ion-toolbar color="primary">
-        <ion-title>Pedidos</ion-title>
+        <ion-title>Carta</ion-title>
         <ion-buttons slot="end" *ngIf="table">
             <ion-button (click)="viewCart()">
                 <ion-icon name="cart-outline"></ion-icon>
@@ -76,7 +76,7 @@
                     </div>
                     <ion-card-header>
                         <ion-card-subtitle>{{consumable.Name}}</ion-card-subtitle>
-                        <ion-card-title style="text-align: right;">{{consumable.Price | currency:'CLP'}}</ion-card-title>
+                        <ion-card-title style="text-align: right;">{{consumable.SalePrice | currency:'CLP'}}</ion-card-title>
                     </ion-card-header>
                     <ion-card-content>
                         <p>{{ consumable.Details }}</p>

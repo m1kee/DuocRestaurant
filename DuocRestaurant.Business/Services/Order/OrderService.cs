@@ -312,6 +312,34 @@ namespace Business.Services
 
             return result;
         }
+        public Order Edit(int orderId, Order order, OracleTransaction transaction)
+        {
+            Order result = null;
+
+            using (OracleConnection conn = new OracleConnection(dbSettings.ConnectionString))
+            {
+                conn.Open();
+
+                string query = $"UPDATE {Order.TableName} " +
+                    $"SET " +
+                    $"{Order.ColumnNames.PurchaseId} = :{Order.ColumnNames.PurchaseId} " +
+                    $"WHERE {Order.ColumnNames.Id} = {orderId}";
+                OracleCommand cmd = new OracleCommand(query, conn);
+                cmd.Transaction = transaction;
+                cmd.Parameters.Add(new OracleParameter()
+                {
+                    Value = order.PurchaseId,
+                    ParameterName = $":{Order.ColumnNames.PurchaseId}",
+                    DbType = System.Data.DbType.Int32
+                });
+
+                cmd.ExecuteNonQuery();
+
+                result = order;
+            }
+
+            return result;
+        }
 
         private OrderDetail Edit(OracleConnection conn, OracleTransaction transaction, OrderDetail orderDetail)
         {

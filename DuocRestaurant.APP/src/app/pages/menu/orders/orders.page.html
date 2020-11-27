@@ -15,7 +15,7 @@
         </ion-refresher-content>
     </ion-refresher>
 
-    <ion-list>
+    <ion-list style="margin-bottom: 30px;">
         <ion-item *ngFor="let order of orders">
             <ion-label>
                 <h2><b> {{ getOrderTotal(order) | currency:'CLP' }} </b></h2>
@@ -31,4 +31,12 @@
             </ion-badge>
         </ion-item>
     </ion-list>
+
+
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button (click)="tryPay()"
+                        *ngIf="showPayButton()">
+            <ion-icon name="cash-outline"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
 </ion-content>

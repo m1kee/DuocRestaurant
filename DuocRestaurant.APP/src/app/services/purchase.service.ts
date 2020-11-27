@@ -31,4 +31,8 @@ export class PurchaseService {
     delete(id: number) {
         return this.httpClient.delete(`${this.controllerUrl}/${id}`);
     }
+
+    filterBy(filters) {
+        return this.httpClient.post(`${this.controllerUrl}/FilterBy`, filters);
+    }
 }

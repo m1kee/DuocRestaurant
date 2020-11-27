@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Mis compras</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="refreshPayments($event)">
+        <ion-refresher-content>
+        </ion-refresher-content>
+    </ion-refresher>
+
+    <ion-list>
+        <ion-item *ngFor="let purchase of purchases" button (click)="viewDetails(purchase)">
+            <ion-label>
+                <h2>
+                    <b> {{ purchase.Total | currency:'CLP' }} </b>
+                </h2>
+                <h3>
+                    {{purchase.CreationDate | date:'short' }}
+                </h3>
+            </ion-label>
+            <ion-badge slot="end" [color]="getStateBadgeColor(purchase)">
+                {{getStateBadge(purchase)}}
+            </ion-badge>
+        </ion-item>
+    </ion-list>
+</ion-content>

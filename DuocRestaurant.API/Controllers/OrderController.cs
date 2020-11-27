@@ -293,9 +293,11 @@ namespace DuocRestaurant.API.Controllers
                     orders = orders.Where(x => states.Any(y => y == x.StateId)).ToList();
                 }
 
-                if (filters.ContainsKey("PuchaseId"))
+                if (filters.ContainsKey("PurchaseId"))
                 {
-                    int purchaseId = Convert.ToInt32(filters.GetValue("PuchaseId").ToString());
+                    int? purchaseId = null;
+                    if (!string.IsNullOrEmpty(filters.GetValue("PurchaseId").ToString()))
+                        purchaseId = Convert.ToInt32(filters.GetValue("PurchaseId").ToString());
 
                     orders = orders.Where(x => x.PurchaseId == purchaseId).ToList();
                 }

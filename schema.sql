@@ -94,7 +94,8 @@ CREATE TABLE Producto (
     TipoProductoId INTEGER NOT NULL,
     Cantidad INTEGER NOT NULL,
     UnidadMedidaId INTEGER NOT NULL,
-    Precio decimal NOT NULL,
+    PrecioVenta DECIMAL NULL,
+    PrecioCosto DECIMAL NOT NULL,
     ProveedorId INTEGER NOT NULL,
     Activo NUMBER(1) NOT NULL,
     CONSTRAINT PK_Producto PRIMARY KEY (Id),
@@ -157,6 +158,9 @@ CREATE TABLE Compra (
     Total INTEGER NOT NULL,
     Fecha DATE NOT NULL,
     EstadoId INTEGER NOT NULL,
+    URL VARCHAR2(500) NULL,
+    Token VARCHAR2(500) NULL,
+    FlowOrder INTEGER NULL,
     CONSTRAINT PK_Compra PRIMARY KEY (Id)
 );
 
@@ -205,12 +209,12 @@ CREATE TABLE SeguimientoOrden(
 --    IdSeg number;
 --    estadoSeg number;
 --BEGIN
---    --select para insertar datos
+--    --select para INSERTar datos
 --    SELECT Id, EstadoId 
---    into IdSeg, estadoSeg 
+--    INTO IdSeg, estadoSeg 
 --    from (select * from Orden order by rownum desc)
 --    where rownum <= 1;
---    -- insert en la tabla   
+--    -- INSERT en la tabla   
 --    INSERT INTO SeguimientoOrden (OrdenId, EstadoId, Fecha)
 --    VALUES(IdSeg, estadoSeg, SYSDATE);
 --END;
@@ -285,101 +289,101 @@ INSERT INTO Proveedor (Nombre, Direccion, Telefono, Email, Activo) VALUES ('Carn
 
 INSERT INTO UnidadMedida (Codigo, Descripcion) VALUES ('kg', 'kilogramo');
 INSERT INTO UnidadMedida (Codigo, Descripcion) VALUES ('gr', 'gramo');
-INSERT INTO UnidadMedida (Codigo, Descripcion) VALUES ('un', 'unidad');
+INSERT INTO UnidadMedida (Codigo, Descripcion) VALUES ('un', 'unitario');
 INSERT INTO UnidadMedida (Codigo, Descripcion) VALUES ('lt', 'litro');
 INSERT INTO UnidadMedida (Codigo, Descripcion) VALUES ('ml', 'mililitro');
 
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Casillero del diablo 1L','vino tinto',2,34,4,15000,1,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Casillero del diablo 5L','vino tinto',2,29,4,15000,1,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Surise 2L','merlot',2,21,4,15000,1,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Gran reserva series riveras 1.5L','sauvignon blanc',2,15,4,30000,1,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Santa helena tinto 2L','vino tinto',1,119,4,1500,2,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Santa helena blanco 2L','vino blanco',1,38,4,1500,2,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Carne molida cerdo 5kg','carne roja',1,41,1,4000,3,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Costillar de cerdo 3kg','carne roja',1,98,1,10000,3,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Filete de cerdo 15kg','carne roja',1,6,1,8000,3,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Choripanes 2kg','carne roja',1,8,1,4000,3,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Lomo vacuno 15kg','carne roja',1,78,1,10000,3,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Pierna vacuno 10kg','carne roja',1,89,1,14000,3,0);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Hamburguesa vacuno 20u','carne roja',1,66,3,8000,3,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Huevo gallina 30u','huevos',1,59,3,2000,4,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Alitas de pollo 10kg','carne roja',1,116,1,16000,4,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Nuggets de pollo 5kg','carne roja',2,92,1,4000,4,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Pechuga de pollo 3kg','carne roja',1,64,1,18000,4,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES (' Coca-cola 500ml','bebida',2,55,5,18000,5,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Coca-cola light 500ml','bebida',2,68,5,6000,5,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Coca-cola zero 500ml','bebida',2,133,5,8000,5,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Fanta 500ml','bebida',2,60,5,16000,5,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Sprite 500ml','bebida',2,59,5,2000,5,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Quatro 500ml','bebida',2,147,5,14000,5,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Nectar andina durazno 300ml','bebida',2,129,5,2000,5,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Nectar andina naranja 300ml','bebida',2,140,5,6000,5,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Mani salado 500g','fruto seco',2,56,2,2000,6,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Mani sin sal 500g','fruto seco',2,33,2,18000,6,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Almendras 500g','fruto seco',2,72,2,14000,6,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Nueces 500g','fruto seco',2,56,2,12000,6,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Kunzman torobayo 500ml','cerveza',2,45,4,14000,7,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('kunzman bock 500ml','cerveza',2,94,4,12000,7,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Kunzman miel 500ml','cerveza',2,19,4,14000,7,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Aguamiel de la casa 500ml','cerveza',2,126,4,2000,7,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Cerveza aliento de dragon 500ml','cerveza',2,97,4,14000,7,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Autral lager 500ml','cerveza',2,21,4,10000,7,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Cristal 500ml','cerveza',2,90,4,12000,7,0);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Sol 500ml','cerveza',2,124,4,4000,7,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Agua trol 500ml','cerveza',2,19,4,10000,7,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Café colombia 10kg','café',2,6,1,6000,7,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Sal 5kg','aliño',1,97,1,2000,8,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Pimienta 5kg','aliño',1,122,1,16000,8,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Canela 1kg','aliño',1,122,1,18000,8,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Comino 1kg','aliño',1,74,1,2000,8,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Azucar 10kg','aliño',1,34,1,16000,8,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Té negro 100u','té',2,77,3,18000,8,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Té verde 100u','té',2,42,3,2000,8,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Té blanco 100u','té',2,98,3,8000,8,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Té rojo 100u','té',2,138,3,16000,8,0);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Curry barra 50u','aliño',1,36,3,10000,8,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Huevos de codorniz 24u','huevos',1,119,3,6000,9,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Nuggets de codorniz 1kg','carne roja',2,88,1,4000,9,0);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('champiñones 100u','verdura',1,74,3,16000,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Pimiento rojo 20u','verdura',1,85,3,18000,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Pimiento amarillo 20u','verdura',1,71,3,12000,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Pimiento verde 20u','verdura',1,57,3,12000,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Choclos 10u','verdura',1,116,3,13450,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Tomate 15u','verdura',1,25,3,12000,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Limones 30u','verdura',1,93,3,2000,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Ajo 14u','verdura',1,18,3,2340,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Cebolla 20u','verdura',1,128,3,4000,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Zanahoria 20u','verdura',1,92,3,1200,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Papas 20kg','verdura',1,129,1,18000,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Camotes 4kg','verdura',1,84,1,16000,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Cilantro 15u','verdura',1,24,3,14000,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Peregil 15u','verdura',1,21,3,4000,10,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Aceite girasol 2L','aceite',1,5,4,1000,11,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Aceite oliva extra virgen 1L','aceite',1,41,4,6800,11,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Vinagre tinto 500ml','vinagre',1,91,5,900,11,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Vinagre blanco 500ml','vinagre',1,133,5,900,11,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Filete de salmon 5u','pescado',1,62,3,7890,11,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Arroz tucapel 1kg','grano',1,16,1,8000,12,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Cuscus 1kg','grano',1,108,1,10000,12,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Kinoa 1kg','grano',1,121,1,2000,12,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Harinapam 5kg','harina',1,29,1,12000,12,0);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Harina blanca 10kg','harina',1,36,1,8000,12,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Levadura 1kg','levadura',1,111,1,10000,12,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Tinta comestible 3u','tinta',1,146,3,8000,12,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Helado fresa 2L','helado',2,49,4,4600,13,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Helado chocolate 2L','helado',2,113,4,4600,13,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Helado Vainilla 2L','helado',2,19,4,4600,13,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Hamburguesa vegana 20u','producto vegano',1,24,3,16000,13,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Leche blanca 2L','leche',1,71,4,1000,13,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Leche descremada 2L','leche',1,140,4,1000,13,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Leche Semi-descreamada 2L','leche',1,34,4,1000,13,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Leche vegana coco 1L','producto vegano',1,19,4,1000,13,0);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Lecha vegana almendras 1L','producto vegano',1,20,4,1000,13,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Mayonesa Hellmans 1L','complemento',2,147,4,3000,13,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Ketchup Hellmans 1L','complemento',2,53,4,3000,13,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Mostaza Hellmans 1L','complemento',2,147,4,3000,13,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Mayonesa Vegana 1L','producto vegano',2,38,4,3600,13,1);
-INSERT INTO Producto (Nombre, Detalle, TipoProductoId, Cantidad, UnidadMedidaId, Precio, ProveedorId, Activo) VALUES ('Tabla de quesos variedades 1u','queso',2,21,3,18000,13,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Casillero del diablo 1L','vino tinto',2,34,4,15000,10000,1,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Casillero del diablo 5L','vino tinto',2,29,4,15000,10000,1,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Surise 2L','merlot',2,21,4,15000,10000,1,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Gran reserva series riveras 1.5L','sauvignon blanc',2,15,4,30000,10000,1,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Santa helena tinto 2L','vino tinto',1,119,4,null,1000,2,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Santa helena blanco 2L','vino blanco',1,38,4,null,1000,2,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Carne molida cerdo 5kg','carne roja',1,41,1,null,1500,3,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Costillar de cerdo 3kg','carne roja',1,98,1,null,5000,3,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Filete de cerdo 15kg','carne roja',1,6,1,null,4000,3,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Choripanes 2kg','carne roja',1,8,1,null,2000,3,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Lomo vacuno 15kg','carne roja',1,78,1,null,2500,3,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Pierna vacuno 10kg','carne roja',1,89,1,null,10000,3,0);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Hamburguesa vacuno 20u','carne roja',1,66,3,null,3500,3,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Huevo gallina 30u','huevos',1,59,3,null,500,4,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Alitas de pollo 10kg','carne roja',1,116,1,null,8000,4,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Nuggets de pollo 5kg','carne roja',2,92,1,4000,1500,4,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Pechuga de pollo 3kg','carne roja',1,64,1,null,10000,4,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values (' Coca-cola 500ml','bebida',2,55,5,18000,10000,5,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Coca-cola light 500ml','bebida',2,68,5,6000,3000,5,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Coca-cola zero 500ml','bebida',2,133,5,8000,3000,5,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Fanta 500ml','bebida',2,60,5,16000,10000,5,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Sprite 500ml','bebida',2,59,5,2000,500,5,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Quatro 500ml','bebida',2,147,5,14000,5000,5,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Nectar andina durazno 300ml','bebida',2,129,5,2000,1000,5,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Nectar andina naranja 300ml','bebida',2,140,5,6000,1500,5,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Mani salado 500g','fruto seco',2,56,2,2000,500,6,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Mani sin sal 500g','fruto seco',2,33,2,18000,10000,6,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Almendras 500g','fruto seco',2,72,2,14000,10000,6,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Nueces 500g','fruto seco',2,56,2,12000,6000,6,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Kunzman torobayo 500ml','cerveza',2,45,4,14000,4000,7,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('kunzman bock 500ml','cerveza',2,94,4,12000,5000,7,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Kunzman miel 500ml','cerveza',2,19,4,14000,4000,7,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Aguamiel de la casa 500ml','cerveza',2,126,4,2000,1000,7,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Cerveza aliento de dragon 500ml','cerveza',2,97,4,14000,5000,7,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Autral lager 500ml','cerveza',2,21,4,10000,4000,7,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Cristal 500ml','cerveza',2,90,4,12000,5000,7,0);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Sol 500ml','cerveza',2,124,4,4000,1000,7,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Agua trol 500ml','cerveza',2,19,4,10000,3000,7,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Café colombia 10kg','café',2,6,1,6000,3500,7,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Sal 5kg','aliño',1,97,1,null,500,8,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Pimienta 5kg','aliño',1,122,1,null,5000,8,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Canela 1kg','aliño',1,122,1,null,4000,8,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Comino 1kg','aliño',1,74,1,null,500,8,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Azucar 10kg','aliño',1,34,1,null,10000,8,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Té negro 100u','té',2,77,3,18000,10000,8,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Té verde 100u','té',2,42,3,2000,500,8,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Té blanco 100u','té',2,98,3,8000,3000,8,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Té rojo 100u','té',2,138,3,16000,10000,8,0);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Curry barra 50u','aliño',1,36,3,null,4000,8,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Huevos de codorniz 24u','huevos',1,119,3,null,3000,9,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Nuggets de codorniz 1kg','carne roja',2,88,1,4000,2000,9,0);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('champiñones 100u','verdura',1,74,3,null,2500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Pimiento rojo 20u','verdura',1,85,3,null,2500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Pimiento amarillo 20u','verdura',1,71,3,null,2500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Pimiento verde 20u','verdura',1,57,3,null,2500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Choclos 10u','verdura',1,116,3,null,2500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Tomate 15u','verdura',1,25,3,null,2500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Limones 30u','verdura',1,93,3,null,500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Ajo 14u','verdura',1,18,3,null,500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Cebolla 20u','verdura',1,128,3,null,2500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Zanahoria 20u','verdura',1,92,3,null,500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Papas 20kg','verdura',1,129,1,null,2500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Camotes 4kg','verdura',1,84,1,null,2500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Cilantro 15u','verdura',1,24,3,null,2500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Peregil 15u','verdura',1,21,3,null,2500,10,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Aceite girasol 2L','aceite',1,5,4,null,500,11,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Aceite oliva extra virgen 1L','aceite',1,41,4,null,2500,11,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Vinagre tinto 500ml','vinagre',1,91,5,null,500,11,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Vinagre blanco 500ml','vinagre',1,133,5,null,500,11,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Filete de salmon 5u','pescado',1,62,3,null,2500,11,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Arroz tucapel 1kg','grano',1,16,1,null,2500,12,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Cuscus 1kg','grano',1,108,1,null,2500,12,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Kinoa 1kg','grano',1,121,1,null,500,12,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Harinapam 5kg','harina',1,29,1,null,2500,12,0);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Harina blanca 10kg','harina',1,36,1,null,2500,12,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Levadura 1kg','levadura',1,111,1,null,2500,12,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Tinta comestible 3u','tinta',1,146,3,null,2500,12,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Helado fresa 2L','helado',2,49,4,4600,2500,13,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Helado chocolate 2L','helado',2,113,4,4600,2500,13,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Helado Vainilla 2L','helado',2,19,4,4600,2500,13,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Hamburguesa vegana 20u','producto vegano',1,24,3,null,2500,13,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Leche blanca 2L','leche',1,71,4,null,500,13,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Leche descremada 2L','leche',1,140,4,null,500,13,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Leche Semi-descreamada 2L','leche',1,34,4,null,500,13,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Leche vegana coco 1L','producto vegano',1,19,4,null,500,13,0);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Lecha vegana almendras 1L','producto vegano',1,20,4,null,500,13,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Mayonesa Hellmans 1L','complemento',2,147,4,3000,2500,13,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Ketchup Hellmans 1L','complemento',2,53,4,3000,2500,13,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Mostaza Hellmans 1L','complemento',2,147,4,3000,2500,13,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Mayonesa Vegana 1L','producto vegano',2,38,4,3600,2500,13,1);
+INSERT INTO Producto (Nombre,Detalle,TipoProductoId,Cantidad,UnidadMedidaId,PrecioVenta,PrecioCosto,ProveedorId,Activo) values ('Tabla de quesos variedades 1u','queso',2,21,3,18000,2500,13,1);
 
 INSERT INTO Receta (Nombre, Precio, Detalle, TiempoPreparacion, Imagen, Activa) VALUES ('Arroz del comienzo',2500,'Un platillo simple con verduras y huevo de codorniz', 20, NULL, 1);
 INSERT INTO Receta (Nombre, Precio, Detalle, TiempoPreparacion, Imagen, Activa) VALUES ('Queque zanahoria',900,'Porcion del clasico queque de zanahorias', 40, NULL, 1);

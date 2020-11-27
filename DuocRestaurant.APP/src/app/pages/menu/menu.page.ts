@@ -7,7 +7,7 @@ import { User } from '@domain/user';
 import { Order } from '@domain/order';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { ProductService } from '@services/product.service';
-import { ProductTypes, OrderState } from '@domain/enums';
+import { ProductTypes, OrderState, ViewMode } from '@domain/enums';
 import { Product } from '@domain/product';
 import { RecipeService } from '@services/recipe.service';
 import { OrderDetail } from '@domain/order-detail';
@@ -84,7 +84,7 @@ export class MenuPage implements OnInit {
 
             let orderFilter = {
                 UserId: this.currentUser.Id,
-                States: [this.orderStates.Pending, this.orderStates.InPreparation, this.orderStates.Ready],
+                States: [this.orderStates.Pending, this.orderStates.InPreparation, this.orderStates.Ready, this.orderStates.Delivered],
                 PurchaseId: null
             };
             this.orderService.filterBy(orderFilter).subscribe((orders: Order[]) => {
@@ -119,12 +119,16 @@ export class MenuPage implements OnInit {
         const modal = await this.modalController.create({
             component: OrdersPage,
             componentProps: {
-                orders: this.orders
+                orders: this.orders,
+                user: this.currentUser,
+                table: this.table
             }
         });
 
         modal.onWillDismiss().then((value) => {
-            console.log('viewOrders dismiss: ', value);
+            if (value.data) {
+                this.orders = value.data;
+            }
         });
 
         return await modal.present();
@@ -167,7 +171,7 @@ export class MenuPage implements OnInit {
         let addToDetails = () => {
             let orderDetail: OrderDetail = {
                 Count: 1,
-                Price: consumable.Price,
+                Price: consumable.SalePrice,
                 ProductId: consumable.Id,
                 Product: consumable,
                 OrderId: 0
@@ -229,7 +233,3 @@ export class MenuPage implements OnInit {
     };
 }
 
-enum ViewMode {
-    Recipes,
-    Consumables
-}

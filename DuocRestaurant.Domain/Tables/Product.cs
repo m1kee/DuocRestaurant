@@ -13,7 +13,8 @@ namespace Domain
         public int ProductTypeId { get; set; }
         public int Count { get; set; }
         public int MeasurementUnitId { get; set; }
-        public decimal Price { get; set; }
+        public decimal CostPrice { get; set; }
+        public decimal? SalePrice { get; set; }
         public int ProviderId { get; set; }
         public bool Active { get; set; }
 
@@ -29,7 +30,8 @@ namespace Domain
             public const string ProductTypeId = "TipoProductoId";
             public const string Count = "Cantidad";
             public const string MeasurementUnitId = "UnidadMedidaId";
-            public const string Price = "Precio";
+            public const string CostPrice = "PrecioCosto";
+            public const string SalePrice = "PrecioVenta";
             public const string ProviderId = "ProveedorId";
             public const string Active = "Activo";
         }

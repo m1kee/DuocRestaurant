@@ -20,7 +20,8 @@ namespace Business.Services
                     $"{Product.ColumnNames.ProductTypeId}, " +
                     $"{Product.ColumnNames.Count}, " +
                     $"{Product.ColumnNames.MeasurementUnitId}, " +
-                    $"{Product.ColumnNames.Price}, " +
+                    $"{Product.ColumnNames.CostPrice}, " +
+                    $"{Product.ColumnNames.SalePrice}, " +
                     $"{Product.ColumnNames.ProviderId}, " +
                     $"{Product.ColumnNames.Active} " +
                     $") VALUES (" +
@@ -29,11 +30,18 @@ namespace Business.Services
                     $"{product.ProductTypeId}, " +
                     $"{product.Count}, " +
                     $"{product.MeasurementUnitId}, " +
-                    $"{product.Price}, " +
+                    $"{product.CostPrice}, " +
+                    $":{Product.ColumnNames.SalePrice}, " +
                     $"{product.ProviderId}, " +
                     $"{1} " +
                     $") RETURNING {Product.ColumnNames.Id} INTO :{Product.ColumnNames.Id}";
                 OracleCommand cmd = new OracleCommand(query, conn);
+                cmd.Parameters.Add(new OracleParameter()
+                {
+                    Value = product.SalePrice,
+                    ParameterName = $":{Product.ColumnNames.SalePrice}",
+                    DbType = System.Data.DbType.Int32
+                });
                 cmd.Parameters.Add(new OracleParameter()
                 {
                     ParameterName = $":{Product.ColumnNames.Id}",
@@ -86,11 +94,18 @@ namespace Business.Services
                     $"{Product.ColumnNames.ProductTypeId} = {product.ProductTypeId}, " +
                     $"{Product.ColumnNames.Count} = {product.Count}, " +
                     $"{Product.ColumnNames.MeasurementUnitId} = {product.MeasurementUnitId}, " +
-                    $"{Product.ColumnNames.Price} = {product.Price}, " +
+                    $"{Product.ColumnNames.CostPrice} = {product.CostPrice}, " +
+                    $"{Product.ColumnNames.SalePrice} = :{Product.ColumnNames.SalePrice}, " +
                     $"{Product.ColumnNames.ProviderId} = {product.ProviderId} " +
                     $"WHERE {Product.ColumnNames.Id} = {productId}";
                 OracleCommand cmd = new OracleCommand(query, conn);
                 conn.Open();
+                cmd.Parameters.Add(new OracleParameter()
+                {
+                    Value = product.SalePrice,
+                    ParameterName = $":{Product.ColumnNames.SalePrice}",
+                    DbType = System.Data.DbType.Int32
+                });
 
                 cmd.ExecuteNonQuery();
 
@@ -113,7 +128,8 @@ namespace Business.Services
                     $"p.{Product.ColumnNames.ProductTypeId}, " +
                     $"p.{Product.ColumnNames.Count}, " +
                     $"p.{Product.ColumnNames.MeasurementUnitId}, " +
-                    $"p.{Product.ColumnNames.Price}, " +
+                    $"p.{Product.ColumnNames.SalePrice}, " +
+                    $"p.{Product.ColumnNames.CostPrice}, " +
                     $"p.{Product.ColumnNames.ProviderId}, " +
                     $"p.{Product.ColumnNames.Active}, " +
                     $"um.{MeasurementUnit.ColumnNames.Id} AS MeasurementUnit{MeasurementUnit.ColumnNames.Id}, " +
@@ -138,7 +154,7 @@ namespace Business.Services
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    result.Add(new Product()
+                    var product = new Product()
                     {
                         Id = Convert.ToInt32(reader[Product.ColumnNames.Id]),
                         Name = reader[Product.ColumnNames.Name]?.ToString(),
@@ -146,7 +162,7 @@ namespace Business.Services
                         ProductTypeId = Convert.ToInt32(reader[Product.ColumnNames.ProductTypeId]),
                         Count = Convert.ToInt32(reader[Product.ColumnNames.Count]),
                         MeasurementUnitId = Convert.ToInt32(reader[Product.ColumnNames.MeasurementUnitId]),
-                        Price = Convert.ToDecimal(reader[Product.ColumnNames.Price]),
+                        CostPrice = Convert.ToDecimal(reader[Product.ColumnNames.CostPrice]),
                         ProviderId = Convert.ToInt32(reader[Product.ColumnNames.ProviderId]),
                         Active = Convert.ToBoolean(Convert.ToInt16(reader[Product.ColumnNames.Active].ToString())),
                         ProductType = new ProductType()
@@ -169,7 +185,14 @@ namespace Business.Services
                             Phone = reader[$"Provider{Provider.ColumnNames.Phone}"]?.ToString(),
                             Active = Convert.ToBoolean(Convert.ToInt16(reader[$"Provider{Provider.ColumnNames.Active}"].ToString()))
                         }
-                    });
+                    };
+
+                    if (reader[Product.ColumnNames.SalePrice] != DBNull.Value)
+                    {
+                        product.SalePrice = Convert.ToDecimal(reader[Product.ColumnNames.SalePrice]);
+                    }
+
+                    result.Add(product);
                 }
 
                 reader.Dispose();
@@ -191,7 +214,8 @@ namespace Business.Services
                     $"p.{Product.ColumnNames.ProductTypeId}, " +
                     $"p.{Product.ColumnNames.Count}, " +
                     $"p.{Product.ColumnNames.MeasurementUnitId}, " +
-                    $"p.{Product.ColumnNames.Price}, " +
+                    $"p.{Product.ColumnNames.SalePrice}, " +
+                    $"p.{Product.ColumnNames.CostPrice}, " +
                     $"p.{Product.ColumnNames.ProviderId}, " +
                     $"p.{Product.ColumnNames.Active}, " +
                     $"um.{MeasurementUnit.ColumnNames.Id} AS MeasurementUnit{MeasurementUnit.ColumnNames.Id}, " +
@@ -225,7 +249,7 @@ namespace Business.Services
                         ProductTypeId = Convert.ToInt32(reader[Product.ColumnNames.ProductTypeId]),
                         Count = Convert.ToInt32(reader[Product.ColumnNames.Count]),
                         MeasurementUnitId = Convert.ToInt32(reader[Product.ColumnNames.MeasurementUnitId]),
-                        Price = Convert.ToDecimal(reader[Product.ColumnNames.Price]),
+                        CostPrice = Convert.ToDecimal(reader[Product.ColumnNames.SalePrice]),
                         ProviderId = Convert.ToInt32(reader[Product.ColumnNames.ProviderId]),
                         Active = Convert.ToBoolean(Convert.ToInt16(reader[Product.ColumnNames.Active].ToString())),
                         ProductType = new ProductType()
@@ -249,6 +273,11 @@ namespace Business.Services
                             Active = Convert.ToBoolean(Convert.ToInt16(reader[$"Provider{Provider.ColumnNames.Active}"].ToString()))
                         }
                     };
+
+                    if (reader[Product.ColumnNames.SalePrice] != DBNull.Value)
+                    {
+                        result.SalePrice = Convert.ToDecimal(reader[Product.ColumnNames.SalePrice]);
+                    }
                 }
 
                 reader.Dispose();

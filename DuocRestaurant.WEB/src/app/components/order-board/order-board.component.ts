@@ -34,7 +34,6 @@ export class OrderBoardComponent implements OnInit, OnDestroy {
 
   ngOnInit()  {
     this.getOrders();
-
     this.startHubConnection();
   }
 
@@ -142,6 +141,7 @@ export class OrderBoardComponent implements OnInit, OnDestroy {
   startHubConnection = () => {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(`${this.env.hubUrl}/orders`)
+      .withAutomaticReconnect()
       .build();
 
     this.hubConnection
@@ -153,11 +153,18 @@ export class OrderBoardComponent implements OnInit, OnDestroy {
         })
       })
       .catch(err => {
-        console.log('Error while starting connection: ' + err)
+        console.log('Error while starting connection: ' + err);
         setTimeout(() => {
           this.startHubConnection();
-        }, 10000);
+        }, 5000);
       });
+
+    this.hubConnection.onclose((error) => {
+      console.log('Error while starting connection: ' + error);
+      setTimeout(() => {
+        this.startHubConnection();
+      }, 5000);
+    });
   };
 
   endHubConnection = () => {
