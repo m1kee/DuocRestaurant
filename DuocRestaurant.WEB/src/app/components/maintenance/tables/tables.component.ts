@@ -41,7 +41,10 @@ export class TablesComponent implements OnInit {
 
   getTables() {
     this.loading = true;
-    this.tableService.getAll().subscribe((tables: Table[]) => {
+    let filters = {
+      Active: true
+    };
+    this.tableService.filterBy(filters).subscribe((tables: Table[]) => {
       this.tables = tables;
       this.loading = false;
     }, (error) => {

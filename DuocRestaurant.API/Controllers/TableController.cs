@@ -74,7 +74,7 @@ namespace DuocRestaurant.API.Controllers
             try
             {
                 var tables = this.tableService.Get(this.dbSettings);
-                if (tables.Any(x => x.Number.Equals(table.Number)))
+                if (tables.Any(x => x.Active && x.Number.Equals(table.Number)))
                     throw new Exception($"Ya existe una mesa con el número: { table.Number }");
 
                 var created = this.tableService.Add(this.dbSettings, table);
@@ -100,7 +100,7 @@ namespace DuocRestaurant.API.Controllers
             try
             {
                 var tables = this.tableService.Get(this.dbSettings);
-                if (tables.Any(x => x.Id != tableId && x.Number.Equals(table.Number)))
+                if (tables.Any(x => x.Active && x.Id != tableId && x.Number.Equals(table.Number)))
                     throw new Exception($"Ya existe una mesa con el número: { table.Number }");
                 if (tables.Any(x => x.Id != tableId && table.UserId != null && x.UserId.Equals(table.UserId)))
                     throw new Exception($"Ya existe una mesa asociada al usuario {table.UserId}");
