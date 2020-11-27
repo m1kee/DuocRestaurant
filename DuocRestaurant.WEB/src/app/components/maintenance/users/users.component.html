@@ -153,7 +153,7 @@
             <button (click)="edit(user, userForm)" type="button" class="btn btn-sm btn-default" style="margin-right: 5px;">
               <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
             </button>
-            <button [swal]="['Advertencia!', '¿Está seguro de querer eliminar el usuario?', 'warning']"
+            <button [swal]="{ title: 'Advertencia!', text: '¿Está seguro de querer eliminar el usuario?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Eliminar', cancelButtonText: 'Cancelar', confirmButtonColor: '#218838' }"
                     (confirm)="delete(user)"
                     type="button" class="btn btn-default btn-sm">
               <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>

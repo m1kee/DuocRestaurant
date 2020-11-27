@@ -7,6 +7,7 @@ export class User {
   LastName: string;
   Email: string;
   Password: string;
+  VPassword?: string;
   Phone: string;
   Address: string;
 

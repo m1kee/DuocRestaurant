@@ -88,18 +88,14 @@ import { SupplyCodePipe } from './pipes/supply-code.pipe';
       enableHtml: false,
       progressBar: true,
       progressAnimation: 'decreasing',
-      toastClass: 'toast',
+      toastClass: 'ngx-toastr',
       positionClass: 'toast-top-center',
       titleClass: 'toast-title',
       messageClass: 'toast-message',
       tapToDismiss: true,
       onActivateTick: false
     }),
-    SweetAlert2Module.forRoot({
-      confirmButtonText: 'Si',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#dc3545'
-    }),
+    SweetAlert2Module.forRoot(),
     NgxMaskModule.forRoot(maskConfig),
     ModalModule.forRoot()
   ],

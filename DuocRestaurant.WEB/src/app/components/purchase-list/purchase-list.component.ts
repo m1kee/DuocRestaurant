@@ -125,6 +125,9 @@ export class PurchaseListComponent implements OnInit {
 
     return state;
   };
+  pageChanged = (event) => {
+    this.paginationConfig.currentPage = event;
+  };
 }
 
 @Component({

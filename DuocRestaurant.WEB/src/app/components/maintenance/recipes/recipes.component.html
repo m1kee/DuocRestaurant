@@ -194,7 +194,7 @@
             <button (click)="edit(recipe, recipeForm)" type="button" class="btn btn-sm btn-default">
               <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
             </button>
-            <button [swal]="['Advertencia!', '¿Está seguro de querer eliminar la receta?', 'warning']"
+            <button [swal]="{ title: 'Advertencia!', text: '¿Está seguro de querer eliminar la receta?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Eliminar', cancelButtonText: 'Cancelar', confirmButtonColor: '#218838' }"
               (confirm)="delete(recipe)" type="button" class="btn btn-default btn-sm">
               <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
             </button>

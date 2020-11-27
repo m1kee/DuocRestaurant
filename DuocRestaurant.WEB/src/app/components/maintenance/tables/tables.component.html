@@ -86,7 +86,7 @@
             <button (click)="edit(table, tableForm)" type="button" class="btn btn-sm btn-default" style="margin-right: 5px;">
               <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
             </button>
-            <button [swal]="['Advertencia!', '¿Está seguro de querer eliminar la mesa?', 'warning']"
+            <button [swal]="{ title: 'Advertencia!', text: '¿Está seguro de querer eliminar la mesa?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Eliminar', cancelButtonText: 'Cancelar', confirmButtonColor: '#218838' }"
                     (confirm)="delete(table)"
                     type="button" class="btn btn-default btn-sm">
               <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>

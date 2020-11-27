@@ -113,14 +113,14 @@
                         <button *ngIf="supplyRequest.SupplyRequestState != this.supplyRequestStates.Created" (click)="view(supplyRequest, form)" type="button" class="btn btn-sm btn-default" title="Ver orden de compra">
                           <fa-icon [icon]="icons.faEye" [fixedWidth]="true"></fa-icon>
                         </button>
-                        <button *ngIf="supplyRequest.SupplyRequestState == this.supplyRequestStates.Created" type="button" class="btn btn-sm btn-default" title="Enviar a proveedor" [swal]="{ title: 'Enviar orden', text: '¿Está seguro de querer enviar la orden al proveedor?', type: 'question', showCancelButton: true }"
+                        <button *ngIf="supplyRequest.SupplyRequestState == this.supplyRequestStates.Created" type="button" class="btn btn-sm btn-default" title="Enviar a proveedor" [swal]="{ title: 'Enviar orden', text: '¿Está seguro de querer enviar la orden al proveedor?', icon: 'question', showCancelButton: true, confirmButtonText: 'Enviar', cancelButtonText: 'Cancelar', confirmButtonColor: '#218838'}"
                             (confirm)="send(supplyRequest)">
                           <fa-icon [icon]="icons.faEnvelope" [fixedWidth]="true"></fa-icon>
                         </button>
                         <button *ngIf="supplyRequest.SupplyRequestState == this.supplyRequestStates.Created" (click)="edit(supplyRequest, form)" type="button" class="btn btn-sm btn-default" title="Editar orden de compra">
                           <fa-icon [icon]="icons.faEdit" [fixedWidth]="true"></fa-icon>
                         </button>
-                        <button *ngIf="supplyRequest.SupplyRequestState == this.supplyRequestStates.Created" title="Eliminar orden de compra" [swal]="['Advertencia!', '¿Está seguro de querer eliminar la orden?', 'warning']" (confirm)="delete(supplyRequest)" type="button" class="btn btn-default btn-sm">
+                        <button *ngIf="supplyRequest.SupplyRequestState == this.supplyRequestStates.Created" title="Eliminar orden de compra" [swal]="{ title: 'Advertencia!', text: '¿Está seguro de querer eliminar la orden?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Eliminar', cancelButtonText: 'Cancelar', confirmButtonColor: '#218838' }" (confirm)="delete(supplyRequest)" type="button" class="btn btn-default btn-sm">
                           <fa-icon [icon]="icons.faTrashAlt" [fixedWidth]="true"></fa-icon>
                         </button>
                     </td>
