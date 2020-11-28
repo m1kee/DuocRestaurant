@@ -13,6 +13,7 @@ import { RecipesComponent } from '@components/maintenance/recipes/recipes.compon
 import { SupplyRequestComponent } from '@components/supply-request/supply-request.component';
 import { OrderBoardComponent } from '@components/order-board/order-board.component';
 import { PurchaseListComponent } from '@components/purchase-list/purchase-list.component';
+import { StatsComponent } from './components/stats/stats.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -28,6 +29,7 @@ const routes: Routes = [
   { path: 'supply-request', component: SupplyRequestComponent, canActivate: [AuthGuard] },
   { path: 'orders-board', component: OrderBoardComponent, canActivate: [AuthGuard] },
   { path: 'finance-movements', component: PurchaseListComponent, canActivate: [AuthGuard] },
+  { path: 'stats', component: StatsComponent, canActivate: [AuthGuard] },
   { path: '**', component: PageNotFoundComponent, canActivate: [AuthGuard] }
 ];
 

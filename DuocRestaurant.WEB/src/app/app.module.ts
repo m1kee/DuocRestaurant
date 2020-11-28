@@ -12,6 +12,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ChartModule } from 'angular-highcharts';
 import { APP_ROUTING } from '@app/app.routing';
 
 // ngx-mask config
@@ -44,6 +45,7 @@ import { PasswordValidatorDirective } from '@helpers/validations/password.valida
 
 // pipes
 import { SupplyCodePipe } from './pipes/supply-code.pipe';
+import { StatsComponent } from './components/stats/stats.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +66,8 @@ import { SupplyCodePipe } from './pipes/supply-code.pipe';
     SupplyCodePipe,
     OrderBoardComponent,
     PurchaseListComponent,
-    ModalContentComponent
+    ModalContentComponent,
+    StatsComponent
   ],
   imports: [
     BrowserModule,
@@ -97,7 +100,8 @@ import { SupplyCodePipe } from './pipes/supply-code.pipe';
     }),
     SweetAlert2Module.forRoot(),
     NgxMaskModule.forRoot(maskConfig),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    ChartModule 
   ],
   providers: [],
   bootstrap: [AppComponent],

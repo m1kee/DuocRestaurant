@@ -69,6 +69,9 @@
           <a [routerLink]="['/finance-movements']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Finance])" class="dropdown-item clickable">
             Compras
           </a>
+          <a [routerLink]="['/stats']" routerLinkActive="active" *ngIf="hasPermissions([profiles.Administrator, profiles.Finance])" class="dropdown-item clickable">
+            Estad&iacute;sticas
+          </a>
         </div>
       </li>
       <li class="nav-item" *ngIf="hasPermissions([profiles.Kitchen])">

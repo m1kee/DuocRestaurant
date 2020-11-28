@@ -412,7 +412,7 @@ namespace Business.Services
                         {
                             Id = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.Id}"]),
                             StateId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.StateId}"]),
-                            CreationDate = Convert.ToDateTime(reader[$"{Purchase.TableName}{Purchase.ColumnNames.CreationDate}"]).ToLocalTime()
+                            CreationDate = Convert.ToDateTime(reader[$"{Purchase.TableName}{Purchase.ColumnNames.CreationDate}"])
                         };
                     }
 
@@ -539,7 +539,7 @@ namespace Business.Services
                         {
                             Id = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.Id}"]),
                             StateId = Convert.ToInt32(reader[$"{Purchase.TableName}{Purchase.ColumnNames.StateId}"]),
-                            CreationDate = Convert.ToDateTime(reader[$"{Purchase.TableName}{Purchase.ColumnNames.CreationDate}"]).ToLocalTime()
+                            CreationDate = Convert.ToDateTime(reader[$"{Purchase.TableName}{Purchase.ColumnNames.CreationDate}"])
                         };
                     }
 

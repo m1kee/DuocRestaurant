@@ -5,5 +5,20 @@
 </ion-header>
 
 <ion-content>
-  <ion-button type="button" expand="block" (click)="logout()" color="danger">Cerrar Sesi&oacute;n</ion-button>
+
+    <ion-grid>
+        <ion-row>
+            <ion-col size-xs="12">
+                <h2 style="text-align: center !important;">Bienvenido {{user.Name}} {{user.LastName}}</h2>
+                <h4 style="text-align: center !important;">  {{user.Role.Description}} </h4>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+
+
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button (click)="logout()" color="danger">
+            <ion-icon name="log-out-outline"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
 </ion-content>

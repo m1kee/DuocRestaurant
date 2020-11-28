@@ -305,7 +305,7 @@ namespace Business.Services
                         Code = reader[$"{SupplyRequest.ColumnNames.Code}"]?.ToString(),
                         ProviderId = Convert.ToInt32(reader[$"{SupplyRequest.ColumnNames.ProviderId}"]),
                         StateId = Convert.ToInt32(reader[$"{SupplyRequest.ColumnNames.StateId}"]),
-                        CreationDate = Convert.ToDateTime(reader[$"{SupplyRequest.ColumnNames.CreationDate}"]).ToLocalTime(),
+                        CreationDate = Convert.ToDateTime(reader[$"{SupplyRequest.ColumnNames.CreationDate}"]),
                         Active = Convert.ToBoolean(Convert.ToInt16(reader[$"{SupplyRequest.ColumnNames.Active}"].ToString())),
 
                         Provider = new Provider()
@@ -442,7 +442,7 @@ namespace Business.Services
                         Code = reader[$"{SupplyRequest.ColumnNames.Code}"]?.ToString(),
                         ProviderId = Convert.ToInt32(reader[$"{SupplyRequest.ColumnNames.ProviderId}"]),
                         StateId = Convert.ToInt32(reader[$"{SupplyRequest.ColumnNames.StateId}"]),
-                        CreationDate = Convert.ToDateTime(reader[$"{SupplyRequest.ColumnNames.CreationDate}"]).ToLocalTime(),
+                        CreationDate = Convert.ToDateTime(reader[$"{SupplyRequest.ColumnNames.CreationDate}"]),
                         Active = Convert.ToBoolean(Convert.ToInt16(reader[$"{SupplyRequest.ColumnNames.Active}"].ToString())),
 
                         Provider = new Provider()
@@ -543,7 +543,7 @@ namespace Business.Services
                         Code = reader[$"{SupplyRequest.ColumnNames.Code}"]?.ToString(),
                         ProviderId = Convert.ToInt32(reader[$"{SupplyRequest.ColumnNames.ProviderId}"]),
                         StateId = Convert.ToInt32(reader[$"{SupplyRequest.ColumnNames.StateId}"]),
-                        CreationDate = Convert.ToDateTime(reader[$"{SupplyRequest.ColumnNames.CreationDate}"]).ToLocalTime(),
+                        CreationDate = Convert.ToDateTime(reader[$"{SupplyRequest.ColumnNames.CreationDate}"]),
                         Active = Convert.ToBoolean(Convert.ToInt16(reader[$"{SupplyRequest.ColumnNames.Active}"].ToString())),
 
                         Provider = new Provider()

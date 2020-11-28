@@ -145,7 +145,7 @@ namespace Business.Services
                         Id = Convert.ToInt32(reader[$"{Purchase.ColumnNames.Id}"]),
                         StateId = Convert.ToInt32(reader[$"{Purchase.ColumnNames.StateId}"]),
                         Total = Convert.ToInt32(reader[$"{Purchase.ColumnNames.Total}"]),
-                        CreationDate = Convert.ToDateTime(reader[$"{Purchase.ColumnNames.CreationDate}"]).ToLocalTime()
+                        CreationDate = Convert.ToDateTime(reader[$"{Purchase.ColumnNames.CreationDate}"])
                     };
 
                     if (reader[Purchase.ColumnNames.URL] != DBNull.Value)
@@ -191,7 +191,7 @@ namespace Business.Services
                         Id = Convert.ToInt32(reader[$"{Purchase.ColumnNames.Id}"]),
                         StateId = Convert.ToInt32(reader[$"{Purchase.ColumnNames.StateId}"]),
                         Total = Convert.ToInt32(reader[$"{Purchase.ColumnNames.Total}"]),
-                        CreationDate = Convert.ToDateTime(reader[$"{Purchase.ColumnNames.CreationDate}"]).ToLocalTime()
+                        CreationDate = Convert.ToDateTime(reader[$"{Purchase.ColumnNames.CreationDate}"])
                     };
 
                     if (reader[Purchase.ColumnNames.URL] != DBNull.Value)
