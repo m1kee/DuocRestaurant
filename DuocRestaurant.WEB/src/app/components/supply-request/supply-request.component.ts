@@ -204,7 +204,7 @@ export class SupplyRequestComponent implements OnInit {
         let cIndex = this.supplyRequests.findIndex((c) => c.Id === edited.Id);
         this.supplyRequests.splice(cIndex, 1, edited);
         this.loading = false;
-        this.toastrService.success('Se ha editado correctamente', 'Orden Enviada');
+        this.toastrService.success('Se ha enviado correctamente', 'Orden Enviada');
       }, (error) => {
         this.loading = false;
         let message = 'Error al enviar la orden';
