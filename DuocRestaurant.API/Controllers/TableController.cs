@@ -17,14 +17,17 @@ namespace DuocRestaurant.API.Controllers
     {
         private ITableService tableService { get; set; }
         private IUserService userService { get; set; }
+        private IBookingService bookingService { get; set; }
         private RestaurantDatabaseSettings dbSettings { get; set; }
 
         public TableController(ITableService authService, 
             IUserService userService,
+            IBookingService bookingService,
             IOptions<RestaurantDatabaseSettings> databaseContext)
         {
             this.tableService = authService;
             this.userService = userService;
+            this.bookingService = bookingService;
             this.dbSettings = databaseContext.Value;
         }
 

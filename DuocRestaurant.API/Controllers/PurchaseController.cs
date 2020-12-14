@@ -186,7 +186,16 @@ namespace DuocRestaurant.API.Controllers
                     }
                 }
 
-                result = Ok(purchases.MapAll(this.dbSettings, true));
+                if (filters.ContainsKey("Month"))
+                {
+                    int month = Convert.ToInt32(filters.GetValue("Month").ToString());
+                    DateTime firstDayOfMonth = new DateTime(DateTime.Now.Year, (month + 1), 1, 0, 0, 0);
+                    DateTime lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddTicks(-1);
+
+                    purchases = purchases.Where(x => x.CreationDate >= firstDayOfMonth && x.CreationDate <= lastDayOfMonth).ToList();
+                }
+
+                result = Ok(purchases.OrderByDescending(x => x.CreationDate).MapAll(this.dbSettings, true));
             }
             catch (Exception ex)
             {

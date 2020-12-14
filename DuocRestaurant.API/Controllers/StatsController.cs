@@ -34,12 +34,15 @@ namespace DuocRestaurant.API.Controllers
 
             try
             {
+                DateTime firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1, 0, 0, 0);
+                DateTime lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddTicks(-1);
+
                 var response = new MonthSellsResponse();
                 // get purchase
                 var purchases = this.purchaseService.Get();
                 if (purchases != null && purchases.Any())
                 {
-                    purchases = purchases.Where(x => x.StateId == (int)Enums.PurchaseState.Paid).ToList();
+                    purchases = purchases.Where(x => x.StateId == (int)Enums.PurchaseState.Paid && x.CreationDate >= firstDayOfMonth && x.CreationDate <= lastDayOfMonth).ToList();
                     var categories = purchases.Select(x => x.CreationDate.Date).Distinct();
 
                     response.Categories = categories.Select(x => x.Date.ToString("dd-MM-yyyy")).ToList();

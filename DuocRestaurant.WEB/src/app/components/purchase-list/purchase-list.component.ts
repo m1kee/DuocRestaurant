@@ -46,10 +46,7 @@ export class PurchaseListComponent implements OnInit {
   refreshPayments = async () => {
     
     let filters = {
-      Date: {
-        Start: new Date(),
-        End: new Date()
-      }
+      Month: new Date().getMonth()
     };
 
     this.purchaseService.filterBy(filters).subscribe((purchases: Purchase[]) => {
